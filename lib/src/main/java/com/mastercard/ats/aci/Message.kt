@@ -1,5 +1,6 @@
 package com.mastercard.ats.aci
 
+import com.mastercard.ats.common.Buffer
 import com.mastercard.ats.common.bytes
 import java.io.ByteArrayOutputStream
 import java.nio.ByteBuffer
@@ -8,20 +9,27 @@ data class Message(val content: String) {
 
     companion object {
 
-        const val HEADER_SIZE = 4
+        private const val HEADER_SIZE = 4
 
-        fun read(buffer: ByteBuffer): Message? {
-            val b = ByteArrayOutputStream()
+        fun read(buffer: Buffer): Message? {
+            if (buffer.size < HEADER_SIZE) {
+                return null
+            }
 
-            buffer.position(0)
-            val len = buffer.getInt(0)
-//            buffer.put()
-            return null
+            val header = buffer.peek(HEADER_SIZE)
+            val length = ByteBuffer.wrap(header).int
+
+            if (buffer.size < HEADER_SIZE + length) {
+                return null
+            }
+
+            val data = buffer.pop(HEADER_SIZE + length)
+            return parse(data)
         }
 
         fun parse(bytes: ByteArray): Message {
             // get content without header
-            val content = String(bytes.copyOfRange(HEADER_SIZE, bytes.size - 1))
+            val content = String(bytes.copyOfRange(HEADER_SIZE, bytes.size))
             return Message(content)
         }
     }
@@ -34,7 +42,7 @@ data class Message(val content: String) {
             out.write(content.length.bytes())
 
             // write content
-            out.write(content.toByteArray(Charsets.UTF_8))
+            out.write(content.toByteArray())
 
             return out.toByteArray()
         }

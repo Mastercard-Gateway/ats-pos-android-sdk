@@ -1,5 +1,6 @@
 package com.mastercard.ats.aci
 
+import com.mastercard.ats.aci.CardServiceRequest
 import org.junit.Assert.assertNotNull
 import org.junit.Test
 import org.junit.runner.RunWith

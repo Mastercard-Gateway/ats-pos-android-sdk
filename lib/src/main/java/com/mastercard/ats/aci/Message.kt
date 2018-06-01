@@ -1,7 +1,9 @@
 package com.mastercard.ats.aci
 
+import com.mastercard.ats.aci.domain.CardServiceResponse
 import com.mastercard.ats.common.Buffer
 import com.mastercard.ats.common.bytes
+import org.simpleframework.xml.core.Persister
 import java.io.ByteArrayOutputStream
 import java.nio.ByteBuffer
 

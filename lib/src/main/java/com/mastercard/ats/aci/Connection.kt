@@ -5,10 +5,11 @@ import android.os.Message
 import android.util.Log
 import com.mastercard.ats.common.Buffer
 import java.io.Closeable
+import java.io.InputStream
+import java.io.OutputStream
 import java.net.Socket
 
-class Connection internal constructor(ip: String, port: Int) : Closeable {
-
+class Connection {
 
     companion object {
         private const val EVENT_CONNECTED = 1
@@ -28,16 +29,6 @@ class Connection internal constructor(ip: String, port: Int) : Closeable {
     private val callbacks = arrayListOf<Callback>()
     private val sendBuffer = Buffer()
 
-    init {
-        // start connection to socket on new thread
-        Thread(Runnable { doConnect(ip, port) }).start()
-    }
-
-    override fun close() {
-        socket?.close()
-        socket = null
-    }
-
     fun addCallback(callback: Callback) {
         if (!callbacks.contains(callback)) {
             callbacks.add(callback)
@@ -47,7 +38,17 @@ class Connection internal constructor(ip: String, port: Int) : Closeable {
     fun removeCallback(callback: Callback) {
         callbacks.remove(callback)
     }
-    
+
+    fun connect(ip: String, port: Int) {
+        // start connection to socket on new thread
+        Thread(Runnable { doConnect(ip, port) }).start()
+    }
+
+    fun disconnect() {
+        socket?.close()
+        socket = null
+    }
+
     fun send(bytes: ByteArray) {
         sendBuffer.put(bytes)
     }

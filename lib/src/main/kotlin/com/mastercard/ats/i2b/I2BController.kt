@@ -7,13 +7,18 @@ import android.content.BroadcastReceiver
 import android.content.Context
 import android.content.Intent
 import android.content.IntentFilter
+import android.content.DialogInterface
+import android.support.v7.app.AlertDialog
+import com.mastercard.ats.R
 
 
 class I2BController {
 
-    private lateinit var activity: Activity
+    companion object {
+        const val REQUEST_ENABLE_BT = 1
+    }
 
-    private val REQUEST_ENABLE_BT = 1
+    private lateinit var activity: Activity
 
     private val bluetoothAdapter = BluetoothAdapter.getDefaultAdapter()
 
@@ -49,19 +54,18 @@ class I2BController {
             activity.startActivityForResult(enableBtIntent, REQUEST_ENABLE_BT)
         }
 
-        // Register for broadcasts when a device is discovered
-        var filter = IntentFilter(BluetoothDevice.ACTION_FOUND)
-        activity.registerReceiver(receiver, filter)
+        /* // Register for broadcasts when a device is discovered
+         var filter = IntentFilter(BluetoothDevice.ACTION_FOUND)
+         activity.registerReceiver(receiver, filter)
 
-        // Register for broadcasts when discovery has finished
-        filter = IntentFilter(BluetoothAdapter.ACTION_DISCOVERY_FINISHED)
-        activity.registerReceiver(receiver, filter)
+         // Register for broadcasts when discovery has finished
+         filter = IntentFilter(BluetoothAdapter.ACTION_DISCOVERY_FINISHED)
+         activity.registerReceiver(receiver, filter)*/
 
     }
 
 
     fun scan() {
-
         // If we're already discovering, stop it
         if (bluetoothAdapter.isDiscovering) {
             bluetoothAdapter.cancelDiscovery()
@@ -71,20 +75,35 @@ class I2BController {
         bluetoothAdapter.startDiscovery()
     }
 
-    fun findDevices(): List<String> {
+    /**
+     *  Displays a list of paired devices as a dialog
+     */
+    fun displayPairedDevices() {
 
+        // fetch the list of paired devices first
         val pairedDevices = bluetoothAdapter.bondedDevices
-        val list = mutableListOf<String>()
-        if (pairedDevices.size > 0) {
+
+        if (pairedDevices.isNotEmpty()) {
+
+            val list = mutableListOf<String>()
             for (device in pairedDevices) {
                 list.add(device.name + "\n${device.address}")
             }
+
+            // Display a dialog with a list of devices
+            AlertDialog.Builder(activity)
+                    .setSingleChoiceItems(list.toTypedArray(), -1, null)
+                    .setNeutralButton(R.string.scan, DialogInterface.OnClickListener { dialog, _ ->
+                        dialog.dismiss()
+                        val selectedPosition = (dialog as AlertDialog).listView.checkedItemPosition
+                        val info = list.get(selectedPosition)
+                        val address = info.substring(info.length - 17)
+                        println("address : $address")
+                    })
+                    .show()
         }
-        return list
+
     }
 
-    fun finish() {
-        activity.unregisterReceiver(receiver)
-    }
 
 }

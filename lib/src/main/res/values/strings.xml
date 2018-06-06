@@ -1,3 +1,5 @@
 <resources>
     <string name="app_name">ATS Android SDK</string>
+
+    <string name="scan">Scan</string>
 </resources>

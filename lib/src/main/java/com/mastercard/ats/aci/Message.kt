@@ -13,6 +13,7 @@ data class Message(val content: String) {
 
         private const val HEADER_SIZE = 4
 
+        @JvmStatic
         fun read(buffer: Buffer): Message? {
             if (buffer.size < HEADER_SIZE) {
                 return null
@@ -29,6 +30,7 @@ data class Message(val content: String) {
             return parse(data)
         }
 
+        @JvmStatic
         fun parse(bytes: ByteArray): Message {
             // get content without header
             val content = String(bytes.copyOfRange(HEADER_SIZE, bytes.size))

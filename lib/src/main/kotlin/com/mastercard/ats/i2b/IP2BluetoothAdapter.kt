@@ -15,7 +15,7 @@ class IP2BluetoothAdapter {
         const val REQUEST_ENABLE_BT = 1
     }
 
-    interface onDevicesDiscoveryListener {
+    interface OnDevicesDiscoveryListener {
         fun onDevicesDiscovered(devices: List<String>)
     }
 
@@ -23,7 +23,7 @@ class IP2BluetoothAdapter {
 
     private val bluetoothAdapter = BluetoothAdapter.getDefaultAdapter()
 
-    private var callback: onDevicesDiscoveryListener? = null
+    private var callback: OnDevicesDiscoveryListener? = null
 
     private val discoveredDevicesListSubject: PublishSubject<List<String>> = PublishSubject.create()
 
@@ -39,12 +39,13 @@ class IP2BluetoothAdapter {
             when (action) {
                 BluetoothDevice.ACTION_FOUND -> {
                     val device = intent.getParcelableExtra<BluetoothDevice>(BluetoothDevice.EXTRA_DEVICE)
-                    device?.name?.apply {
-                        list.add(this)
-                    }
+                    if (isDeviceAllowed(device)) list.add(device.name)
                 }
 
                 BluetoothAdapter.ACTION_DISCOVERY_FINISHED -> {
+                    //append paired devices on the top
+                    list.addAll(0, getPairedDevices())
+
                     callback?.onDevicesDiscovered(list)
                     discoveredDevicesListSubject.onNext(list)
                 }
@@ -84,7 +85,7 @@ class IP2BluetoothAdapter {
         return discoveredDevicesListSubject
     }
 
-    fun getBluetoothDevices(listener: onDevicesDiscoveryListener) {
+    fun getBluetoothDevices(listener: OnDevicesDiscoveryListener) {
         this.callback = listener
         scanForBluetoothDevices()
     }
@@ -99,8 +100,24 @@ class IP2BluetoothAdapter {
         bluetoothAdapter.startDiscovery()
     }
 
+    @SuppressLint("MissingPermission")
+    fun isDeviceAllowed(device: BluetoothDevice?): Boolean {
+
+        device?.name?.apply {
+            return true
+        }
+
+        return false
+    }
+
+    @SuppressLint("MissingPermission")
+    fun getPairedDevices(): List<String> {
+        val pairedDevices = mutableListOf<String>()
+        bluetoothAdapter.bondedDevices.filter { isDeviceAllowed(it) }.map { it.name }.toCollection(pairedDevices)
+        return pairedDevices
+    }
+
     fun cancel() {
-        println("Adapter Cancel")
         activity.unregisterReceiver(discoveredDevicesReceiver)
     }
 

@@ -1,15 +1,13 @@
-package com.mastercard.ats.aci
+package com.mastercard.ats.common
 
 import android.os.Handler
 import android.os.Message
 import android.util.Log
-import com.mastercard.ats.common.Buffer
-import java.io.OutputStream
+import java.net.InetSocketAddress
 import java.net.Socket
 import java.net.SocketException
-import java.nio.channels.SocketChannel
 
-class Connection {
+class SocketConnection {
 
     companion object {
         private const val EVENT_CONNECTED = 1
@@ -25,7 +23,7 @@ class Connection {
         fun error(throwable: Throwable)
     }
 
-    private var socket: Socket? = null
+    private var socket: Socket = Socket()
 
     private val handler = Handler { handleCallback(it) }
     private val callbacks = arrayListOf<Callback>()
@@ -42,15 +40,15 @@ class Connection {
     }
 
     fun connect(ip: String, port: Int) {
-        if (socket == null || socket?.isConnected == false) {
-            // start connection to socket on new thread
-            Thread(ConnectRunnable(ip, port)).start()
-        }
+        disconnect()
+        socket = Socket()
+
+        // start connection thread
+        Thread(ConnectRunnable(ip, port)).start()
     }
 
     fun disconnect() {
-        socket?.close()
-        socket = null
+        socket.close()
     }
 
     fun send(bytes: ByteArray) {
@@ -59,15 +57,7 @@ class Connection {
 
     private fun handleCallback(msg: Message): Boolean {
         when {
-            msg.what == EVENT_CONNECTED -> {
-                callbacks.forEach { it.connected() }
-
-                socket?.let {
-                    // start read/send threads
-                    Thread(ReadRunnable(it)).start()
-                    Thread(SendRunnable(it)).start()
-                }
-            }
+            msg.what == EVENT_CONNECTED -> callbacks.forEach { it.connected() }
             msg.what == EVENT_DISCONNECTED -> callbacks.forEach { it.disconnected() }
             msg.what == EVENT_DATA_RECEIVED -> callbacks.forEach { it.dataReceived(msg.obj as ByteArray) }
             msg.what == EVENT_ERROR -> callbacks.forEach { it.error(msg.obj as Throwable) }
@@ -81,33 +71,27 @@ class Connection {
 
         override fun run() {
             try {
-                socket = Socket(ip, port)
+                // connect to the socket
+                socket.connect(InetSocketAddress(ip, port))
 
+                // start send thread
+                Thread(SendRunnable()).start()
+
+                // notify connected
                 handler.sendEmptyMessage(EVENT_CONNECTED)
-            } catch (e: Exception) {
-                Log.e("Connection", "Error connecting to $ip:$port ", e)
 
-                val msg = handler.obtainMessage()
-                msg.what = EVENT_ERROR
-                msg.obj = e
-                handler.sendMessage(msg)
-            }
-        }
-    }
-
-    private inner class ReadRunnable(val socket: Socket) : Runnable {
-
-        override fun run() {
-            try {
+                // get input stream
                 val inputStream = socket.getInputStream()
                 val buffer = ByteArray(1024)
 
+                // read loop
                 while (true) {
                     val count = inputStream.read(buffer)
                     if (count < 0) break
 
-                    Log.i("Connection", "Read $count bytes")
+                    Log.v(SocketConnection::class.java.simpleName, "Read $count bytes")
 
+                    // notify data received
                     val msg = handler.obtainMessage()
                     msg.what = EVENT_DATA_RECEIVED
                     msg.obj = buffer.copyOf(count)
@@ -116,17 +100,24 @@ class Connection {
             } catch (e: SocketException) {
                 // socket disconnected. event dispatched below
             } catch (e: Exception) {
-                Log.e("Connection", "Exception in read loop", e)
-            }
+                Log.e(SocketConnection::class.java.simpleName, "Error connecting to $ip:$port ", e)
 
-            handler.sendEmptyMessage(EVENT_DISCONNECTED)
+                val msg = handler.obtainMessage()
+                msg.what = EVENT_ERROR
+                msg.obj = e
+                handler.sendMessage(msg)
+            } finally {
+                disconnect()
+                handler.sendEmptyMessage(EVENT_DISCONNECTED)
+            }
         }
     }
 
-    private inner class SendRunnable(val socket: Socket) : Runnable {
+    private inner class SendRunnable : Runnable {
 
         override fun run() {
             try {
+                // get output stream
                 val outputStream = socket.getOutputStream()
 
                 while (!socket.isClosed) {
@@ -135,15 +126,15 @@ class Connection {
                         outputStream.write(sendBuffer.pop(size))
                         outputStream.flush()
 
-                        Log.i("Connection", "Sent $size bytes")
+                        Log.v(SocketConnection::class.java.simpleName, "Sent $size bytes")
                     }
 
                     Thread.sleep(50) // just throttle down a bit
                 }
-            } catch (e: SocketException) {
-                // socket is disconnected, will notify from read loop
             } catch (e: Exception) {
-                Log.e("Connection", "Exception in send loop", e)
+                Log.e(SocketConnection::class.java.simpleName, "Exception in send loop", e)
+            } finally {
+                disconnect()
             }
         }
     }

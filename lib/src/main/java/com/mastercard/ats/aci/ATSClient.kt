@@ -1,52 +1,36 @@
 package com.mastercard.ats.aci
 
-import com.mastercard.ats.common.SocketConnection
+import com.mastercard.ats.common.Buffer
+import com.mastercard.ats.common.SocketClient
 import java.io.Closeable
 
-class ATSClient(private val ipAddress: String, private val port: Int) : SocketConnection.Callback, Closeable {
+data class ATSClient(val ipAddress: String, val port: Int) : SocketClient.Callback, Closeable {
 
-    var connection: SocketConnection? = null
-
-    var isConnected: Boolean = false
-
-    private val callbacks = mutableListOf<Callback>()
-
-    fun connect() {
-        connection = SocketConnection().apply {
-            connect(ipAddress, port)
-            addCallback(this@ATSClient)
-        }
+    interface Callback {
+        fun connected()
+        fun disconnected()
+        fun messageReceived(message: String)
+        fun error(throwable: Throwable)
     }
 
-    fun sendMesage(message: String) {
-        connection?.send(message.toByteArray())
+    private val socketClient: SocketClient = SocketClient()
+    private val callbacks = mutableListOf<Callback>()
+    private val readBuffer = Buffer()
+
+    init {
+        socketClient.addCallback(this)
+    }
+
+    fun connect() {
+        socketClient.connect(ipAddress, port)
+    }
+
+    fun sendMessage(msg: String) {
+        socketClient.send(Message(msg).bytes)
     }
 
     override fun close() {
-        connection?.disconnect()
-        connection?.removeCallback(this)
-    }
-
-    override fun connected() {
-        isConnected = true
-    }
-
-    override fun dataReceived(bytes: ByteArray) {
-        val message = String(bytes)
-
-        callbacks.forEach {
-            it.messageReceived(message)
-        }
-    }
-
-    override fun disconnected() {
-        isConnected = false
-    }
-
-    override fun error(throwable: Throwable) {
-        callbacks.forEach {
-            it.error(throwable)
-        }
+        socketClient.disconnect()
     }
 
     fun addCallback(callback: Callback) {
@@ -59,9 +43,28 @@ class ATSClient(private val ipAddress: String, private val port: Int) : SocketCo
         callbacks.remove(callback)
     }
 
-    interface Callback {
-        fun messageReceived(message: String)
-        fun error(throwable: Throwable)
+
+    override fun connected() {
+        callbacks.forEach { it.connected() }
     }
 
+    override fun dataReceived(bytes: ByteArray) {
+        readBuffer.put(bytes)
+
+        // read the buffer for a complete message
+        Message.read(readBuffer)?.let { message ->
+            callbacks.forEach {
+                it.messageReceived(message.content)
+            }
+        }
+    }
+
+    override fun disconnected() {
+        readBuffer.clear()
+        callbacks.forEach { it.disconnected() }
+    }
+
+    override fun error(throwable: Throwable) {
+        callbacks.forEach { it.error(throwable) }
+    }
 }

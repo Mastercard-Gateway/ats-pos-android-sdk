@@ -8,8 +8,8 @@ import android.content.*
 import io.reactivex.Observable
 import io.reactivex.subjects.PublishSubject
 
-
-class IP2BluetoothAdapter {
+@SuppressLint("MissingPermission")
+class IP2BluetoothAdapter(private val activity: Activity) {
 
     companion object {
         const val REQUEST_ENABLE_BT = 1
@@ -19,19 +19,16 @@ class IP2BluetoothAdapter {
         fun onDevicesDiscovered(devices: List<String>)
     }
 
-    private lateinit var activity: Activity
-
     private val bluetoothAdapter = BluetoothAdapter.getDefaultAdapter()
+    private val connectionService = BluetoothConnectionService()
 
     private var callback: OnDevicesDiscoveryListener? = null
-
     private val discoveredDevicesListSubject: PublishSubject<List<String>> = PublishSubject.create()
-
     private val discoveredDevicesReceiver = object : BroadcastReceiver() {
 
         val list = mutableListOf<String>()
 
-        @SuppressLint("MissingPermission")
+
         override fun onReceive(context: Context?, intent: Intent?) {
 
             val action = intent?.action
@@ -54,10 +51,7 @@ class IP2BluetoothAdapter {
         }
     }
 
-    @SuppressLint("MissingPermission")
-    fun init(activity: Activity) {
-
-        this.activity = activity
+    fun init() {
 
         if (bluetoothAdapter == null) {
             //TODO : Notify user or throw exception
@@ -90,7 +84,6 @@ class IP2BluetoothAdapter {
         scanForBluetoothDevices()
     }
 
-    @SuppressLint("MissingPermission")
     private fun scanForBluetoothDevices() {
 
         if (bluetoothAdapter.isDiscovering) {
@@ -100,7 +93,6 @@ class IP2BluetoothAdapter {
         bluetoothAdapter.startDiscovery()
     }
 
-    @SuppressLint("MissingPermission")
     fun isDeviceAllowed(device: BluetoothDevice?): Boolean {
 
         device?.name?.apply {
@@ -110,7 +102,6 @@ class IP2BluetoothAdapter {
         return false
     }
 
-    @SuppressLint("MissingPermission")
     fun getPairedDevices(): List<String> {
         val pairedDevices = mutableListOf<String>()
         bluetoothAdapter.bondedDevices.filter { isDeviceAllowed(it) }.map { it.name }.toCollection(pairedDevices)
@@ -121,4 +112,7 @@ class IP2BluetoothAdapter {
         activity.unregisterReceiver(discoveredDevicesReceiver)
     }
 
+    fun connectTo(deviceName : String) {
+        connectionService.connectTo(deviceName = deviceName, secure = true, attempts = 2)
+    }
 }

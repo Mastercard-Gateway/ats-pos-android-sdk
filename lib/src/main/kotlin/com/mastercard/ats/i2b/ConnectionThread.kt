@@ -27,7 +27,6 @@ class ConnectionThread(device: BluetoothDevice, secure: Boolean, maxAttemptsAllo
     private var currentCountOfAttempts = 0
 
     init {
-        Log.d(TAG, "ConnectionThread constructor ... ")
         this.maxAttemptsAllowed = Math.max(1, maxAttemptsAllowed)
         socket = getSocket(device, secure)
         if (socket == null)
@@ -71,6 +70,31 @@ class ConnectionThread(device: BluetoothDevice, secure: Boolean, maxAttemptsAllo
             socket?.connect()
         } catch (e: IOException) {
             Log.e(TAG, "Couldn't connect to the provided bluetooth device")
+            e.printStackTrace()
+            return false
+        }
+
+        return true
+    }
+
+    /**
+     *  Opens a connection to the provided bluetooth device
+     */
+    //TODO:: this can't be the final solution. Need to analyse why connect() method isn't working
+    fun fallBackSocketConnect(): Boolean {
+
+        Log.d(TAG, "$SUB_TAG : Calling fallBackSocketConnect() on socket Type $socketType ")
+
+        val temp = socket as BluetoothSocket
+        val clazz = temp.remoteDevice.javaClass
+        val paramTypes = arrayOf<Class<*>>(Integer.TYPE)
+        val m = clazz.getMethod("createRfcommSocket", *paramTypes)
+        val fallbackSocket = m.invoke(socket?.remoteDevice, Integer.valueOf(1)) as BluetoothSocket
+        try {
+            fallbackSocket.connect()
+        } catch (e: Exception) {
+            Log.e(TAG, "Couldn't connect to the provided bluetooth device")
+            e.printStackTrace()
             return false
         }
 
@@ -103,7 +127,8 @@ class ConnectionThread(device: BluetoothDevice, secure: Boolean, maxAttemptsAllo
 
             currentCountOfAttempts++
 
-            connected = connect()
+//            connected = connect()
+            connected = fallBackSocketConnect()
         }
 
         if (connected) {

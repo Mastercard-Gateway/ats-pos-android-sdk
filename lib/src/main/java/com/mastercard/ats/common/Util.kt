@@ -1,5 +1,6 @@
 package com.mastercard.ats.common
 
+import com.mastercard.ats.aci.Message
 import org.xmlpull.v1.XmlSerializer
 import java.io.StringWriter
 import java.nio.ByteBuffer
@@ -49,6 +50,10 @@ fun XmlSerializer.element(name: String, content: String) =
 fun XmlSerializer.attribute(name: String, value: String) =
         attribute("", name, value)
 
+
+fun Buffer.readMeassage(): Message? {
+    return Message.read(buffer = this)
+}
 
 
 //val xmlSerializer = Xml.newSerializer()

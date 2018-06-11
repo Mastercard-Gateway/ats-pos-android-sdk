@@ -2,9 +2,10 @@ package com.mastercard.ats.aci
 
 import com.mastercard.ats.common.Buffer
 import com.mastercard.ats.common.SocketClient
+import com.mastercard.ats.common.readMeassage
 import java.io.Closeable
 
-data class ATSClient(val ipAddress: String, val port: Int) : SocketClient.Callback, Closeable {
+class ATSClient(val ipAddress: String, val port: Int) : SocketClient.Callback, Closeable {
 
     interface Callback {
         fun connected()
@@ -52,9 +53,9 @@ data class ATSClient(val ipAddress: String, val port: Int) : SocketClient.Callba
         readBuffer.put(bytes)
 
         // read the buffer for a complete message
-        Message.read(readBuffer)?.let { message ->
-            callbacks.forEach {
-                it.messageReceived(message.content)
+        readBuffer.readMeassage()?.let { message ->
+            callbacks.forEach { callback ->
+                callback.messageReceived(message.content)
             }
         }
     }

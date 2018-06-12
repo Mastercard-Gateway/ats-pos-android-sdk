@@ -22,10 +22,10 @@ class SocketClient {
         fun error(throwable: Throwable)
     }
 
-    private var socket: Socket? = null
-    private val handler = Handler { handleCallback(it) }
-    private val callbacks = mutableListOf<Callback>()
-    private val sendBuffer = Buffer()
+    var socket: Socket? = null
+    val handler = Handler { handleCallback(it) }
+    val callbacks = mutableListOf<Callback>()
+    val sendBuffer = Buffer()
 
     val connected: Boolean
         get() {

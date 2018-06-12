@@ -2,12 +2,9 @@ package com.mastercard.ats.i2b
 
 import android.annotation.SuppressLint
 import android.bluetooth.BluetoothAdapter
-import android.content.Context
 import android.bluetooth.BluetoothDevice
 import android.os.Handler
-import android.os.Message
 import android.util.Log
-import java.io.IOException
 
 @SuppressLint("MissingPermission")
 class BluetoothConnectionService {

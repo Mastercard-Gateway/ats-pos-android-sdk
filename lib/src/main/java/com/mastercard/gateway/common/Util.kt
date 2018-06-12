@@ -1,5 +1,6 @@
 package com.mastercard.gateway.common
 
+import android.util.Log
 import com.mastercard.gateway.ats.Message
 import org.xmlpull.v1.XmlSerializer
 import java.io.StringWriter
@@ -10,6 +11,71 @@ fun Int.bytes(): ByteArray {
             .putInt(this)
             .array()
 }
+
+fun String.log(tag: String, priority:Int = Log.DEBUG) {
+    Log.println(priority, tag, this)
+}
+
+fun String.log(tag: String, tr: Throwable) {
+    "$this\n${Log.getStackTraceString(tr)}".log(tag, Log.ERROR)
+}
+
+fun String.log(obj: Any, priority:Int = Log.DEBUG) {
+    log(obj.javaClass.simpleName, priority)
+}
+
+fun String.log(obj: Any, tr: Throwable) {
+    log(obj.javaClass.simpleName, tr)
+}
+
+fun String.logV(tag: String) {
+    log(tag, Log.VERBOSE)
+}
+
+fun String.logV(obj: Any) {
+    log(obj, Log.VERBOSE)
+}
+
+fun String.logD(tag: String) {
+    log(tag, Log.DEBUG)
+}
+
+fun String.logD(obj: Any) {
+    log(obj, Log.DEBUG)
+}
+
+fun String.logI(tag: String) {
+    log(tag, Log.INFO)
+}
+
+fun String.logI(obj: Any) {
+    log(obj, Log.INFO)
+}
+
+fun String.logW(tag: String) {
+    log(tag, Log.WARN)
+}
+
+fun String.logW(obj: Any) {
+    log(obj, Log.WARN)
+}
+
+fun String.logE(tag: String) {
+    log(tag, Log.ERROR)
+}
+
+fun String.logE(obj: Any) {
+    log(obj, Log.ERROR)
+}
+
+fun String.logE(tag: String, tr: Throwable) {
+    log(tag, tr)
+}
+
+fun String.logE(obj: Any, tr: Throwable) {
+    log(obj, tr)
+}
+
 
 //  XML generation by code
 fun XmlSerializer.document(docName: String = "UTF-8",

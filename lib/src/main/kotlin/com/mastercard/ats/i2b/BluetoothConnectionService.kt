@@ -5,6 +5,8 @@ import android.bluetooth.BluetoothAdapter
 import android.bluetooth.BluetoothDevice
 import android.os.Handler
 import android.util.Log
+import java.io.InputStream
+import java.io.OutputStream
 
 @SuppressLint("MissingPermission")
 class BluetoothConnectionService {
@@ -15,6 +17,14 @@ class BluetoothConnectionService {
         val MSG_CONNECT_SUCCESS = 1
         @JvmStatic
         val MSG_CONNECT_ERROR = 2
+        @JvmStatic
+        val MSG_READ_SUCCESS = 3
+        @JvmStatic
+        val MSG_READ_FAILURE = 4
+        @JvmStatic
+        val MSG_SEND_SUCCESS = 5
+        @JvmStatic
+        val MSG_SEND_FAILURE = 6
     }
 
     private val TAG = "BTConnectionService"
@@ -22,6 +32,8 @@ class BluetoothConnectionService {
     private var bluetoothAdapter: BluetoothAdapter = BluetoothAdapter.getDefaultAdapter()
     private var state = BluetoothConnectionState.DISCONNECTED
     private var connectionThread: ConnectionThread? = null
+    private var readThread: ReadThread? = null
+    private var writeThread: WriteThread? = null
 
     private enum class BluetoothConnectionState {
         DISCONNECTED, CONNECTING, CONNECTED
@@ -34,6 +46,13 @@ class BluetoothConnectionService {
             MSG_CONNECT_SUCCESS -> {
                 setState(BluetoothConnectionState.CONNECTED)
 
+                val (inputStream, outputStream) = msg.obj as (Pair<InputStream, OutputStream>)
+
+                startReaderThread(inputStream)
+
+                startWriterThread(outputStream)
+
+                // TODO : callbacks
                 println("MSG_CONNECT_SUCCESS !!!!! ")
 
             }
@@ -45,13 +64,40 @@ class BluetoothConnectionService {
                 setState(BluetoothConnectionState.DISCONNECTED)
 
                 val errorMessage = msg.obj as String
-                /*for (listener in getListeners()) {
-                    listener.onConnectError(errorMessage)
-                }*/
+                // TODO : callbacks
             }
+
+            MSG_SEND_SUCCESS -> {
+                println("MSG_SEND_SUCCESS !!!")
+                // TODO : callbacks
+            }
+
+            MSG_READ_SUCCESS -> {
+                val data = msg.obj as ByteArray
+                println("MSG_READ_SUCCESS !!! Message is >>>>>>>> : ${String(data)}")
+                // TODO : callbacks
+            }
+
+            MSG_READ_FAILURE, MSG_SEND_FAILURE -> {
+                println("MSG_READ_FAILURE or MSG_SEND_FAILURE !!!")
+                // TODO : callbacks
+                disconnect()
+            }
+
+            else -> Unit
 
         }
         true
+    }
+
+    fun startReaderThread(inputStream: InputStream) {
+        readThread = ReadThread(inputStream = inputStream, handler = handler)
+        readThread?.start()
+    }
+
+    fun startWriterThread(outputStream: OutputStream) {
+        writeThread = WriteThread(outputStream = outputStream, handler = handler)
+        writeThread?.start()
     }
 
     private val handler = Handler(handlerCallback)
@@ -70,8 +116,7 @@ class BluetoothConnectionService {
     }
 
     fun isConnected(): Boolean {
-        //return mSocket != null && mSocket.isConnected()
-        return false
+        return connectionThread?.isConnected() ?: false
     }
 
     fun connectTo(deviceName: String, secure: Boolean, attempts: Int) {
@@ -86,7 +131,6 @@ class BluetoothConnectionService {
             null
         }
 
-
         when (device) {
             null -> throw DeviceNotFoundException("No device found with name: $deviceName")
             else -> connect(device, secure, attempts)
@@ -95,6 +139,7 @@ class BluetoothConnectionService {
 
 
     fun connect(device: BluetoothDevice, secure: Boolean, attempts: Int) {
+
         Log.d(TAG, "connect $device")
 
         // disconnect from current device if already connected or trying to connect
@@ -121,14 +166,22 @@ class BluetoothConnectionService {
         bluetoothAdapter.cancelDiscovery()
 
         if (connectionThread?.isConnected() == true) {
-            connectionThread?.interrupt()
             connectionThread?.disconnect()
+        }
+
+        if (readThread?.isRunning() == true) {
+            readThread?.cancel()
+        }
+
+        if (writeThread?.isRunning() == true) {
+            writeThread?.cancel()
         }
 
         if (getState() != BluetoothConnectionState.DISCONNECTED) {
             setState(BluetoothConnectionState.DISCONNECTED)
         }
 
+        // TODO : callbacks
     }
 
 }

@@ -47,7 +47,7 @@ class ConnectionThread(device: BluetoothDevice, secure: Boolean, maxAttemptsAllo
 
         } catch (e: IOException) {
 
-            Log.e(TAG, "$SUB_TAG: IOException: " + e.message)
+            Log.e(TAG, "$SUB_TAG: IOException: ${e.message}")
             return null
         }
     }
@@ -105,12 +105,15 @@ class ConnectionThread(device: BluetoothDevice, secure: Boolean, maxAttemptsAllo
      *  Closes the opened connection to the provided bluetooth device
      */
     fun disconnect() {
+
+        interrupt()
+
         if (isConnected()) {
-            Log.d(TAG, "$SUB_TAG :  Socket Type" + socketType + "getting disconnected ")
+            Log.d(TAG, "$SUB_TAG :  Socket Type $socketType getting disconnected ")
             try {
                 socket?.close()
             } catch (e: IOException) {
-                Log.e(TAG, "$SUB_TAG :  Socket Type" + socketType + "close() of server failed", e)
+                Log.e(TAG, "$SUB_TAG :  close() of bluetooth socket (of socket type  : $socketType) failed")
             }
         }
     }
@@ -142,8 +145,10 @@ class ConnectionThread(device: BluetoothDevice, secure: Boolean, maxAttemptsAllo
                 outputStream = socket?.outputStream
 
             } catch (e: IOException) {
+
                 Log.d(TAG, "$SUB_TAG :  Getting input/output streams failed")
                 notifyConnectionError(e)
+
             }
 
             if (inputStream != null && outputStream != null) {

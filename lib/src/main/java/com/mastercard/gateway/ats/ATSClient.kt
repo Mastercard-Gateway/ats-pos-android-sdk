@@ -1,6 +1,7 @@
 package com.mastercard.gateway.ats
 
 import com.mastercard.gateway.common.Buffer
+import com.mastercard.gateway.common.IPSocketClient
 import com.mastercard.gateway.common.SocketClient
 import com.mastercard.gateway.common.readMessage
 import java.io.Closeable
@@ -8,13 +9,13 @@ import java.io.Closeable
 class ATSClient(val ipAddress: String, val port: Int) : SocketClient.Callback, Closeable {
 
     interface Callback {
-        fun connected()
-        fun disconnected()
-        fun messageReceived(message: String)
-        fun error(throwable: Throwable)
+        fun onConnected()
+        fun onDisconnected()
+        fun onMessageReceived(message: String)
+        fun onError(throwable: Throwable)
     }
 
-    private val socketClient: SocketClient = SocketClient()
+    private val socketClient: IPSocketClient = IPSocketClient(ipAddress, port)
     private val callbacks = mutableListOf<Callback>()
     private val readBuffer = Buffer()
 
@@ -23,15 +24,15 @@ class ATSClient(val ipAddress: String, val port: Int) : SocketClient.Callback, C
     }
 
     fun connect() {
-        socketClient.connect(ipAddress, port)
+        socketClient.connect(3)
     }
 
     fun sendMessage(msg: String) {
-        socketClient.send(Message(msg).bytes)
+        socketClient.write(Message(msg).bytes)
     }
 
     override fun close() {
-        socketClient.disconnect()
+        socketClient.close()
     }
 
     fun addCallback(callback: Callback) {
@@ -45,27 +46,27 @@ class ATSClient(val ipAddress: String, val port: Int) : SocketClient.Callback, C
     }
 
 
-    override fun connected() {
-        callbacks.forEach { it.connected() }
+    override fun onConnected() {
+        callbacks.forEach { it.onConnected() }
     }
 
-    override fun dataReceived(bytes: ByteArray) {
+    override fun onRead(bytes: ByteArray) {
         readBuffer.put(bytes)
 
         // read the buffer for a complete message
         readBuffer.readMessage()?.let { message ->
             callbacks.forEach { callback ->
-                callback.messageReceived(message.content)
+                callback.onMessageReceived(message.content)
             }
         }
     }
 
-    override fun disconnected() {
+    override fun onDisconnected() {
         readBuffer.clear()
-        callbacks.forEach { it.disconnected() }
+        callbacks.forEach { it.onDisconnected() }
     }
 
-    override fun error(throwable: Throwable) {
-        callbacks.forEach { it.error(throwable) }
+    override fun onError(throwable: Throwable) {
+        callbacks.forEach { it.onError(throwable) }
     }
 }

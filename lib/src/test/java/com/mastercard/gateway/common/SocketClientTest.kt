@@ -7,10 +7,10 @@ import org.junit.Before
 import org.junit.Test
 import org.junit.runner.RunWith
 import org.robolectric.RobolectricTestRunner
-import java.net.Socket
+import java.io.InputStream
+import java.io.OutputStream
 import kotlin.test.assertEquals
 import kotlin.test.assertFalse
-import kotlin.test.assertNull
 import kotlin.test.assertTrue
 
 
@@ -18,40 +18,38 @@ import kotlin.test.assertTrue
 class SocketClientTest {
 
     private lateinit var socketClient: SocketClient
-    private val mockSocket: Socket = mock()
+    private val mockInputStream: InputStream = mock()
+    private val mockOutputStream: OutputStream = mock()
 
     @Before
     fun setUp() {
-        socketClient = spy()
-        socketClient.socket = mockSocket
+        socketClient = spy(object : SocketClient() {
+            override fun connectToSocket() {
+                // do nothing
+            }
+
+            override fun isConnected(): Boolean {
+                return true
+            }
+
+            override fun getInputStream(): InputStream {
+                return mockInputStream
+            }
+
+            override fun getOutputStream(): OutputStream {
+                return mockOutputStream
+            }
+        })
     }
 
     @After
     fun tearDown() {
         socketClient.callbacks.clear()
-        socketClient.sendBuffer.clear()
+        socketClient.writeBuffer.clear()
 
         reset(socketClient)
-        reset(mockSocket)
-    }
-
-    @Test
-    fun testConnectedReturnsTrueWhenSocketConnected() {
-        whenever(mockSocket.isConnected).thenReturn(true)
-        whenever(mockSocket.isClosed).thenReturn(false)
-
-        val result = socketClient.connected
-
-        assertTrue(result)
-    }
-
-    @Test
-    fun testConnectedReturnsFalseWhenSocketIsNull() {
-        socketClient.socket = null
-
-        val result = socketClient.connected
-
-        assertFalse(result)
+        reset(mockInputStream)
+        reset(mockOutputStream)
     }
 
     @Test
@@ -86,38 +84,34 @@ class SocketClientTest {
 
     @Test
     fun testConnectFirstDisconnectsThenStartsNewConnectionThread() {
-        val ip = "1.1.1.1"
-        val port = 20002
         val mockThread: Thread = mock()
-        whenever(socketClient.createConnectThread(ip, port)).thenReturn(mockThread)
+        whenever(socketClient.createConnectThread(1)).thenReturn(mockThread)
 
-        socketClient.connect(ip, port)
+        socketClient.connect()
 
-        verify(socketClient).disconnect()
+        verify(socketClient).close()
         verify(mockThread).start()
     }
 
     @Test
-    fun testDisconnectClosesSocketAndClearsBuffer() {
-        socketClient.sendBuffer.put(byteArrayOf(0, 1, 2, 3))
+    fun testCloseClearsWriteBuffer() {
+        socketClient.writeBuffer.put(byteArrayOf(0, 1, 2, 3))
 
-        socketClient.disconnect()
+        socketClient.close()
 
-        verify(mockSocket).close()
-        assertNull(socketClient.socket)
-        assertEquals(0, socketClient.sendBuffer.size)
+        assertEquals(0, socketClient.writeBuffer.size)
     }
 
     @Test
     fun testSendPutsBytesOnTheSendBufferIfConnected() {
         val bytes = byteArrayOf(0,1,2,3)
-        whenever(socketClient.connected).thenReturn(true)
+        whenever(socketClient.isConnected()).thenReturn(true)
 
-        assertEquals(0, socketClient.sendBuffer.size)
+        assertEquals(0, socketClient.writeBuffer.size)
 
-        socketClient.send(bytes)
+        socketClient.write(bytes)
 
-        assertEquals(bytes.size, socketClient.sendBuffer.size)
+        assertEquals(bytes.size, socketClient.writeBuffer.size)
     }
 
     @Test
@@ -130,23 +124,23 @@ class SocketClientTest {
 
         var result = socketClient.handleMessage(msg)
 
-        verify(mockCallback).connected()
+        verify(mockCallback).onConnected()
         assertTrue(result)
 
         msg.what = SocketClient.EVENT_DISCONNECTED
 
         result = socketClient.handleMessage(msg)
 
-        verify(mockCallback).disconnected()
+        verify(mockCallback).onDisconnected()
         assertTrue(result)
 
         val bytes = byteArrayOf(0,1,2,3)
-        msg.what = SocketClient.EVENT_DATA_RECEIVED
+        msg.what = SocketClient.EVENT_READ
         msg.obj = bytes
 
         result = socketClient.handleMessage(msg)
 
-        verify(mockCallback).dataReceived(bytes)
+        verify(mockCallback).onRead(bytes)
         assertTrue(result)
 
         val throwable: Throwable = mock()
@@ -155,7 +149,7 @@ class SocketClientTest {
 
         result = socketClient.handleMessage(msg)
 
-        verify(mockCallback).error(throwable)
+        verify(mockCallback).onError(throwable)
         assertTrue(result)
     }
 

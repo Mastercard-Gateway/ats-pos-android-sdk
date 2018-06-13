@@ -12,7 +12,7 @@ import org.jetbrains.annotations.NotNull;
 
 public class MainActivity extends AppCompatActivity {
 
-    ATSClient ats = new ATSClient("10.157.193.8", 20002);
+    ATSClient ats = new ATSClient("10.157.193.1", 20002);
 
 
     @Override
@@ -22,29 +22,31 @@ public class MainActivity extends AppCompatActivity {
 
         ats.addCallback(new ATSClient.Callback() {
             @Override
-            public void connected() {
-                Log.i("MainActivity", "Socket connected");
+            public void onConnected() {
+                Log.i("MainActivity", "ATS connected");
 
                 CardServiceRequest request = new CardServiceRequest(CardServiceRequest.RequestType.CardPayment,"asdasd","asdasd","1.00");
                 String xml = request.toString();
+
+                Log.i(MainActivity.class.getSimpleName(), "Sending message:\n" + xml);
 
                 ats.sendMessage(xml);
             }
 
             @Override
-            public void disconnected() {
-
+            public void onDisconnected() {
+                Log.i("MainActivity", "ATS disconnected");
             }
 
             @Override
-            public void messageReceived(@NotNull String message) {
+            public void onMessageReceived(@NotNull String message) {
                 Log.i("MainActivity", "Received message:\n" + message);
 
                 ats.close();
             }
 
             @Override
-            public void error(@NotNull Throwable throwable) {
+            public void onError(@NotNull Throwable throwable) {
                 Log.i("MainActivity", "Error communicating to ATS", throwable);
             }
         });

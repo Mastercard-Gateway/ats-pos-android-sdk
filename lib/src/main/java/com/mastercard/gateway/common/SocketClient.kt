@@ -2,34 +2,38 @@ package com.mastercard.gateway.common
 
 import android.os.Handler
 import android.os.Message
-import java.net.Socket
+import java.io.Closeable
+import java.io.InputStream
+import java.io.OutputStream
 import java.net.SocketException
 
-class SocketClient {
+abstract class SocketClient: Closeable {
 
     companion object {
         const val EVENT_CONNECTED = 1
-        const val EVENT_DATA_RECEIVED = 2
-        const val EVENT_DISCONNECTED = 3
+        const val EVENT_DISCONNECTED = 2
+        const val EVENT_READ = 3
         const val EVENT_ERROR = 4
     }
 
     interface Callback {
-        fun connected()
-        fun dataReceived(bytes: ByteArray)
-        fun disconnected()
-        fun error(throwable: Throwable)
+        fun onConnected()
+        fun onDisconnected()
+        fun onRead(bytes: ByteArray)
+        fun onError(throwable: Throwable)
     }
 
-    var socket: Socket? = null
+
     val handler = Handler { handleMessage(it) }
     val callbacks = mutableListOf<Callback>()
-    val sendBuffer = Buffer()
+    val writeBuffer = Buffer()
 
-    val connected: Boolean
-        get() {
-            return socket?.run { return@run isConnected && !isClosed } == true
-        }
+
+    abstract fun connectToSocket()
+    abstract fun isConnected(): Boolean
+    abstract fun getInputStream(): InputStream
+    abstract fun getOutputStream(): OutputStream
+
 
     fun addCallback(callback: Callback) {
         if (!callbacks.contains(callback)) {
@@ -41,50 +45,70 @@ class SocketClient {
         callbacks.remove(callback)
     }
 
-    fun connect(ip: String, port: Int) {
-        disconnect()
+    fun connect() {
+        connect(1)
+    }
+
+    fun connect(attempts: Int) {
+        close()
 
         // start connection thread
-        createConnectThread(ip, port).start()
+        createConnectThread(attempts).start()
     }
 
-    fun disconnect() {
-        socket?.close()
-        socket = null
-        sendBuffer.clear()
+    override fun close() {
+        writeBuffer.clear()
     }
 
-    fun send(bytes: ByteArray) {
-        if (connected) {
-            sendBuffer.put(bytes)
+    fun write(bytes: ByteArray) {
+        if (isConnected()) {
+            writeBuffer.put(bytes)
         }
     }
 
     fun handleMessage(msg: Message): Boolean {
         when {
-            msg.what == EVENT_CONNECTED -> callbacks.forEach { it.connected() }
-            msg.what == EVENT_DISCONNECTED -> callbacks.forEach { it.disconnected() }
-            msg.what == EVENT_DATA_RECEIVED -> callbacks.forEach { it.dataReceived(msg.obj as ByteArray) }
-            msg.what == EVENT_ERROR -> callbacks.forEach { it.error(msg.obj as Throwable) }
+            msg.what == EVENT_CONNECTED -> callbacks.forEach { it.onConnected() }
+            msg.what == EVENT_DISCONNECTED -> callbacks.forEach { it.onDisconnected() }
+            msg.what == EVENT_READ -> callbacks.forEach { it.onRead(msg.obj as ByteArray) }
+            msg.what == EVENT_ERROR -> callbacks.forEach { it.onError(msg.obj as Throwable) }
             else -> return false
         }
 
         return true
     }
 
-    private fun runConnect(ip: String, port: Int) {
+    private fun runConnect(attempts: Int) {
         try {
-            // connect to the socket
-            socket = Socket(ip, port)
+            // attempt to connect to the socket
+            var attempt = 0
 
-            // start send thread
-            createSendThread().start()
+            while (attempt++ < attempts) {
+                "Attempting to connect ($attempt of $attempts)".log(this)
+
+                try {
+                    connectToSocket()
+
+                    // if we got a closeable, break from loop
+                    break
+                } catch (e: Exception) {
+                    "Connection attempt failed".log(this)
+
+                    // if error on last attempt, rethrow exception
+                    if (attempt == attempts) {
+                        throw e
+                    }
+                }
+            }
+
+            // start write thread
+            createWriteThread().start()
 
             // notify connected
             handler.sendEmptyMessage(EVENT_CONNECTED)
 
             // get input stream
-            val inputStream = socket!!.getInputStream()
+            val inputStream = getInputStream()
             val buffer = ByteArray(1024)
 
             // read loop
@@ -94,57 +118,51 @@ class SocketClient {
 
                 "Read $count bytes".log(this)
 
-                // notify data received
-                val msg = handler.obtainMessage()
-                msg.what = EVENT_DATA_RECEIVED
-                msg.obj = buffer.copyOf(count)
+                // notify read
+                val msg = handler.obtainMessage(EVENT_READ, buffer.copyOf(count))
                 handler.sendMessage(msg)
             }
         } catch (e: SocketException) {
             // socket disconnected. event dispatched below
         } catch (e: Exception) {
-            "Error connecting to $ip:$port".log(this, e)
+            "Error connecting to / reading from socket".log(this, e)
 
-            val msg = handler.obtainMessage()
-            msg.what = EVENT_ERROR
-            msg.obj = e
+            val msg = handler.obtainMessage(EVENT_ERROR, e)
             handler.sendMessage(msg)
         } finally {
-            disconnect()
+            close()
             handler.sendEmptyMessage(EVENT_DISCONNECTED)
         }
     }
 
-    private fun runSend() {
+    private fun runWrite() {
         try {
-            socket?.let {
-                // get output stream
-                val outputStream = it.getOutputStream()
+            // get output stream
+            val outputStream = getOutputStream()
 
-                while (connected) {
-                    val size = sendBuffer.size
-                    if (size > 0) {
-                        outputStream.write(sendBuffer.pop(size))
-                        outputStream.flush()
+            while (isConnected()) {
+                val size = writeBuffer.size
+                if (size > 0) {
+                    outputStream.write(writeBuffer.pop(size))
+                    outputStream.flush()
 
-                        "Sent $size bytes".log(this)
-                    }
-
-                    Thread.sleep(50) // just throttle down a bit
+                    "Sent $size bytes".log(this)
                 }
+
+                Thread.sleep(50) // just throttle down a bit
             }
         } catch (e: Exception) {
-            "Exception in send loop".log(this, e)
+            "Error writing to socket".log(this, e)
         } finally {
-            disconnect()
+            close()
         }
     }
 
-    fun createConnectThread(ip: String, port: Int): Thread {
-        return Thread(Runnable { runConnect(ip, port) })
+    fun createConnectThread(attempts: Int): Thread {
+        return Thread(Runnable { runConnect(attempts) })
     }
 
-    fun createSendThread() : Thread {
-        return Thread(Runnable { runSend() })
+    fun createWriteThread() : Thread {
+        return Thread(Runnable { runWrite() })
     }
 }

@@ -6,7 +6,7 @@ import java.io.InputStream
 import java.io.OutputStream
 import java.util.*
 
-class BluetoothSocketClient(val device: BluetoothDevice, val secure: Boolean): SocketClient() {
+class BluetoothSocketClient(val device: BluetoothDevice, val secure: Boolean = true): SocketClient() {
 
     private val MY_UUID = UUID.fromString("8ce255c0-200a-11e0-ac64-0800200c9a66")
 

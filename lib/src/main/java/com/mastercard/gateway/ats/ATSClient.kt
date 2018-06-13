@@ -3,7 +3,6 @@ package com.mastercard.gateway.ats
 import com.mastercard.gateway.common.Buffer
 import com.mastercard.gateway.common.IPSocketClient
 import com.mastercard.gateway.common.SocketClient
-import com.mastercard.gateway.common.readMessage
 import java.io.Closeable
 
 class ATSClient(val ipAddress: String, val port: Int) : SocketClient.Callback, Closeable {
@@ -58,7 +57,7 @@ class ATSClient(val ipAddress: String, val port: Int) : SocketClient.Callback, C
         readBuffer.put(bytes)
 
         // read the buffer for a complete message
-        readBuffer.readMessage()?.let { message ->
+        Message.read(readBuffer)?.let { message ->
             callbacks.forEach { callback ->
                 callback.onMessageReceived(message.content)
             }

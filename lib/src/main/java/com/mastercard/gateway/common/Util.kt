@@ -117,10 +117,6 @@ fun XmlSerializer.attribute(name: String, value: String) =
         attribute("", name, value)
 
 
-fun Buffer.readMessage(): Message? {
-    return Message.read(buffer = this)
-}
-
 
 //val xmlSerializer = Xml.newSerializer()
 //val xmlString = xmlSerializer.document {

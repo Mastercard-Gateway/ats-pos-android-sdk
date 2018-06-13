@@ -8,6 +8,10 @@ import java.io.Closeable
 
 class ATSClient(val ipAddress: String, val port: Int) : SocketClient.Callback, Closeable {
 
+    companion object {
+        const val CONNECTION_ATTEMPTS = 3
+    }
+
     interface Callback {
         fun onConnected()
         fun onDisconnected()
@@ -24,7 +28,7 @@ class ATSClient(val ipAddress: String, val port: Int) : SocketClient.Callback, C
     }
 
     fun connect() {
-        socketClient.connect(3)
+        socketClient.connect(CONNECTION_ATTEMPTS)
     }
 
     fun sendMessage(msg: String) {

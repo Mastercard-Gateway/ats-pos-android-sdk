@@ -12,7 +12,7 @@ import org.jetbrains.annotations.NotNull;
 
 public class MainActivity extends AppCompatActivity {
 
-    ATSClient ats = new ATSClient("10.157.193.1", 20002);
+    ATSClient ats = new ATSClient("10.157.193.8", 20002);
 
 
     @Override

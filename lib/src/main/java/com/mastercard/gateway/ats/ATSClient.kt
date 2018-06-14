@@ -74,6 +74,4 @@ class ATSClient(ipAddress: String, port: Int) : Closeable {
             callbacks.forEach { it.onError(throwable) }
         }
     }
-
-
 }

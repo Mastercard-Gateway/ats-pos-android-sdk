@@ -7,7 +7,7 @@ import java.io.InputStream
 import java.io.OutputStream
 import java.net.SocketException
 
-abstract class SocketClient: Closeable {
+internal abstract class SocketClient: Closeable {
 
     companion object {
         const val EVENT_CONNECTED = 1
@@ -29,8 +29,8 @@ abstract class SocketClient: Closeable {
     val writeBuffer = Buffer()
 
 
-    abstract fun connectToSocket()
     abstract fun isConnected(): Boolean
+    abstract fun connectToSocket()
     abstract fun getInputStream(): InputStream
     abstract fun getOutputStream(): OutputStream
 
@@ -78,7 +78,7 @@ abstract class SocketClient: Closeable {
         return true
     }
 
-    private fun runConnect(attempts: Int) {
+    fun runConnect(attempts: Int) {
         try {
             // attempt to connect to the socket
             var attempt = 0
@@ -135,7 +135,7 @@ abstract class SocketClient: Closeable {
         }
     }
 
-    private fun runWrite() {
+    fun runWrite() {
         try {
             // get output stream
             val outputStream = getOutputStream()

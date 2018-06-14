@@ -4,7 +4,7 @@ import com.mastercard.gateway.ats.domain.CardServiceResponse
 import org.simpleframework.xml.core.Persister
 import java.io.ByteArrayOutputStream
 
-class Interpreter {
+internal class Interpreter {
 
     companion object {
 

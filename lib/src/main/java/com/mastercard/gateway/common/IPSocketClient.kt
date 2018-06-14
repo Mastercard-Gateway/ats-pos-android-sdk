@@ -5,7 +5,7 @@ import java.io.OutputStream
 import java.net.InetSocketAddress
 import java.net.Socket
 
-class IPSocketClient(val ip: String, val port: Int): SocketClient() {
+internal class IPSocketClient(val ip: String, val port: Int): SocketClient() {
 
     companion object {
         const val SOCKET_TIMEOUT = 10000

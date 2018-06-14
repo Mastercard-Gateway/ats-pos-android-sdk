@@ -112,11 +112,15 @@ class IP2BluetoothAdapter(private val activity: Activity) {
         activity.unregisterReceiver(discoveredDevicesReceiver)
     }
 
-    fun connectTo(deviceName : String) {
+    fun connectTo(deviceName: String) {
         connectionService.connectTo(deviceName = deviceName, secure = true, attempts = 2)
     }
 
     fun disConnect() {
         connectionService.disconnect()
+    }
+
+    fun writeData(data: String) {
+        connectionService.write(data)
     }
 }

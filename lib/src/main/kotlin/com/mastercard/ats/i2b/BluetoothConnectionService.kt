@@ -30,21 +30,16 @@ class BluetoothConnectionService {
     private val TAG = "BTConnectionService"
 
     private var bluetoothAdapter: BluetoothAdapter = BluetoothAdapter.getDefaultAdapter()
-    private var state = BluetoothConnectionState.DISCONNECTED
     private var connectionThread: ConnectionThread? = null
     private var readThread: ReadThread? = null
     private var writeThread: WriteThread? = null
 
-    private enum class BluetoothConnectionState {
-        DISCONNECTED, CONNECTING, CONNECTED
-    }
 
     private val handlerCallback = Handler.Callback { msg ->
 
         when (msg?.what) {
 
             MSG_CONNECT_SUCCESS -> {
-                setState(BluetoothConnectionState.CONNECTED)
 
                 val (inputStream, outputStream) = msg.obj as (Pair<InputStream, OutputStream>)
 
@@ -53,33 +48,31 @@ class BluetoothConnectionService {
                 startWriterThread(outputStream)
 
                 // TODO : callbacks
-                println("MSG_CONNECT_SUCCESS !!!!! ")
+                Log.d(TAG, "MSG_CONNECT_SUCCESS !!!!! socket Connected ? : ${connectionThread?.isConnected()}")
 
             }
 
             MSG_CONNECT_ERROR -> {
 
-                println("MSG_CONNECT_ERROR !!!!! ")
-
-                setState(BluetoothConnectionState.DISCONNECTED)
+                Log.d(TAG, "MSG_CONNECT_ERROR !!!!! ")
 
                 val errorMessage = msg.obj as String
                 // TODO : callbacks
             }
 
             MSG_SEND_SUCCESS -> {
-                println("MSG_SEND_SUCCESS !!!")
+                Log.d(TAG, "MSG_SEND_SUCCESS !!!")
                 // TODO : callbacks
             }
 
             MSG_READ_SUCCESS -> {
                 val data = msg.obj as ByteArray
-                println("MSG_READ_SUCCESS !!! Message is >>>>>>>> : ${String(data)}")
+                Log.d(TAG, "MSG_READ_SUCCESS !!! Message is >>>>>>>> : ${String(data)}")
                 // TODO : callbacks
             }
 
             MSG_READ_FAILURE, MSG_SEND_FAILURE -> {
-                println("MSG_READ_FAILURE or MSG_SEND_FAILURE !!!")
+                Log.d(TAG, "MSG_READ_FAILURE or MSG_SEND_FAILURE !!!")
                 // TODO : callbacks
                 disconnect()
             }
@@ -101,14 +94,6 @@ class BluetoothConnectionService {
     }
 
     private val handler = Handler(handlerCallback)
-
-    private fun setState(state: BluetoothConnectionState) {
-        this.state = state
-    }
-
-    private fun getState(): BluetoothConnectionState {
-        return state
-    }
 
     fun isConnecting(): Boolean {
         //return mConnectThread != null && mConnectThread.isAlive() && !mConnectThread.isInterrupted()
@@ -147,10 +132,6 @@ class BluetoothConnectionService {
             disconnect()
         }
 
-        if (getState() !== BluetoothConnectionState.CONNECTING) {
-            setState(BluetoothConnectionState.CONNECTING)
-        }
-
         Log.d(TAG, "Attempting to connect to " + device.name)
 
         // Always cancel discovery because it will slow down a connection
@@ -177,11 +158,10 @@ class BluetoothConnectionService {
             writeThread?.cancel()
         }
 
-        if (getState() != BluetoothConnectionState.DISCONNECTED) {
-            setState(BluetoothConnectionState.DISCONNECTED)
-        }
-
         // TODO : callbacks
     }
 
+    fun write(data: String) {
+        writeThread?.write(data = data.toByteArray())
+    }
 }

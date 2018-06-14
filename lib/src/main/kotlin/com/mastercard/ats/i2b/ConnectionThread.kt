@@ -19,7 +19,7 @@ class ConnectionThread(device: BluetoothDevice, secure: Boolean, maxAttemptsAllo
 
     private val TAG = "BTConnectionService"
     private val SUB_TAG = this::class.java.simpleName
-    private val MY_UUID = UUID.fromString("8ce255c0-200a-11e0-ac64-0800200c9a66")
+//    private val MY_UUID = UUID.fromString("8ce255c0-200a-11e0-ac64-0800200c9a66")
     private var socketType = if (secure) "Secure" else "Insecure"
 
     private var socket: BluetoothSocket? = null
@@ -41,8 +41,8 @@ class ConnectionThread(device: BluetoothDevice, secure: Boolean, maxAttemptsAllo
         try {
 
             return when (secure) {
-                true -> device.createRfcommSocketToServiceRecord(MY_UUID)
-                false -> device.createInsecureRfcommSocketToServiceRecord(MY_UUID)
+                true -> device.createRfcommSocketToServiceRecord(device.uuids[0].uuid)
+                false -> device.createInsecureRfcommSocketToServiceRecord(device.uuids[0].uuid)
             }
 
         } catch (e: IOException) {
@@ -56,6 +56,7 @@ class ConnectionThread(device: BluetoothDevice, secure: Boolean, maxAttemptsAllo
      *  Returns whether connected is alive
      */
     fun isConnected(): Boolean {
+        Log.d(TAG, "$SUB_TAG isConnected() socket = $socket")
         return socket?.isConnected ?: false
     }
 
@@ -69,30 +70,6 @@ class ConnectionThread(device: BluetoothDevice, secure: Boolean, maxAttemptsAllo
         try {
             socket?.connect()
         } catch (e: IOException) {
-            Log.e(TAG, "Couldn't connect to the provided bluetooth device")
-            e.printStackTrace()
-            return false
-        }
-
-        return true
-    }
-
-    /**
-     *  Opens a connection to the provided bluetooth device
-     */
-    //TODO:: this can't be the final solution. Need to analyse why connect() method isn't working
-    fun fallBackSocketConnect(): Boolean {
-
-        Log.d(TAG, "$SUB_TAG : Calling fallBackSocketConnect() on socket Type $socketType ")
-
-        val temp = socket as BluetoothSocket
-        val clazz = temp.remoteDevice.javaClass
-        val paramTypes = arrayOf<Class<*>>(Integer.TYPE)
-        val m = clazz.getMethod("createRfcommSocket", *paramTypes)
-        val fallbackSocket = m.invoke(socket?.remoteDevice, Integer.valueOf(1)) as BluetoothSocket
-        try {
-            fallbackSocket.connect()
-        } catch (e: Exception) {
             Log.e(TAG, "Couldn't connect to the provided bluetooth device")
             e.printStackTrace()
             return false
@@ -126,13 +103,14 @@ class ConnectionThread(device: BluetoothDevice, secure: Boolean, maxAttemptsAllo
 
         while (!isInterrupted && !connected && currentCountOfAttempts < maxAttemptsAllowed) {
 
-            Log.d(TAG, "Attempt $currentCountOfAttempts trying to connect... ")
+            Log.d(TAG, "ATTEMPT $currentCountOfAttempts TRYING TO CONNECTED... ")
 
             currentCountOfAttempts++
 
-//            connected = connect()
-            connected = fallBackSocketConnect()
+            connected = connect()
         }
+
+        Log.d(TAG, "$SUB_TAG :  outside while  ... socket.isConnected() ? : ${socket?.isConnected}")
 
         if (connected) {
 
@@ -146,7 +124,7 @@ class ConnectionThread(device: BluetoothDevice, secure: Boolean, maxAttemptsAllo
 
             } catch (e: IOException) {
 
-                Log.d(TAG, "$SUB_TAG :  Getting input/output streams failed")
+                Log.e(TAG, "$SUB_TAG :  Getting input/output streams failed")
                 notifyConnectionError(e)
 
             }
@@ -173,4 +151,5 @@ class ConnectionThread(device: BluetoothDevice, secure: Boolean, maxAttemptsAllo
         val msg = handler.obtainMessage(BluetoothConnectionService.MSG_CONNECT_SUCCESS, Pair(inputStream, outputStream))
         handler.sendMessage(msg)
     }
+
 }

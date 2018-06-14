@@ -2,7 +2,7 @@ package com.mastercard.gateway.common
 
 import kotlin.math.min
 
-class Buffer {
+internal class Buffer {
 
     private var data = byteArrayOf()
 

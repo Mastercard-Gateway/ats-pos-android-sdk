@@ -5,13 +5,12 @@ import com.mastercard.gateway.common.bytes
 import java.io.ByteArrayOutputStream
 import java.nio.ByteBuffer
 
-data class Message(val content: String) {
+internal data class Message(val content: String) {
 
     companion object {
 
-        private const val HEADER_SIZE = 4
+        const val HEADER_SIZE = 4
 
-        @JvmStatic
         fun read(buffer: Buffer): Message? {
             if (buffer.size < HEADER_SIZE) {
                 return null
@@ -28,7 +27,6 @@ data class Message(val content: String) {
             return parse(data)
         }
 
-        @JvmStatic
         fun parse(bytes: ByteArray): Message {
             // get content without header
             val content = String(bytes.copyOfRange(HEADER_SIZE, bytes.size))

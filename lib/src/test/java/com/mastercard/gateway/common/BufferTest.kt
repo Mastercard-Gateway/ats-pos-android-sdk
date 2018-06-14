@@ -8,9 +8,9 @@ import org.junit.Test
 
 class BufferTest {
 
-    val buffer = Buffer()
-    val data1 = byteArrayOf(0x1, 0x2, 0x3, 0x4, 0x5)
-    val data2 = byteArrayOf(0x6, 0x7, 0x8)
+    private val buffer = Buffer()
+    private val data1 = byteArrayOf(0x1, 0x2, 0x3, 0x4, 0x5)
+    private val data2 = byteArrayOf(0x6, 0x7, 0x8)
 
     @Before
     fun setUp() {

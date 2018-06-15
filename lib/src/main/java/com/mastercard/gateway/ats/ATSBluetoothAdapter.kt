@@ -2,25 +2,23 @@ package com.mastercard.gateway.ats
 
 import android.bluetooth.BluetoothAdapter
 import com.mastercard.gateway.common.BluetoothSocketClient
+import com.mastercard.gateway.common.IPSocketClient
+import com.mastercard.gateway.common.ServerSocketClient
 import com.mastercard.gateway.common.SocketClient
 import java.io.Closeable
 
-class ATSBluetoothAdapter(deviceName: String, secure: Boolean) : Closeable {
+class ATSBluetoothAdapter(deviceName: String, secure: Boolean, port: Int) : Closeable {
 
     internal val CONNECTION_ATTEMPTS = 3
 
-    interface Callback {
-        fun onConnected()
-        fun onDisconnected()
-        fun onMessageReceived(message: String)
-        fun onError(throwable: Throwable)
-    }
-
     internal var bluetoothAdapter: BluetoothAdapter = BluetoothAdapter.getDefaultAdapter()
-    internal val socketClient: BluetoothSocketClient
-    internal val callbacks = mutableListOf<Callback>()
+    internal val bluetoothSocketClient: BluetoothSocketClient
+    internal val serverSocketClient = ServerSocketClient(port)
 
     init {
+        // Immediately spin up our ServerSocket and listen from incoming connections
+        serverSocketClient.addCallback(ServerSocketCallback())
+        serverSocketClient.connect()
 
         val bondedDevices = bluetoothAdapter.bondedDevices
 
@@ -33,56 +31,56 @@ class ATSBluetoothAdapter(deviceName: String, secure: Boolean) : Closeable {
         when (device) {
             null -> throw RuntimeException("No device found with name: $deviceName")
             else -> {
-                socketClient = BluetoothSocketClient(device = device, secure = secure)
-                socketClient.addCallback(SocketCallback())
+                bluetoothSocketClient = BluetoothSocketClient(device = device, secure = secure)
+                bluetoothSocketClient.addCallback(BluetoothSocketCallback())
             }
         }
-    }
-
-    fun connect(attempts: Int = CONNECTION_ATTEMPTS) {
-        socketClient.connect(attempts = attempts)
-    }
-
-    fun sendMessage(msg: String) {
-        socketClient.write(msg.toByteArray())
     }
 
     override fun close() {
-        socketClient.close()
+        serverSocketClient.close()
+        bluetoothSocketClient.close()
     }
 
-    fun addCallback(callback: Callback) {
-        if (!callbacks.contains(callback)) {
-            callbacks.add(callback)
-        }
-    }
-
-    fun removeCallback(callback: Callback) {
-        callbacks.remove(callback)
-    }
-
-    internal inner class SocketCallback : SocketClient.Callback {
+    internal inner class BluetoothSocketCallback : SocketClient.Callback {
 
         override fun onConnected() {
-            callbacks.forEach { it.onConnected() }
+
         }
 
         override fun onRead(bytes: ByteArray) {
-
-            // read the buffer for a complete message
-            String(bytes).apply {
-                callbacks.forEach { callback ->
-                    callback.onMessageReceived(this)
-                }
-            }
+            // Pass incoming bytes from the bluetooth device to ATS
+            serverSocketClient.write(bytes)
         }
 
         override fun onDisconnected() {
-            callbacks.forEach { it.onDisconnected() }
+            // If the bluetooth socket closes, close the socket ATS is connected to
+            serverSocketClient.close()
         }
 
         override fun onError(throwable: Throwable) {
-            callbacks.forEach { it.onError(throwable) }
+            TODO("Implement me")
+        }
+    }
+
+    internal inner class ServerSocketCallback : SocketClient.Callback {
+        override fun onConnected() {
+            // When we receive the connection from the server spin up the connection to the bluetooth device
+            bluetoothSocketClient.connect(CONNECTION_ATTEMPTS)
+        }
+
+        override fun onDisconnected() {
+            // When we close the connection close the connection to the bluetooth device
+            bluetoothSocketClient.close()
+        }
+
+        override fun onRead(bytes: ByteArray) {
+            // Pass incoming bytes from ATS to the bluetooth device
+            bluetoothSocketClient.write(bytes)
+        }
+
+        override fun onError(throwable: Throwable) {
+            TODO("Implement me")
         }
     }
 }

@@ -5,8 +5,6 @@ import android.app.Activity
 import android.bluetooth.BluetoothAdapter
 import android.bluetooth.BluetoothDevice
 import android.content.*
-import io.reactivex.Observable
-import io.reactivex.subjects.PublishSubject
 
 @SuppressLint("MissingPermission")
 class IP2BluetoothAdapter(private val activity: Activity) {
@@ -23,7 +21,6 @@ class IP2BluetoothAdapter(private val activity: Activity) {
     private val connectionService = BluetoothConnectionService()
 
     private var callback: OnDevicesDiscoveryListener? = null
-    private val discoveredDevicesListSubject: PublishSubject<List<String>> = PublishSubject.create()
     private val discoveredDevicesReceiver = object : BroadcastReceiver() {
 
         val list = mutableListOf<String>()
@@ -44,7 +41,6 @@ class IP2BluetoothAdapter(private val activity: Activity) {
                     list.addAll(0, getPairedDevices())
 
                     callback?.onDevicesDiscovered(list)
-                    discoveredDevicesListSubject.onNext(list)
                 }
                 else -> Unit
             }
@@ -72,11 +68,6 @@ class IP2BluetoothAdapter(private val activity: Activity) {
         filter = IntentFilter(BluetoothAdapter.ACTION_DISCOVERY_FINISHED)
         activity.registerReceiver(discoveredDevicesReceiver, filter)
 
-    }
-
-    fun getBluetoothDevices(): Observable<List<String>> {
-        scanForBluetoothDevices()
-        return discoveredDevicesListSubject
     }
 
     fun getBluetoothDevices(listener: OnDevicesDiscoveryListener) {

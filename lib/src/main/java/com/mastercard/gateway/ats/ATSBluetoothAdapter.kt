@@ -2,7 +2,6 @@ package com.mastercard.gateway.ats
 
 import android.bluetooth.BluetoothAdapter
 import com.mastercard.gateway.common.BluetoothSocketClient
-import com.mastercard.gateway.common.Buffer
 import com.mastercard.gateway.common.SocketClient
 import java.io.Closeable
 

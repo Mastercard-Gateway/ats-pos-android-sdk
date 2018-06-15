@@ -6,18 +6,23 @@ import android.support.v7.app.AppCompatActivity;
 import android.util.Log;
 
 import com.mastercard.gateway.ats.ATSClient;
+import com.mastercard.gateway.ats.ATSDiagnostics;
 
 import org.jetbrains.annotations.NotNull;
 
 public class MainActivity extends AppCompatActivity {
 
     ATSClient ats;
+    String runningLog = "";
 
 
     @Override
     protected void onCreate(@Nullable Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
+
+        ATSDiagnostics.setLogLevel(Log.VERBOSE);
+        ATSDiagnostics.startLogCapture();
 
         ats = new ATSClient("10.157.193.8", 20002);
         ats.addCallback(new ATSCallback());
@@ -53,6 +58,9 @@ public class MainActivity extends AppCompatActivity {
         @Override
         public void onDisconnected() {
             Log.i("MainActivity", "ATS disconnected");
+
+            Log.v("MainActivity", "Total log:\n" + ATSDiagnostics.stopLogCapture());
+            ATSDiagnostics.clearLog();
         }
 
         @Override

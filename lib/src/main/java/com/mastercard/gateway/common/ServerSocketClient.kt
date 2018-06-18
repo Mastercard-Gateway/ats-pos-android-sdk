@@ -39,9 +39,13 @@ internal class ServerSocketClient(val port: Int) : SocketClient() {
     override fun close() {
         super.close()
 
+        closeCurrentConnection()
+
         serverSocket?.close()
         serverSocket = null
+    }
 
+    fun closeCurrentConnection() {
         currentSocket?.close()
         currentSocket = null
     }

@@ -6,42 +6,55 @@ import com.mastercard.gateway.common.ServerSocketClient
 import com.mastercard.gateway.common.SocketClient
 import java.io.Closeable
 
-class ATSBluetoothAdapter(deviceName: String, secure: Boolean, port: Int) : Closeable {
+object ATSBluetoothAdapter : Closeable {
 
-    internal val CONNECTION_ATTEMPTS = 3
+    internal const val CONNECTION_ATTEMPTS = 3
 
     internal var bluetoothAdapter: BluetoothAdapter = BluetoothAdapter.getDefaultAdapter()
-    internal val bluetoothSocketClient: BluetoothSocketClient
-    internal val serverSocketClient = ServerSocketClient(port)
+    internal var bluetoothSocketClient: BluetoothSocketClient? = null
+    internal lateinit var serverSocketClient: ServerSocketClient
 
-    init {
+    fun start(port: Int) {
         // Immediately spin up our ServerSocket and listen from incoming connections
-        serverSocketClient.addCallback(ServerSocketCallback())
-        serverSocketClient.connect()
-
-        val bondedDevices = bluetoothAdapter.bondedDevices
-
-        val device = try {
-            bondedDevices.first { deviceName == it.name }
-        } catch (exception: NoSuchElementException) {
-            null
-        }
-
-        when (device) {
-            null -> throw RuntimeException("No device found with name: $deviceName")
-            else -> {
-                bluetoothSocketClient = BluetoothSocketClient(device = device, secure = secure)
-                bluetoothSocketClient.addCallback(BluetoothSocketCallback())
-            }
+        serverSocketClient = ServerSocketClient(port).apply {
+            addCallback(ServerSocketCallback())
+            connect()
         }
     }
+    
+    @JvmOverloads
+    fun setBluetoothDevice(deviceName: String?, secure: Boolean = true) {
+
+        if (deviceName.isNullOrEmpty()) {
+            val bondedDevices = bluetoothAdapter.bondedDevices
+            val device = try {
+                bondedDevices.first { deviceName == it.name }
+            } catch (exception: NoSuchElementException) {
+                null
+            }
+
+            when (device) {
+                null -> throw RuntimeException("No device found with name: $deviceName")
+                else -> {
+                    bluetoothSocketClient = BluetoothSocketClient(device = device, secure = secure).apply {
+                        addCallback(BluetoothSocketCallback())
+                    }
+                }
+            }
+        } else {
+            // Close and null out bluetooth socket client if name is null
+            bluetoothSocketClient?.close()
+            bluetoothSocketClient = null
+        }
+    }
+
 
     override fun close() {
         serverSocketClient.close()
-        bluetoothSocketClient.close()
+        bluetoothSocketClient?.close()
     }
 
-    internal inner class BluetoothSocketCallback : SocketClient.Callback {
+    internal class BluetoothSocketCallback : SocketClient.Callback {
 
         override fun onConnected() {}
 
@@ -52,32 +65,37 @@ class ATSBluetoothAdapter(deviceName: String, secure: Boolean, port: Int) : Clos
 
         override fun onDisconnected() {
             // If the bluetooth socket closes, close the socket ATS is connected to
-            serverSocketClient.close()
+            serverSocketClient.closeCurrentConnection()
         }
 
         override fun onError(throwable: Throwable) {
-            TODO("Implement me")
+            serverSocketClient.closeCurrentConnection()
         }
     }
 
-    internal inner class ServerSocketCallback : SocketClient.Callback {
+    internal class ServerSocketCallback : SocketClient.Callback {
         override fun onConnected() {
             // When we receive the connection from the server spin up the connection to the bluetooth device
-            bluetoothSocketClient.connect(CONNECTION_ATTEMPTS)
+            if (bluetoothSocketClient != null) {
+                bluetoothSocketClient?.connect(CONNECTION_ATTEMPTS)
+            } else {
+                //If the bluetooth socket client isn't initialized close the current connection to ATS
+                serverSocketClient.closeCurrentConnection()
+            }
         }
 
         override fun onDisconnected() {
             // When we close the connection close the connection to the bluetooth device
-            bluetoothSocketClient.close()
+            bluetoothSocketClient?.close()
         }
 
         override fun onRead(bytes: ByteArray) {
             // Pass incoming bytes from ATS to the bluetooth device
-            bluetoothSocketClient.write(bytes)
+            bluetoothSocketClient?.write(bytes)
         }
 
         override fun onError(throwable: Throwable) {
-            TODO("Implement me")
+            bluetoothSocketClient?.close()
         }
     }
 }

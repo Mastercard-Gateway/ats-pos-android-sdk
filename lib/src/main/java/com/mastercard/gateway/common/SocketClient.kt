@@ -7,7 +7,7 @@ import java.io.InputStream
 import java.io.OutputStream
 import java.net.SocketException
 
-internal abstract class SocketClient: Closeable {
+internal abstract class SocketClient : Closeable {
 
     companion object {
         const val EVENT_CONNECTED = 1
@@ -45,11 +45,8 @@ internal abstract class SocketClient: Closeable {
         callbacks.remove(callback)
     }
 
-    fun connect() {
-        connect(1)
-    }
-
-    fun connect(attempts: Int) {
+    @JvmOverloads
+    fun connect(attempts: Int = 1) {
         close()
 
         // start connection thread
@@ -162,7 +159,7 @@ internal abstract class SocketClient: Closeable {
         return Thread(Runnable { runConnect(attempts) })
     }
 
-    fun createWriteThread() : Thread {
+    fun createWriteThread(): Thread {
         return Thread(Runnable { runWrite() })
     }
 }

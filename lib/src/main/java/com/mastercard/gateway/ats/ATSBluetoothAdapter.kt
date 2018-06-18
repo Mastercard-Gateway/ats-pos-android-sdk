@@ -2,7 +2,6 @@ package com.mastercard.gateway.ats
 
 import android.bluetooth.BluetoothAdapter
 import com.mastercard.gateway.common.BluetoothSocketClient
-import com.mastercard.gateway.common.IPSocketClient
 import com.mastercard.gateway.common.ServerSocketClient
 import com.mastercard.gateway.common.SocketClient
 import java.io.Closeable
@@ -14,12 +13,6 @@ class ATSBluetoothAdapter(deviceName: String, secure: Boolean, port: Int) : Clos
     internal var bluetoothAdapter: BluetoothAdapter = BluetoothAdapter.getDefaultAdapter()
     internal val bluetoothSocketClient: BluetoothSocketClient
     internal val serverSocketClient = ServerSocketClient(port)
-    internal var connectionListener: ConnectionListener? = null
-
-    interface ConnectionListener {
-        fun onConnected()
-        fun onDisconnected()
-    }
 
     init {
         // Immediately spin up our ServerSocket and listen from incoming connections
@@ -43,10 +36,6 @@ class ATSBluetoothAdapter(deviceName: String, secure: Boolean, port: Int) : Clos
         }
     }
 
-    fun setConnectionListener(listener: ConnectionListener) {
-        connectionListener = listener
-    }
-
     override fun close() {
         serverSocketClient.close()
         bluetoothSocketClient.close()
@@ -54,9 +43,7 @@ class ATSBluetoothAdapter(deviceName: String, secure: Boolean, port: Int) : Clos
 
     internal inner class BluetoothSocketCallback : SocketClient.Callback {
 
-        override fun onConnected() {
-            connectionListener?.onConnected()
-        }
+        override fun onConnected() {}
 
         override fun onRead(bytes: ByteArray) {
             // Pass incoming bytes from the bluetooth device to ATS
@@ -66,7 +53,6 @@ class ATSBluetoothAdapter(deviceName: String, secure: Boolean, port: Int) : Clos
         override fun onDisconnected() {
             // If the bluetooth socket closes, close the socket ATS is connected to
             serverSocketClient.close()
-            connectionListener?.onDisconnected()
         }
 
         override fun onError(throwable: Throwable) {

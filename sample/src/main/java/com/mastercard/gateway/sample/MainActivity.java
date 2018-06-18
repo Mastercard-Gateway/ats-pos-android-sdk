@@ -10,6 +10,9 @@ import com.mastercard.gateway.ats.ATSDiagnostics;
 
 import org.jetbrains.annotations.NotNull;
 
+import java.util.regex.Matcher;
+import java.util.regex.Pattern;
+
 public class MainActivity extends AppCompatActivity {
 
     ATSClient ats;
@@ -35,6 +38,25 @@ public class MainActivity extends AppCompatActivity {
         super.onDestroy();
     }
 
+    void acquireDevice() {
+        String xml = "<?xml version=\"1.0\" encoding=\"UTF-8\"?>\n<ServiceRequest RequestType=\"AcquireDevice\" ApplicationSender=\"ATSClient\" WorkstationID=\"12341234\" RequestID=\"9\"/>";
+
+        ats.sendMessage(xml);
+    }
+
+    void startTransactionWithReader(String popid) {
+        String xml = "<?xml version=\"1.0\" encoding=\"UTF-8\"?>\n" +
+                "<CardServiceRequest RequestType=\"CardPayment\" ApplicationSender=\"ATSClient\" WorkstationID=\"12341234\" RequestID=\"2\" POPID=\"" + popid + "\">\n" +
+                "  <POSdata>\n" +
+                "    <POSTimeStamp>2010-05-19T15:11:31.765625+01:00</POSTimeStamp>\n" +
+                "    <TransactionNumber>2</TransactionNumber>\n" +
+                "  </POSdata>\n" +
+                "  <TotalAmount PaymentAmount=\"10.00\">10.00</TotalAmount>\n" +
+                "</CardServiceRequest>";
+
+        ats.sendMessage(xml);
+    }
+
 
     class ATSCallback implements ATSClient.Callback {
 
@@ -42,17 +64,28 @@ public class MainActivity extends AppCompatActivity {
         public void onConnected() {
             Log.i("MainActivity", "ATS connected");
 
-            String xml = "<?xml version=\"1.0\" encoding=\"UTF-8\"?>\n<CardServiceRequest RequestType=\"CardPayment\" ApplicationSender=\"ATSClient\" WorkstationID=\"12341234\" RequestID=\"2\">\n" +
-                    "  <POSdata>\n" +
-                    "    <POSTimeStamp>2010-05-19T15:11:31.765625+01:00</POSTimeStamp>\n" +
-                    "    <TransactionNumber>2</TransactionNumber>\n" +
-                    "  </POSdata>\n" +
-                    "  <TotalAmount PaymentAmount=\"10.00\">10.00</TotalAmount>\n" +
-                    "</CardServiceRequest>";
+            acquireDevice();
+        }
 
-            Log.i(MainActivity.class.getSimpleName(), "Sending message:\n" + xml);
+        @Override
+        public void onMessageReceived(@NotNull String message) {
+            Log.i("MainActivity", "Received message:\n" + message);
 
-            ats.sendMessage(xml);
+            if (message.contains("ServiceResponse") && message.contains("AcquireDevice") && message.contains("OverallResult=\"Success\"")) {
+                Pattern pattern = Pattern.compile("POPID=\"([^\"]+)\"");
+                Matcher m = pattern.matcher(message);
+                if (m.find()) {
+                    String popId = m.group(1);
+                    startTransactionWithReader(popId);
+                }
+            } else if (message.contains("CardServiceResponse")) {
+                ats.close();
+            }
+        }
+
+        @Override
+        public void onError(@NotNull Throwable throwable) {
+            Log.i("MainActivity", "Error communicating to ATS", throwable);
         }
 
         @Override
@@ -61,18 +94,6 @@ public class MainActivity extends AppCompatActivity {
 
             Log.v("MainActivity", "Total log:\n" + ATSDiagnostics.stopLogCapture());
             ATSDiagnostics.clearLog();
-        }
-
-        @Override
-        public void onMessageReceived(@NotNull String message) {
-            Log.i("MainActivity", "Received message:\n" + message);
-
-            ats.close();
-        }
-
-        @Override
-        public void onError(@NotNull Throwable throwable) {
-            Log.i("MainActivity", "Error communicating to ATS", throwable);
         }
     }
 }

@@ -30,7 +30,7 @@ class ATSClient(val ipAddress: String, val port: Int) : Closeable {
     }
 
     fun sendMessage(msg: String) {
-        "Sending message: $msg".log(this)
+        "Sending message:\n$msg".log(this)
         socketClient.write(Message(msg).bytes)
     }
 
@@ -57,13 +57,11 @@ class ATSClient(val ipAddress: String, val port: Int) : Closeable {
         }
 
         override fun onRead(bytes: ByteArray) {
-            "Received: ${String(bytes)}".logV(this@ATSClient)
-
             readBuffer.put(bytes)
 
             // read the buffer for a complete message
             Message.read(readBuffer)?.let { message ->
-                "Received message:\n$message".log(this)
+                "Received message:\n${message.content}".log(this@ATSClient)
                 callbacks.forEach { callback ->
                     callback.onMessageReceived(message.content)
                 }

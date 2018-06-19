@@ -16,7 +16,6 @@ import java.util.regex.Pattern;
 public class MainActivity extends AppCompatActivity {
 
     ATSClient ats;
-    String runningLog = "";
 
 
     @Override
@@ -27,7 +26,8 @@ public class MainActivity extends AppCompatActivity {
         ATSDiagnostics.setLogLevel(Log.VERBOSE);
         ATSDiagnostics.startLogCapture();
 
-        ats = new ATSClient("10.157.193.8", 20002);
+//        ats = new ATSClient("10.157.193.8", 20002);
+        ats = new ATSClient("10.157.196.212", 20002);
         ats.addCallback(new ATSCallback());
         ats.connect();
     }
@@ -39,14 +39,14 @@ public class MainActivity extends AppCompatActivity {
     }
 
     void acquireDevice() {
-        String xml = "<?xml version=\"1.0\" encoding=\"UTF-8\"?>\n<ServiceRequest RequestType=\"AcquireDevice\" ApplicationSender=\"ATSClient\" WorkstationID=\"12341234\" RequestID=\"9\"/>";
+        String xml = "<?xml version=\"1.0\" encoding=\"UTF-8\"?>\n<ServiceRequest RequestType=\"AcquireDevice\" ApplicationSender=\"ATSClient\" WorkstationID=\"12342\" RequestID=\"9\"/>";
 
         ats.sendMessage(xml);
     }
 
     void startTransactionWithReader(String popid) {
         String xml = "<?xml version=\"1.0\" encoding=\"UTF-8\"?>\n" +
-                "<CardServiceRequest RequestType=\"CardPayment\" ApplicationSender=\"ATSClient\" WorkstationID=\"12341234\" RequestID=\"2\" POPID=\"" + popid + "\">\n" +
+                "<CardServiceRequest RequestType=\"CardPayment\" ApplicationSender=\"ATSClient\" WorkstationID=\"12342\" RequestID=\"2\" POPID=\"" + popid + "\">\n" +
                 "  <POSdata>\n" +
                 "    <POSTimeStamp>2010-05-19T15:11:31.765625+01:00</POSTimeStamp>\n" +
                 "    <TransactionNumber>2</TransactionNumber>\n" +

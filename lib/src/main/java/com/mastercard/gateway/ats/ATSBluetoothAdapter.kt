@@ -25,7 +25,7 @@ object ATSBluetoothAdapter : Closeable {
     @JvmOverloads
     fun setBluetoothDevice(deviceName: String?, secure: Boolean = true) {
 
-        if (deviceName.isNullOrEmpty()) {
+        if (!deviceName.isNullOrEmpty()) {
             val bondedDevices = bluetoothAdapter.bondedDevices
             val device = try {
                 bondedDevices.first { deviceName == it.name }

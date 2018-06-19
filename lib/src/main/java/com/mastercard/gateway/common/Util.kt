@@ -1,6 +1,7 @@
 package com.mastercard.gateway.common
 
 import android.util.Log
+import com.mastercard.gateway.ats.ATSDiagnostics
 import org.xmlpull.v1.XmlSerializer
 import java.io.StringWriter
 import java.nio.ByteBuffer
@@ -13,6 +14,9 @@ internal fun Int.bytes(): ByteArray {
 
 internal fun String.log(tag: String, priority:Int = Log.DEBUG) {
     Log.println(priority, tag, this)
+
+    // also include in diagnostics
+    ATSDiagnostics.log(priority, tag, this)
 }
 
 internal fun String.log(tag: String, tr: Throwable) {

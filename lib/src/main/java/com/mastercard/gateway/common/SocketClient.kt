@@ -6,8 +6,9 @@ import java.io.Closeable
 import java.io.InputStream
 import java.io.OutputStream
 import java.net.SocketException
+import kotlin.concurrent.thread
 
-internal abstract class SocketClient : Closeable {
+internal abstract class SocketClient: Closeable {
 
     companion object {
         const val EVENT_CONNECTED = 1
@@ -45,12 +46,15 @@ internal abstract class SocketClient : Closeable {
         callbacks.remove(callback)
     }
 
-    @JvmOverloads
-    fun connect(attempts: Int = 1) {
+    fun connect() {
+        connect(1)
+    }
+
+    fun connect(attempts: Int) {
         close()
 
         // start connection thread
-        createConnectThread(attempts).start()
+        startConnectThread(attempts)
     }
 
     override fun close() {
@@ -99,7 +103,7 @@ internal abstract class SocketClient : Closeable {
             }
 
             // start write thread
-            createWriteThread().start()
+            startWriteThread()
 
             // notify connected
             handler.sendEmptyMessage(EVENT_CONNECTED)
@@ -111,9 +115,12 @@ internal abstract class SocketClient : Closeable {
             // read loop
             while (true) {
                 val count = inputStream.read(buffer)
-                if (count < 0) break
+                if (count < 0) {
+                    "End of stream reached".logV(this)
+                    break
+                }
 
-                "Read $count bytes".log(this)
+                "Read $count bytes".logV(this)
 
                 // notify read
                 val msg = handler.obtainMessage(EVENT_READ, buffer.copyOf(count))
@@ -143,7 +150,7 @@ internal abstract class SocketClient : Closeable {
                     outputStream.write(writeBuffer.pop(size))
                     outputStream.flush()
 
-                    "Sent $size bytes".log(this)
+                    "Sent $size bytes".logV(this)
                 }
 
                 Thread.sleep(50) // just throttle down a bit
@@ -155,11 +162,11 @@ internal abstract class SocketClient : Closeable {
         }
     }
 
-    fun createConnectThread(attempts: Int): Thread {
-        return Thread(Runnable { runConnect(attempts) })
+    fun startConnectThread(attempts: Int) {
+        thread(start = true) { runConnect(attempts) }
     }
 
-    fun createWriteThread(): Thread {
-        return Thread(Runnable { runWrite() })
+    fun startWriteThread() {
+        thread(start = true) { runWrite() }
     }
 }

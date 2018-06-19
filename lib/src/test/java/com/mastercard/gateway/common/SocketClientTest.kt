@@ -84,13 +84,12 @@ class SocketClientTest {
 
     @Test
     fun testConnectFirstDisconnectsThenStartsNewConnectionThread() {
-        val mockThread: Thread = mock()
-        whenever(socketClient.createConnectThread(1)).thenReturn(mockThread)
+        whenever(socketClient.startConnectThread(1)).thenReturn(Unit)
 
         socketClient.connect()
 
         verify(socketClient).close()
-        verify(mockThread).start()
+        verify(socketClient).startConnectThread(1)
     }
 
     @Test

@@ -15,6 +15,7 @@ internal class ServerSocketClient(val port: Int) : SocketClient() {
         serverSocket = ServerSocket(port).also {
             //Wait for incoming connection
             currentSocket = it.accept()
+            "Incoming socket connection".log(this)
         }
     }
 

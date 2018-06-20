@@ -5,6 +5,7 @@ import android.support.annotation.Nullable;
 import android.support.v7.app.AppCompatActivity;
 import android.util.Log;
 
+import com.mastercard.gateway.ats.ATSBluetoothAdapter;
 import com.mastercard.gateway.ats.ATSClient;
 import com.mastercard.gateway.ats.ATSDiagnostics;
 
@@ -16,6 +17,7 @@ import java.util.regex.Pattern;
 public class MainActivity extends AppCompatActivity {
 
     ATSClient ats;
+    ATSBluetoothAdapter bluetoothAdapter;
 
 
     @Override
@@ -26,8 +28,9 @@ public class MainActivity extends AppCompatActivity {
         ATSDiagnostics.setLogLevel(Log.VERBOSE);
         ATSDiagnostics.startLogCapture();
 
-//        ats = new ATSClient("10.157.193.8", 20002);
-        ats = new ATSClient("10.157.196.212", 20002);
+        ats = new ATSClient("10.157.193.8", 20002);
+        bluetoothAdapter = new ATSBluetoothAdapter(45645);
+//        ats = new ATSClient("10.157.196.212", 20002);
         ats.addCallback(new ATSCallback());
         ats.connect();
     }
@@ -39,7 +42,8 @@ public class MainActivity extends AppCompatActivity {
     }
 
     void acquireDevice() {
-        String xml = "<?xml version=\"1.0\" encoding=\"UTF-8\"?>\n<ServiceRequest RequestType=\"AcquireDevice\" ApplicationSender=\"ATSClient\" WorkstationID=\"12342\" RequestID=\"9\"/>";
+//        String xml = "<?xml version=\"1.0\" encoding=\"UTF-8\"?>\n<ServiceRequest RequestType=\"AcquireDevice\" ApplicationSender=\"ATSClient\" WorkstationID=\"12342\" RequestID=\"9\"/>";
+        String xml = "<?xml version=\"1.0\" encoding=\"UTF-8\"?>\n<ServiceRequest RequestType=\"AcquireDevice\" ApplicationSender=\"ATSClient\" RequestID=\"9\"/>";
 
         ats.sendMessage(xml);
     }
@@ -57,6 +61,21 @@ public class MainActivity extends AppCompatActivity {
         ats.sendMessage(xml);
     }
 
+    void startTransactionWithBluetoothCardReader(String bluetoothDeviceName) {
+        bluetoothAdapter.setBluetoothDevice(bluetoothDeviceName);
+
+        String xml = "<?xml version=\"1.0\" encoding=\"UTF-8\"?>\n" +
+                "<CardServiceRequest RequestType=\"CardPayment\" ApplicationSender=\"ATSClient\" WorkstationID=\"12341234\"  POPID=\"1\"  RequestID=\"2\">\n" +
+                "  <POSdata>\n" +
+                "    <POSTimeStamp>2010-05-19T15:11:31.765625+01:00</POSTimeStamp>\n" +
+                "    <TransactionNumber>2</TransactionNumber>\n" +
+                "  </POSdata>\n" +
+                "  <TotalAmount PaymentAmount=\"10.00\">10.00</TotalAmount>\n" +
+                "</CardServiceRequest>";
+
+        ats.sendMessage(xml);
+    }
+
 
     class ATSCallback implements ATSClient.Callback {
 
@@ -64,8 +83,10 @@ public class MainActivity extends AppCompatActivity {
         public void onConnected() {
             Log.i("MainActivity", "ATS connected");
 
-            acquireDevice();
+//            acquireDevice();
+            startTransactionWithBluetoothCardReader("Simplify 760");
         }
+
 
         @Override
         public void onMessageReceived(@NotNull String message) {
@@ -76,7 +97,7 @@ public class MainActivity extends AppCompatActivity {
                 Matcher m = pattern.matcher(message);
                 if (m.find()) {
                     String popId = m.group(1);
-                    startTransactionWithReader(popId);
+//                    startTransactionWithReader(popId);
                 }
             } else if (message.contains("CardServiceResponse")) {
                 ats.close();

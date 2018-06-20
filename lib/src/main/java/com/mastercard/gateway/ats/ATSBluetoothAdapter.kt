@@ -14,16 +14,23 @@ object ATSBluetoothAdapter : Closeable {
     internal var bluetoothSocketClient: BluetoothSocketClient? = null
     internal lateinit var serverSocketClient: ServerSocketClient
 
-    fun start(port: Int) {
+    @JvmOverloads
+    fun init(port: Int, deviceName: String?, secure: Boolean = true) {
+
+        setBluetoothDevice(deviceName = deviceName, secure = secure)
+
+        startServer(port = port)
+    }
+
+    internal fun startServer(port: Int) {
         // Immediately spin up our ServerSocket and listen from incoming connections
         serverSocketClient = ServerSocketClient(port).apply {
             addCallback(ServerSocketCallback())
             connect()
         }
     }
-    
-    @JvmOverloads
-    fun setBluetoothDevice(deviceName: String?, secure: Boolean = true) {
+
+    internal fun setBluetoothDevice(deviceName: String?, secure: Boolean) {
 
         if (!deviceName.isNullOrEmpty()) {
             val bondedDevices = bluetoothAdapter.bondedDevices

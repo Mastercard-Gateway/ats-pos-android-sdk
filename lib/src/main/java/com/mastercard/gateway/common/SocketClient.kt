@@ -7,6 +7,7 @@ import java.io.InputStream
 import java.io.OutputStream
 import java.net.SocketException
 import kotlin.concurrent.thread
+import kotlin.math.max
 
 internal abstract class SocketClient: Closeable {
 
@@ -25,7 +26,7 @@ internal abstract class SocketClient: Closeable {
     }
 
 
-    val handler = Handler { handleMessage(it) }
+    var handler = Handler { handleMessage(it) }
     val callbacks = mutableListOf<Callback>()
     val writeBuffer = Buffer()
 
@@ -46,11 +47,7 @@ internal abstract class SocketClient: Closeable {
         callbacks.remove(callback)
     }
 
-    fun connect() {
-        connect(1)
-    }
-
-    fun connect(attempts: Int) {
+    fun connect(attempts: Int = 1) {
         close()
 
         // start connection thread
@@ -82,25 +79,7 @@ internal abstract class SocketClient: Closeable {
     fun runConnect(attempts: Int) {
         try {
             // attempt to connect to the socket
-            var attempt = 0
-
-            while (attempt++ < attempts) {
-                "Attempting to connect ($attempt of $attempts)".log(this)
-
-                try {
-                    connectToSocket()
-
-                    // if we got a closeable, break from loop
-                    break
-                } catch (e: Exception) {
-                    "Connection attempt failed".log(this)
-
-                    // if error on last attempt, rethrow exception
-                    if (attempt == attempts) {
-                        throw e
-                    }
-                }
-            }
+            attemptConnection(attempts)
 
             // start write thread
             startWriteThread()
@@ -108,24 +87,8 @@ internal abstract class SocketClient: Closeable {
             // notify connected
             handler.sendEmptyMessage(EVENT_CONNECTED)
 
-            // get input stream
-            val inputStream = getInputStream()
-            val buffer = ByteArray(1024)
+            readLoop()
 
-            // read loop
-            while (true) {
-                val count = inputStream.read(buffer)
-                if (count < 0) {
-                    "End of stream reached".logV(this)
-                    break
-                }
-
-                "Read $count bytes".logV(this)
-
-                // notify read
-                val msg = handler.obtainMessage(EVENT_READ, buffer.copyOf(count))
-                handler.sendMessage(msg)
-            }
         } catch (e: SocketException) {
             // socket disconnected. event dispatched below
         } catch (e: Exception) {
@@ -159,6 +122,51 @@ internal abstract class SocketClient: Closeable {
             "Error writing to socket".log(this, e)
         } finally {
             close()
+        }
+    }
+
+    fun attemptConnection(attempts: Int) {
+        // attempt to connect to the socket
+        var attempt = 0
+        val minAttempts = max(attempts, 1)
+
+        while (attempt++ < minAttempts) {
+            "Attempting to connect ($attempt of $minAttempts)".log(this)
+
+            try {
+                connectToSocket()
+
+                // if we got a closeable, break from loop
+                break
+            } catch (e: Exception) {
+                "Connection attempt failed".log(this)
+
+                // if error on last attempt, rethrow exception
+                if (attempt == minAttempts) {
+                    throw e
+                }
+            }
+        }
+    }
+
+    fun readLoop() {
+        // get input stream
+        val inputStream = getInputStream()
+        val buffer = ByteArray(1024)
+
+        // read loop
+        while (true) {
+            val count = inputStream.read(buffer)
+            if (count < 0) {
+                "End of stream reached".logV(this)
+                break
+            }
+
+            "Read $count bytes".logV(this)
+
+            // notify read
+            val msg = handler.obtainMessage(EVENT_READ, buffer.copyOf(count))
+            handler.sendMessage(msg)
         }
     }
 

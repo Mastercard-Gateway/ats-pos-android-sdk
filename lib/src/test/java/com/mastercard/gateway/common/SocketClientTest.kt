@@ -1,17 +1,22 @@
 package com.mastercard.gateway.common
 
+import android.os.Handler
 import android.os.Message
+import com.mastercard.gateway.common.SocketClient.Companion.EVENT_DISCONNECTED
+import com.mastercard.gateway.common.SocketClient.Companion.EVENT_ERROR
 import com.nhaarman.mockito_kotlin.*
 import org.junit.After
 import org.junit.Before
 import org.junit.Test
 import org.junit.runner.RunWith
+import org.mockito.exceptions.base.MockitoException
 import org.robolectric.RobolectricTestRunner
 import java.io.InputStream
 import java.io.OutputStream
 import kotlin.test.assertEquals
 import kotlin.test.assertFalse
 import kotlin.test.assertTrue
+import kotlin.test.fail
 
 
 @RunWith(RobolectricTestRunner::class)
@@ -20,6 +25,7 @@ class SocketClientTest {
     private lateinit var socketClient: SocketClient
     private val mockInputStream: InputStream = mock()
     private val mockOutputStream: OutputStream = mock()
+    private val mockHandler: Handler = mock()
 
     @Before
     fun setUp() {
@@ -40,6 +46,8 @@ class SocketClientTest {
                 return mockOutputStream
             }
         })
+
+        socketClient.handler = mockHandler
     }
 
     @After
@@ -50,6 +58,7 @@ class SocketClientTest {
         reset(socketClient)
         reset(mockInputStream)
         reset(mockOutputStream)
+        reset(mockHandler)
     }
 
     @Test
@@ -84,7 +93,7 @@ class SocketClientTest {
 
     @Test
     fun testConnectFirstDisconnectsThenStartsNewConnectionThread() {
-        whenever(socketClient.startConnectThread(1)).thenReturn(Unit)
+        whenever(socketClient.startConnectThread(1)).then {  }
 
         socketClient.connect()
 
@@ -160,5 +169,129 @@ class SocketClientTest {
         val result = socketClient.handleMessage(msg)
 
         assertFalse(result)
+    }
+
+    @Test
+    fun testAttemptConnectionWillAttemptMultipleTimes() {
+        val attempts = 4
+
+        whenever(socketClient.connectToSocket()).thenThrow(MockitoException::class.java)
+
+        try {
+            socketClient.attemptConnection(attempts)
+
+            fail("Should have ultimately thrown an exception on the last attempt")
+        } catch (e: Exception) {
+            // the final attempt will rethrow this exception
+        }
+
+        verify(socketClient, times(attempts)).connectToSocket()
+    }
+
+    @Test
+    fun testAttemptConnectionWillAttemptAtLeastOnce() {
+        val attempts = -1
+
+        whenever(socketClient.connectToSocket()).thenThrow(MockitoException::class.java)
+
+        try {
+            socketClient.attemptConnection(attempts)
+
+            fail("Should have ultimately thrown an exception on the last attempt")
+        } catch (e: Exception) {
+            // the final attempt will rethrow this exception
+        }
+
+        verify(socketClient, times(1)).connectToSocket()
+    }
+
+    @Test
+    fun attemptConnectionBreaksWhenConnectionIsMade() {
+        val attempts = 4
+
+        whenever(socketClient.connectToSocket())
+                .thenThrow(MockitoException::class.java)
+                .then{}
+
+        socketClient.attemptConnection(attempts)
+
+        verify(socketClient, times(2)).connectToSocket()
+    }
+
+    @Test
+    fun testReadLoopEndsWhenEndOfStreamReached() {
+        val mockMessage: Message = mock()
+        whenever(mockInputStream.read(any())).thenReturn(-1)
+        whenever(mockHandler.obtainMessage(any(), any())).thenReturn(mockMessage)
+
+        socketClient.readLoop()
+
+        verify(mockHandler, times(0)).sendMessage(mockMessage)
+    }
+
+    @Test
+    fun testReadLoopReadsUntilEndOfStream() {
+        val mockMessage: Message = mock()
+        whenever(mockInputStream.read(any()))
+                .thenReturn(100)
+                .thenReturn(200)
+                .thenReturn(-1)
+
+        whenever(mockHandler.obtainMessage(any(), any())).thenReturn(mockMessage)
+
+        socketClient.readLoop()
+
+        verify(mockHandler, times(2)).sendMessage(mockMessage)
+    }
+
+    @Test
+    fun testRunConnectExceptionClosesAndSendsDisconnectMessage() {
+        val mockException: MockitoException = mock()
+        whenever(socketClient.attemptConnection(1)).thenThrow(mockException)
+
+        val mockMessage: Message = mock()
+        whenever(mockHandler.obtainMessage(EVENT_ERROR, mockException)).thenReturn(mockMessage)
+
+        socketClient.runConnect(1)
+
+        verify(mockHandler).sendMessage(mockMessage)
+        verify(socketClient).close()
+        verify(mockHandler).sendEmptyMessage(EVENT_DISCONNECTED)
+    }
+
+    @Test
+    fun testRunWriteClosesClientWhenNotConnected() {
+        whenever(socketClient.isConnected())
+                .thenReturn(true)
+                .thenReturn(true)
+                .thenReturn(false)
+
+        socketClient.runWrite()
+
+        verify(socketClient).close()
+    }
+
+    @Test
+    fun testRunWriteReducesWriteBuffer() {
+        whenever(socketClient.isConnected())
+                .thenReturn(true)
+                .thenReturn(false)
+
+        socketClient.writeBuffer.put(byteArrayOf(0,1,2,3))
+
+        socketClient.runWrite()
+
+        assertEquals(0, socketClient.writeBuffer.size)
+    }
+
+    @Test
+    fun testRunWriteOutputStreamExceptionBreaksLoop() {
+        whenever(socketClient.isConnected()).thenReturn(true)
+        socketClient.writeBuffer.put(byteArrayOf(0,1,2,3))
+        whenever(mockOutputStream.write(any() as ByteArray?)).thenThrow(MockitoException::class.java)
+
+        socketClient.runWrite()
+
+        verify(socketClient).close()
     }
 }

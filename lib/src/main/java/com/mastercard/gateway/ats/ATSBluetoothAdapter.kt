@@ -80,7 +80,7 @@ class ATSBluetoothAdapter(port: Int) : Closeable {
         }
 
         override fun onError(throwable: Throwable) {
-            "Bluetooth connection closed due to error $throwable".log(this)
+            "Bluetooth connection closed due to error".log(this, throwable)
             serverSocketClient.closeCurrentConnection()
         }
     }
@@ -113,7 +113,7 @@ class ATSBluetoothAdapter(port: Int) : Closeable {
         }
 
         override fun onError(throwable: Throwable) {
-            "ATS connection closed due to error $throwable".log(this)
+            "ATS connection closed due to error".log(this, throwable)
             bluetoothSocketClient?.close()
         }
     }

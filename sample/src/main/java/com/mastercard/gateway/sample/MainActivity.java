@@ -17,7 +17,6 @@ import java.util.regex.Pattern;
 public class MainActivity extends AppCompatActivity {
 
     ATSClient ats;
-    ATSBluetoothAdapter bluetoothAdapter;
 
 
     @Override
@@ -29,10 +28,11 @@ public class MainActivity extends AppCompatActivity {
         ATSDiagnostics.startLogCapture();
 
         ats = new ATSClient("10.157.193.8", 20002);
-        bluetoothAdapter = new ATSBluetoothAdapter(45645);
+        ATSBluetoothAdapter.setBluetoothDevice("Simplify 760");
+//        startTransactionWithBluetoothCardReader("Simplify 760");
 //        ats = new ATSClient("10.157.196.212", 20002);
         ats.addCallback(new ATSCallback());
-        ats.connect();
+//        ats.connect();
     }
 
     @Override
@@ -62,10 +62,10 @@ public class MainActivity extends AppCompatActivity {
     }
 
     void startTransactionWithBluetoothCardReader(String bluetoothDeviceName) {
-        bluetoothAdapter.setBluetoothDevice(bluetoothDeviceName);
+        ATSBluetoothAdapter.setBluetoothDevice(bluetoothDeviceName);
 
         String xml = "<?xml version=\"1.0\" encoding=\"UTF-8\"?>\n" +
-                "<CardServiceRequest RequestType=\"CardPayment\" ApplicationSender=\"ATSClient\" WorkstationID=\"12341234\"  POPID=\"1\"  RequestID=\"2\">\n" +
+                "<CardServiceRequest RequestType=\"CardPayment\" ApplicationSender=\"ATSClient\" WorkstationID=\"43214321\"  POPID=\"2\"  RequestID=\"2\">\n" +
                 "  <POSdata>\n" +
                 "    <POSTimeStamp>2010-05-19T15:11:31.765625+01:00</POSTimeStamp>\n" +
                 "    <TransactionNumber>2</TransactionNumber>\n" +
@@ -84,7 +84,7 @@ public class MainActivity extends AppCompatActivity {
             Log.i("MainActivity", "ATS connected");
 
 //            acquireDevice();
-            startTransactionWithBluetoothCardReader("Simplify 760");
+//            startTransactionWithBluetoothCardReader("Simplify 760");
         }
 
 

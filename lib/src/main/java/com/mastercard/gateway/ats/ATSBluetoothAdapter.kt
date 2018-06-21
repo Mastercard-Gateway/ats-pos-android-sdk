@@ -11,21 +11,24 @@ import com.mastercard.gateway.common.log
 import java.io.Closeable
 import java.util.*
 
-class ATSBluetoothAdapter(port: Int) : Closeable {
+object ATSBluetoothAdapter : Closeable {
 
     private val CONNECTION_ATTEMPTS = 3
 
     internal var bluetoothAdapter: BluetoothAdapter = BluetoothAdapter.getDefaultAdapter()
     internal var bluetoothSocketClient: BluetoothSocketClient? = null
-    private val serverSocketClient: ServerSocketClient
+    internal lateinit var serverSocketClient: ServerSocketClient
 
-    init {
+
+    @JvmStatic
+    fun init(port: Int) {
         serverSocketClient = ServerSocketClient(port).apply {
             addCallback(ServerSocketCallback())
             connect()
         }
     }
 
+    @JvmStatic
     @JvmOverloads
     fun setBluetoothDevice(deviceName: String?, secure: Boolean = true) {
         if (!deviceName.isNullOrEmpty()) {
@@ -61,7 +64,7 @@ class ATSBluetoothAdapter(port: Int) : Closeable {
 
 
     @SuppressLint("NewApi")
-    private inner class BluetoothSocketCallback : SocketClient.Callback {
+    private class BluetoothSocketCallback : SocketClient.Callback {
 
         override fun onConnected() {}
 
@@ -85,7 +88,7 @@ class ATSBluetoothAdapter(port: Int) : Closeable {
     }
 
     @SuppressLint("NewApi")
-    private inner class ServerSocketCallback : SocketClient.Callback {
+    private class ServerSocketCallback : SocketClient.Callback {
         override fun onConnected() {
             // When we receive the connection from the server spin up the connection to the bluetooth device
             if (bluetoothSocketClient != null) {

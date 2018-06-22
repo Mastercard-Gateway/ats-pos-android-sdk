@@ -11,6 +11,6 @@ public class SampleApplication extends Application {
     public void onCreate() {
         super.onCreate();
 
-        ATSBluetoothAdapter.init(45645);
+        ATSBluetoothAdapter.init(46545);
     }
 }

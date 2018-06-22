@@ -7,7 +7,7 @@ import java.io.OutputStream
 import java.net.SocketException
 import kotlin.concurrent.thread
 
-abstract class StreamManager : Closeable {
+internal abstract class StreamManager : Closeable {
 
     companion object {
         const val EVENT_DISCONNECTED = 2
@@ -16,13 +16,14 @@ abstract class StreamManager : Closeable {
     }
 
 
-    internal val writeBuffer = Buffer()
+    val writeBuffer = Buffer()
 
     abstract fun getInputStream(): InputStream?
     abstract fun getOutputStream(): OutputStream?
     abstract fun isConnected(): Boolean
 
     abstract val handler: Handler
+
 
     fun write(bytes: ByteArray) {
         if (isConnected()) {
@@ -58,10 +59,8 @@ abstract class StreamManager : Closeable {
                 val msg = handler.obtainMessage(EVENT_READ, buffer.copyOf(count))
                 handler.sendMessage(msg)
             }
-        } catch (e: SocketException) {
-            // socket disconnected. event dispatched below
         } catch (e: Exception) {
-            "Reading from socket".log(this, e)
+            "Error reading from socket".log(this, e)
 
             val msg = handler.obtainMessage(EVENT_ERROR, e)
             handler.sendMessage(msg)
@@ -89,6 +88,9 @@ abstract class StreamManager : Closeable {
             }
         } catch (e: Exception) {
             "Error writing to stream".log(this, e)
+
+            val msg = handler.obtainMessage(EVENT_ERROR, e)
+            handler.sendMessage(msg)
         } finally {
             writeBuffer.clear()
             close()

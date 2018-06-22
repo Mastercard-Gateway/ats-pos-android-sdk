@@ -4,8 +4,10 @@ import android.bluetooth.BluetoothDevice
 import android.bluetooth.BluetoothSocket
 import java.io.InputStream
 import java.io.OutputStream
-import java.util.*
 
+/**
+ * @see { @link SocketClient } implementation that connects to the provided @see { @link android.bluetooth.BluetoothDevice }
+ */
 internal class BluetoothSocketClient(val device: BluetoothDevice, val secure: Boolean = true): SocketClient() {
 
     var socket: BluetoothSocket? = null

@@ -5,7 +5,7 @@ import java.io.OutputStream
 import java.net.Socket
 
 /**
- * Basic { @link SocketClient } implementation that assumes the provided socket is already connected
+ * Basic @see { @link SocketClient } implementation that assumes the provided socket is already connected
  * and closes the socket when SocketClient is closed
  */
 internal class BasicSocketClient(val socket: Socket) : SocketClient() {

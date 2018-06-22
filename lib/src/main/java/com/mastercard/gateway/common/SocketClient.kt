@@ -49,23 +49,23 @@ internal abstract class SocketClient: StreamManager(), Closeable {
     }
 
     fun handleMessage(msg: Message): Boolean {
-        when {
-            msg.what == EVENT_CONNECTED -> {
-
+        when (msg.what) {
+            EVENT_CONNECTED -> {
+                // Spin up both the read and write threads
                 startWriteThread()
                 startReadThread()
 
                 callbacks.forEach { it.onConnected() }
 
             }
-            msg.what == EVENT_DISCONNECTED -> {
+            EVENT_DISCONNECTED -> {
+                //Notify disconnect and clear all callbacks
+                callbacks.forEach { it.onDisconnected() }
 
                 close()
-
-                callbacks.forEach { it.onDisconnected() }
             }
-            msg.what == EVENT_READ -> callbacks.forEach { it.onRead(msg.obj as ByteArray) }
-            msg.what == EVENT_ERROR -> callbacks.forEach { it.onError(msg.obj as Throwable) }
+            EVENT_READ -> callbacks.forEach { it.onRead(msg.obj as ByteArray) }
+            EVENT_ERROR -> callbacks.forEach { it.onError(msg.obj as Throwable) }
             else -> return false
         }
 
@@ -81,7 +81,7 @@ internal abstract class SocketClient: StreamManager(), Closeable {
             handler.sendEmptyMessage(EVENT_CONNECTED)
 
         } catch (e: Exception) {
-            "Error connecting to / reading from socket".log(this, e)
+            "Error connecting to socket".log(this, e)
 
             val msg = handler.obtainMessage(EVENT_ERROR, e)
             handler.sendMessage(msg)
@@ -98,7 +98,6 @@ internal abstract class SocketClient: StreamManager(), Closeable {
 
             try {
                 connectToSocket()
-
                 // if we got a closeable, break from loop
                 break
             } catch (e: Exception) {

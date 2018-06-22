@@ -7,7 +7,11 @@ import java.net.ServerSocket
 import java.net.Socket
 import kotlin.concurrent.thread
 
-internal class SocketServer(val port: Int) : Closeable {
+/**
+ * Spins up a @see { @link java.net.ServerSocket } at the provided port. When a new connection
+ * comes in it is passed to all listeners on the incomingSocket() callback
+ */
+internal class SocketServer(port: Int) : Closeable {
 
     companion object {
         const val EVENT_NEW_CONNECTION = 1
@@ -27,8 +31,8 @@ internal class SocketServer(val port: Int) : Closeable {
     }
 
     private fun handleMessage(msg: Message): Boolean {
-        when {
-            msg.what == EVENT_NEW_CONNECTION -> callbacks.forEach { it.incomingSocket(msg.obj as Socket) }
+        when (msg.what) {
+            EVENT_NEW_CONNECTION -> callbacks.forEach { it.incomingSocket(msg.obj as Socket) }
             else -> return false
         }
 
@@ -45,6 +49,9 @@ internal class SocketServer(val port: Int) : Closeable {
         callbacks.remove(callback)
     }
 
+    /**
+     * Closes the ServerSocket and removes all callbacks
+     */
     override fun close() {
         serverSocket.close()
         callbacks.clear()

@@ -21,6 +21,11 @@ object ATSBluetoothAdapter : Closeable {
 
     @JvmStatic
     fun init(port: Int) {
+
+        if (::socketServer.isInitialized) {
+            throw IllegalStateException("ATSBluetoothAdapter has already been initialized")
+        }
+
         socketServer = SocketServer(port).apply {
             addCallback(SocketServerCallback())
         }

@@ -75,8 +75,8 @@ object ATSBluetoothAdapter : Closeable {
 
         override fun onRead(bytes: ByteArray) {
             // Pass incoming bytes from the bluetooth device to ATS
-            """"From Bluetooth:
-                |${Base64.getEncoder().encode(bytes)}""".log(this)
+            /*""""From Bluetooth:
+                |${Base64.getEncoder().encode(bytes)}""".log(this)*/
             socketClient?.write(bytes)
         }
 
@@ -114,8 +114,8 @@ object ATSBluetoothAdapter : Closeable {
 
         override fun onRead(bytes: ByteArray) {
             // Pass incoming bytes from ATS to the bluetooth device
-            """"From ATS:
-                |${Base64.getEncoder().encode(bytes)}""".log(this)
+           /* """"From ATS:
+                |${Base64.getEncoder().encode(bytes)}""".log(this)*/
             bluetoothSocketClient?.write(bytes)
         }
 

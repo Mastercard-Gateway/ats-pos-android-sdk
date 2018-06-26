@@ -1,9 +1,13 @@
 package com.mastercard.gateway.sample;
 
+import android.content.Context;
+import android.net.wifi.WifiManager;
 import android.os.Bundle;
 import android.support.annotation.Nullable;
 import android.support.v7.app.AppCompatActivity;
+import android.text.format.Formatter;
 import android.util.Log;
+import android.widget.TextView;
 
 import com.mastercard.gateway.ats.ATSBluetoothAdapter;
 import com.mastercard.gateway.ats.ATSClient;
@@ -24,15 +28,19 @@ public class MainActivity extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
 
+        WifiManager wifiManager = (WifiManager) getApplicationContext().getSystemService(Context.WIFI_SERVICE);
+        ((TextView) findViewById(R.id.hello)).setText(Formatter.formatIpAddress(wifiManager.getConnectionInfo().getIpAddress()));
+
         ATSDiagnostics.setLogLevel(Log.VERBOSE);
         ATSDiagnostics.startLogCapture();
 
-        ATSBluetoothAdapter.setBluetoothDevice("Simplify 760");
+//        ATSBluetoothAdapter.setBluetoothDevice("Miura 183");
+        ATSBluetoothAdapter.init(2002);
 
 //        ats = new ATSClient("10.157.193.8", 20002);
-//        ats = new ATSClient("10.157.196.212", 20002);
-//        ats.addCallback(new ATSCallback());
-//        ats.connect();
+        ats = new ATSClient("10.157.196.212", 20002);
+        ats.addCallback(new ATSCallback());
+        ats.connect();
     }
 
     @Override
@@ -62,6 +70,7 @@ public class MainActivity extends AppCompatActivity {
     }
 
     void startTransactionWithBluetoothCardReader(String bluetoothDeviceName) {
+
         ATSBluetoothAdapter.setBluetoothDevice(bluetoothDeviceName);
 
         String xml = "<?xml version=\"1.0\" encoding=\"UTF-8\"?>\n" +
@@ -93,7 +102,7 @@ public class MainActivity extends AppCompatActivity {
             Log.i("MainActivity", "Received message:\n" + message);
 
             if (message.contains("ServiceResponse") && message.contains("AcquireDevice") && message.contains("OverallResult=\"Success\"")) {
-                startTransactionWithBluetoothCardReader("Simplify 780");
+                startTransactionWithBluetoothCardReader("Miura 183");
 //                Pattern pattern = Pattern.compile("POPID=\"([^\"]+)\"");
 //                Matcher m = pattern.matcher(message);
 //                if (m.find()) {

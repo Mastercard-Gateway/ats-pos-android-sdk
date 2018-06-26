@@ -1,6 +1,5 @@
 package com.mastercard.gateway.ats
 
-import com.mastercard.gateway.ats.domain.CardServiceResponse
 import org.simpleframework.xml.core.Persister
 import java.io.ByteArrayOutputStream
 

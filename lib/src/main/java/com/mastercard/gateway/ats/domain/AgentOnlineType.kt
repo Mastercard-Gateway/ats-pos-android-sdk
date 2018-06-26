@@ -4,33 +4,35 @@
 // Any modifications to this file will be lost upon recompilation of the source schema. 
 // Generated on: 2018.06.26 at 04:13:46 PM CDT 
 //
+
+
 package com.mastercard.gateway.ats.domain
 
 /**
  *
- * Kotlin class for AdditionalResponseType.
+ * Kotlin class for AgentOnlineType.
  *
  *
  * The following schema fragment specifies the expected content contained within this class.
  *
  *
  * <pre>
- * &lt;simpleType name="AdditionalResponseType"&gt;
+ * &lt;simpleType name="AgentOnlineType"&gt;
  * &lt;restriction base="{http://www.w3.org/2001/XMLSchema}string"&gt;
- * &lt;enumeration value="NotPassed"/&gt;
- * &lt;enumeration value="NotChecked"/&gt;
- * &lt;enumeration value="Match"/&gt;
- * &lt;enumeration value="NotMatched"/&gt;
- * &lt;enumeration value="PartialMatch"/&gt;
+ * &lt;enumeration value="MobilePhonePrepaid"/&gt;
+ * &lt;enumeration value="MobilePhoneAuthorization"/&gt;
+ * &lt;enumeration value="MobilePhoneAuthorisation"/&gt;
  * &lt;/restriction&gt;
  * &lt;/simpleType&gt;
 </pre> *
  *
  */
-enum class AdditionalResponseType {
-    NotPassed,
-    NotChecked,
-    Match,
-    NotMatched,
-    PartialMatch;
+enum class AgentOnlineType {
+    /**
+     * Recharge of Prepaid cards/accounts of mobile phones. No payment included.
+     *
+     */
+    MobilePhonePrepaid,
+    MobilePhoneAuthorization,
+    MobilePhoneAuthorisation
 }

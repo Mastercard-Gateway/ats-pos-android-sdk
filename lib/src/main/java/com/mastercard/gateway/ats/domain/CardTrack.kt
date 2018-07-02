@@ -12,36 +12,7 @@ import org.simpleframework.xml.Element
 import org.simpleframework.xml.Order
 import org.simpleframework.xml.Root
 
-
-/**
- * GenericCardTrack image (1, 2, or 3 Ref. ISO)
- *
- *
- * Java class for CardTrack complex type.
- *
- *
- * The following schema fragment specifies the expected content contained within this class.
- *
- * <pre>
- * &lt;complexType name="CardTrack"&gt;
- * &lt;complexContent&gt;
- * &lt;restriction base="{http://www.w3.org/2001/XMLSchema}anyType"&gt;
- * &lt;choice&gt;
- * &lt;element name="Byte" type="{http://www.nrf-arts.org/IXRetail/namespace}CardTrackByteType" minOccurs="0"/&gt;
- * &lt;element name="Ascii" type="{http://www.nrf-arts.org/IXRetail/namespace}CardTrackAsciiType" minOccurs="0"/&gt;
- * &lt;/choice&gt;
- * &lt;/restriction&gt;
- * &lt;/complexContent&gt;
- * &lt;/complexType&gt;
-</pre> *
- *
- *
- */
 @Root(name = "CardTrack", strict = false)
-@Order(elements = arrayOf("_byte", "ascii"))
-open class CardTrack(
-        @Element(name = "Byte", type = String::class)
-        var _byte: ByteArray? = null,
-        @Element(name = "Ascii")
-        var ascii: String? = null
-)
+@Order(elements = ["_byte", "ascii"])
+open class CardTrack(@field:Element(name = "Byte", type = String::class) var _byte: ByteArray? = null,
+                     @field:Element(name = "Ascii") var ascii: String? = null)

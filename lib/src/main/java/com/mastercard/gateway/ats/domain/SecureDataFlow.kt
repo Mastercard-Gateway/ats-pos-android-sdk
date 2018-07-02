@@ -12,20 +12,21 @@ import org.simpleframework.xml.Element
 import org.simpleframework.xml.Order
 import org.simpleframework.xml.Root
 
-import java.util.ArrayList
-
 
 /**
- * Hex chain (Maced data)
+ * Hex chain (encrypted) data - Format free, TLV advised
  *
  *
- * Java class for MACType complex type.
+ *
+ * Java class for SecureDataFlow complex type.
+ *
  *
  *
  * The following schema fragment specifies the expected content contained within this class.
  *
+ *
  * <pre>
- * &lt;complexType name="MACType"&gt;
+ * &lt;complexType name="SecureDataFlow"&gt;
  * &lt;complexContent&gt;
  * &lt;restriction base="{http://www.w3.org/2001/XMLSchema}anyType"&gt;
  * &lt;sequence&gt;
@@ -35,9 +36,9 @@ import java.util.ArrayList
  * &lt;/complexContent&gt;
  * &lt;/complexType&gt;
 </pre> *
- *
- *
  */
-@Root(name = "MACType")
-@Order(elements = ["hex"])
-data class MACType(@field:Element(name = "Hex", required = true, type = String::class) var hex: List<ByteArray> = ArrayList<ByteArray>())
+@Root(name = "SecureDataFlow")
+@Order(elements = arrayOf("hex"))
+data class SecureDataFlow(
+    @Element(name = "Hex", required = true, type = String::class)
+    protected var hex: List<ByteArray>? = null)

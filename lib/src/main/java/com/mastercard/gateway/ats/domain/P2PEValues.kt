@@ -41,28 +41,14 @@ import org.simpleframework.xml.Root
  * &lt;/complexType&gt;
 </pre> *
  */
+@Suppress("ArrayInDataClass")
 @Root(name = "P2PEValues")
-@Order(elements = arrayOf("dataIV", "dataKSN", "encryptedData", "paniv", "panksn", "encryptedPAN"))
+@Order(elements = ["dataIV", "dataKSN", "encryptedData", "paniv", "panksn", "encryptedPAN"])
 data class P2PEValues(
-
-        @Element(name = "DataIV")
-        /*@XmlJavaTypeAdapter(HexBinaryAdapter.class)
-        @XmlSchemaType(name = "hexBinary")*/
-        protected var dataIV: ByteArray? = null,
-
-        @Element(name = "DataKSN")
-        protected var dataKSN: ByteArray? = null,
-
-        @Element(name = "EncryptedData")
-        protected var encryptedData: ByteArray? = null,
-
-        @Element(name = "PANIV")
-        protected var paniv: ByteArray? = null,
-
-        @Element(name = "PANKSN")
-        protected var panksn: ByteArray? = null,
-
-        @Element(name = "EncryptedPAN")
-        protected var encryptedPAN: ByteArray? = null
-
+        @field:Element(name = "DataIV") var dataIV: ByteArray? = null,
+        @field:Element(name = "DataKSN") var dataKSN: ByteArray? = null,
+        @field:Element(name = "EncryptedData") var encryptedData: ByteArray? = null,
+        @field:Element(name = "PANIV") var paniv: ByteArray? = null,
+        @field:Element(name = "PANKSN") var panksn: ByteArray? = null,
+        @field:Element(name = "EncryptedPAN") var encryptedPAN: ByteArray? = null
 )

@@ -106,34 +106,18 @@ import java.math.BigInteger
 @Root(name = "SaleItemType")
 @Order(elements = ["productCode", "amount", "unitMeasure", "unitPrice", "quantity", "taxCode", "additionalProductCode", "additionalProductInfo", "typeMovement", "saleChannel", "vatRate"])
 data class SaleItemType(
-
-        @Element(name = "ProductCode", required = true)
-        protected var productCode: BigInteger? = null,
-        @Element(name = "Amount", required = true)
-        protected var amount: BigDecimal? = null,
-        @Element(name = "UnitMeasure")
-        protected var unitMeasure: UnitOfMeasureCode? = null,
-        @Element(name = "UnitPrice")
-        protected var unitPrice: BigDecimal? = null,
-        @Element(name = "Quantity")
-        protected var quantity: BigDecimal? = null,
-        @Element(name = "TaxCode")
-        protected var taxCode: String? = null,
-        @Element(name = "AdditionalProductCode")
-        protected var additionalProductCode: Long? = null,
-        @Element(name = "AdditionalProductInfo")
-        protected var additionalProductInfo: String? = null,
-        @Element(name = "TypeMovement")
-        protected var typeMovement: String? = null,
-        @Element(name = "SaleChannel")
-        protected var saleChannel: String? = null,
-        @Element(name = "VATRate")
-        protected var vatRate: BigDecimal? = null,
-        /* @XmlJavaTypeAdapter(CollapsedStringAdapter.class)
-    @XmlID
-    @XmlSchemaType(name = "ID")*/
-        @Attribute(name = "ItemID", required = true)
-        protected var itemID: String? = null
+        @field:Element(name = "ProductCode", required = true) protected var productCode: BigInteger,
+        @field:Element(name = "Amount", required = true) protected var amount: BigDecimal,
+        @field:Element(name = "UnitMeasure") protected var unitMeasure: UnitOfMeasureCode? = null,
+        @field:Element(name = "UnitPrice") protected var unitPrice: BigDecimal? = null,
+        @field:Element(name = "Quantity") protected var quantity: BigDecimal? = null,
+        @field:Element(name = "TaxCode") protected var taxCode: String? = null,
+        @field:Element(name = "AdditionalProductCode") protected var additionalProductCode: Long? = null,
+        @field:Element(name = "AdditionalProductInfo") protected var additionalProductInfo: String? = null,
+        @field:Element(name = "TypeMovement") protected var typeMovement: String? = null,
+        @field:Element(name = "SaleChannel") protected var saleChannel: String? = null,
+        @field:Element(name = "VATRate") protected var vatRate: BigDecimal? = null,
+        @field:Attribute(name = "ItemID", required = true) protected var itemID: String
 )
 
 

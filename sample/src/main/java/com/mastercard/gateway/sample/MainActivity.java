@@ -7,6 +7,9 @@ import android.util.Log;
 
 import com.mastercard.gateway.ats.ATSClient;
 import com.mastercard.gateway.ats.ATSDiagnostics;
+import com.mastercard.gateway.ats.domain.AgentOnlineType;
+import com.mastercard.gateway.ats.domain.ServiceRequest;
+import com.mastercard.gateway.ats.domain.ServiceRequestType;
 
 import org.jetbrains.annotations.NotNull;
 
@@ -39,9 +42,16 @@ public class MainActivity extends AppCompatActivity {
     }
 
     void acquireDevice() {
-        String xml = "<?xml version=\"1.0\" encoding=\"UTF-8\"?>\n<ServiceRequest RequestType=\"AcquireDevice\" ApplicationSender=\"ATSClient\" WorkstationID=\"12342\" RequestID=\"9\"/>";
 
-        ats.sendMessage(xml);
+
+
+        ServiceRequest request = new ServiceRequest(
+                ServiceRequestType.AcquireDevice,
+                "12345",
+                "9");
+        request.setAgent(AgentOnlineType.MobilePhoneAuthorization);
+
+        ats.sendMessage(request);
     }
 
     void startTransactionWithReader(String popid) {

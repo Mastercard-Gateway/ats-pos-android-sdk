@@ -5,4 +5,4 @@ import org.simpleframework.xml.Text
 import java.math.BigDecimal
 
 @Root(name = "Amount", strict = false)
-data class Amount(@field:Text(required = true) var value: BigDecimal)
+data class Amount(@Text(required = true) var value: BigDecimal)

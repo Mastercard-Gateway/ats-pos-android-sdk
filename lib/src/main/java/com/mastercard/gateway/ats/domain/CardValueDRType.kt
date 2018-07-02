@@ -96,45 +96,45 @@ import java.math.BigInteger
 @Order(elements = ["encryptionVersion", "e2EEEncValues", "p2PEEncValues", "track2", "cardPAN", "cadLuhn", "startDate", "expiryDate", "cardCircuit", "issueNumber", "serviceCode", "token", "contactless", "cardType", "readTLV", "features", "terminalAttributes", "terminalID", "readerSerialNo", "icc"])
 data class CardValueDRType(
         @Element(name = "EncryptionVersion")
-        protected var encryptionVersion: BigInteger? = null,
+        var encryptionVersion: BigInteger? = null,
         @Element(name = "E2EEEncValues")
-        protected var e2EEEncValues: E2EEValues? = null,
+        var e2EEEncValues: E2EEValues? = null,
         @Element(name = "P2PEEncValues")
-        protected var p2PEEncValues: P2PEValues? = null,
+        var p2PEEncValues: P2PEValues? = null,
         @Element(name = "Track2")
-        protected var track2: CardTrack? = null,
+        var track2: CardTrack? = null,
         @Element(name = "CardPAN")
-        protected var cardPAN: String? = null,
+        var cardPAN: String? = null,
         @Element(name = "CADLuhn")
-        protected var cadLuhn: CADLuhn? = null,
+        var cadLuhn: CADLuhn? = null,
         @Element(name = "StartDate")
-        protected var startDate: String? = null,
+        var startDate: String? = null,
         @Element(name = "ExpiryDate")
-        protected var expiryDate: String? = null,
+        var expiryDate: String? = null,
         @Element(name = "CardCircuit")
-        protected var cardCircuit: String? = null,
+        var cardCircuit: String? = null,
         @Element(name = "IssueNumber")
-        protected var issueNumber: String? = null,
+        var issueNumber: String? = null,
         @Element(name = "ServiceCode")
-        protected var serviceCode: String? = null,
+        var serviceCode: String? = null,
         @Element(name = "Token")
-        protected var token: String? = null,
+        var token: String? = null,
         @Element(name = "Contactless")
-        protected var contactless: Boolean? = null,
+        var contactless: Boolean? = null,
         @Element(name = "CardType")
-        protected var cardType: String? = null,
+        var cardType: String? = null,
         @Element(name = "ReadTLV")
-        protected var readTLV: String? = null,
+        var readTLV: String? = null,
         @Element(name = "Features")
-        protected var features: Features? = null,
+        var features: Features? = null,
         @Element(name = "TerminalAttributes", type = String::class)
-        protected var terminalAttributes: ByteArray? = null,
+        var terminalAttributes: ByteArray? = null,
         @Element(name = "TerminalID")
-        protected var terminalID: String? = null,
+        var terminalID: String? = null,
         @Element(name = "ReaderSerialNo")
-        protected var readerSerialNo: String? = null,
+        var readerSerialNo: String? = null,
         @Element(name = "ICC")
-        protected var icc: ICCType? = null) {
+        var icc: ICCType? = null) {
 
 
     /**

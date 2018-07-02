@@ -28,7 +28,7 @@ data class CardServiceRequest(@field:Element(name = "POSdata", required = true) 
         @field:Attribute(name = "WorkstationID", required = true) var workstationID: String,
         @field:Attribute(name = "POPID") var popid: String? = null,
         @field:Attribute(name = "RequestID", required = true) var requestID: String? = null,
-        @field:Attribute(name = "ReferenceNumber") var referenceNumber: String? = null) {
+        @field:Attribute(name = "ReferenceNumber") var referenceNumber: String? = null) : ATSMessage {
 
     data class Acquirer(@field:Attribute(name = "TerminalID") var terminalID: String? = null,
             @field:Attribute(name = "MerchantID") var merchantID: String? = null,

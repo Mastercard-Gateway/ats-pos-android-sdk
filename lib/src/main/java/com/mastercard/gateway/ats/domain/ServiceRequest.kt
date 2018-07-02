@@ -20,7 +20,7 @@ class ServiceRequest(@field:Element(name = "POSdata") var poSdata: POSdata? = nu
                      @field:Attribute(name = "ApplicationSender") var applicationSender: String? = null,
                      @field:Attribute(name = "WorkstationID", required = true) var workstationID: String,
                      @field:Attribute(name = "POPID") var popid: String? = null,
-                     @field:Attribute(name = "RequestID", required = true) var requestID: String) {
+                     @field:Attribute(name = "RequestID", required = true) var requestID: String) : ATSMessage {
 
     @Order(elements = ["forceApplication", "forceContactless", "forceFirmware", "forceOperatingSystem", "installEncrypt"])
     class PINPadProgramLoad(@field:Element(name = "ForceApplication") var forceApplication: Boolean? = null,

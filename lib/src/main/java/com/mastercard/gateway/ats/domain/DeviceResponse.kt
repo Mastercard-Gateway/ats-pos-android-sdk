@@ -22,7 +22,7 @@ data class DeviceResponse(@field:Element(name = "Output") var output: List<Outpu
                           @field:Attribute(name = "RequestID", required = true) var requestID: String,
                           @field:Attribute(name = "SequenceID") var sequenceID: Int? = null,
                           @field:Attribute(name = "ReferenceRequestID") var referenceRequestID: String? = null,
-                          @field:Attribute(name = "OverallResult", required = true) var overallResult: RequestResultType) {
+                          @field:Attribute(name = "OverallResult", required = true) var overallResult: RequestResultType) : ATSMessage {
 
     @Order(elements = ["dispenser", "productCode", "modifiedRequest", "totalAmount", "saleItem", "acquirer", "authResponse", "transactionLimits", "oaCentreDetails"])
     data class EventResult(@field:Element(name = "Dispenser", type = Short::class) var dispenser: List<Short>? = null,

@@ -25,7 +25,7 @@ data class CardServiceResponse(@field:Element(name = "Terminal") var terminal: C
                                @field:Attribute(name = "WorkstationID", required = true) var workstationID: String,
                                @field:Attribute(name = "POPID") var popid: String? = null,
                                @field:Attribute(name = "RequestID", required = true) var requestID: String,
-                               @field:Attribute(name = "OverallResult", required = true) var overallResult: RequestResultType) {
+                               @field:Attribute(name = "OverallResult", required = true) var overallResult: RequestResultType) : ATSMessage {
 
     @Order(elements = ["loyaltyCard", "loyaltyAmount", "loyaltyApprovalCode", "enabled", "customerName", "points", "bonus", "incentive", "updated"])
     data class Loyalty(@field:Element(name = "LoyaltyCard") var loyaltyCard: CardServiceResponse.Loyalty.LoyaltyCard? = null,

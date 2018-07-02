@@ -19,7 +19,7 @@ data class DeviceRequest(@field:Element(name = "Output") var output: List<Output
                          @field:Attribute(name = "TerminalID") var terminalID: String? = null,
                          @field:Attribute(name = "POPID") var popid: String? = null,
                          @field:Attribute(name = "RequestID", required = true) var requestID: String,
-                         @field:Attribute(name = "SequenceID") var sequenceID: Int? = null) {
+                         @field:Attribute(name = "SequenceID") var sequenceID: Int? = null) : ATSMessage {
 
     @Order(elements = ["eventData"])
     data class Event(@field:Element(name = "EventData", required = true) var eventData: EventData,

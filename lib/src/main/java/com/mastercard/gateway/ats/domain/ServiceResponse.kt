@@ -28,7 +28,7 @@ data class ServiceResponse(@field:Element(name = "Terminal") var terminal: Termi
                            @field:Attribute(name = "WorkstationID", required = true) var workstationID: String,
                            @field:Attribute(name = "POPID") var popid: String? = null,
                            @field:Attribute(name = "RequestID", required = true) var requestID: String,
-                           @field:Attribute(name = "OverallResult", required = true) var overallResult: RequestResultType) {
+                           @field:Attribute(name = "OverallResult", required = true) var overallResult: RequestResultType) : ATSMessage {
 
 
     data class Authorisation(@field:Attribute(name = "AcquirerID", required = true) var acquirerID: String,

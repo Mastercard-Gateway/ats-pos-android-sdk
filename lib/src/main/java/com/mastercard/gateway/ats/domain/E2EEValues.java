@@ -6,41 +6,43 @@
 //
 
 
-package com.mastercard.gateway.ats.domain;
+package com.mastercard.gateway.ats.domain
 
-import javax.xml.bind.annotation.XmlAccessType;
-import javax.xml.bind.annotation.XmlAccessorType;
-import javax.xml.bind.annotation.XmlElement;
-import javax.xml.bind.annotation.XmlSchemaType;
-import javax.xml.bind.annotation.XmlType;
-import javax.xml.bind.annotation.adapters.HexBinaryAdapter;
-import javax.xml.bind.annotation.adapters.XmlJavaTypeAdapter;
-import javax.xml.datatype.XMLGregorianCalendar;
+import javax.xml.bind.annotation.XmlAccessType
+import javax.xml.bind.annotation.XmlAccessorType
+import javax.xml.bind.annotation.XmlElement
+import javax.xml.bind.annotation.XmlSchemaType
+import javax.xml.bind.annotation.XmlType
+import javax.xml.bind.annotation.adapters.HexBinaryAdapter
+import javax.xml.bind.annotation.adapters.XmlJavaTypeAdapter
+import javax.xml.datatype.XMLGregorianCalendar
 
 
 /**
  * Specifies the E2EE encryption values
- * 
- * <p>Java class for E2EEValues complex type.
- * 
- * <p>The following schema fragment specifies the expected content contained within this class.
- * 
+ *
+ *
+ * Java class for E2EEValues complex type.
+ *
+ *
+ * The following schema fragment specifies the expected content contained within this class.
+ *
  * <pre>
  * &lt;complexType name="E2EEValues"&gt;
- *   &lt;complexContent&gt;
- *     &lt;restriction base="{http://www.w3.org/2001/XMLSchema}anyType"&gt;
- *       &lt;sequence&gt;
- *         &lt;element name="EncryptionIvDt" type="{http://www.w3.org/2001/XMLSchema}dateTime" minOccurs="0"/&gt;
- *         &lt;element name="EncryptionKeyData" type="{http://www.w3.org/2001/XMLSchema}hexBinary" minOccurs="0"/&gt;
- *         &lt;element name="EncryptedTrack2" type="{http://www.w3.org/2001/XMLSchema}hexBinary" minOccurs="0"/&gt;
- *         &lt;element name="EncryptedCardPAN" type="{http://www.w3.org/2001/XMLSchema}hexBinary" minOccurs="0"/&gt;
- *       &lt;/sequence&gt;
- *     &lt;/restriction&gt;
- *   &lt;/complexContent&gt;
+ * &lt;complexContent&gt;
+ * &lt;restriction base="{http://www.w3.org/2001/XMLSchema}anyType"&gt;
+ * &lt;sequence&gt;
+ * &lt;element name="EncryptionIvDt" type="{http://www.w3.org/2001/XMLSchema}dateTime" minOccurs="0"/&gt;
+ * &lt;element name="EncryptionKeyData" type="{http://www.w3.org/2001/XMLSchema}hexBinary" minOccurs="0"/&gt;
+ * &lt;element name="EncryptedTrack2" type="{http://www.w3.org/2001/XMLSchema}hexBinary" minOccurs="0"/&gt;
+ * &lt;element name="EncryptedCardPAN" type="{http://www.w3.org/2001/XMLSchema}hexBinary" minOccurs="0"/&gt;
+ * &lt;/sequence&gt;
+ * &lt;/restriction&gt;
+ * &lt;/complexContent&gt;
  * &lt;/complexType&gt;
- * </pre>
- * 
- * 
+</pre> *
+ *
+ *
  */
 @XmlAccessorType(XmlAccessType.FIELD)
 @XmlType(name = "E2EEValues", propOrder = {
@@ -49,118 +51,78 @@ import javax.xml.datatype.XMLGregorianCalendar;
     "encryptedTrack2",
     "encryptedCardPAN"
 })
-public class E2EEValues {
-
-    @XmlElement(name = "EncryptionIvDt")
-    @XmlSchemaType(name = "dateTime")
-    protected XMLGregorianCalendar encryptionIvDt;
-    @XmlElement(name = "EncryptionKeyData", type = String.class)
-    @XmlJavaTypeAdapter(HexBinaryAdapter.class)
-    @XmlSchemaType(name = "hexBinary")
-    protected byte[] encryptionKeyData;
-    @XmlElement(name = "EncryptedTrack2", type = String.class)
-    @XmlJavaTypeAdapter(HexBinaryAdapter.class)
-    @XmlSchemaType(name = "hexBinary")
-    protected byte[] encryptedTrack2;
-    @XmlElement(name = "EncryptedCardPAN", type = String.class)
-    @XmlJavaTypeAdapter(HexBinaryAdapter.class)
-    @XmlSchemaType(name = "hexBinary")
-    protected byte[] encryptedCardPAN;
+class E2EEValues {
 
     /**
      * Gets the value of the encryptionIvDt property.
-     * 
+     *
      * @return
-     *     possible object is
-     *     {@link XMLGregorianCalendar }
-     *     
+     * possible object is
+     * [XMLGregorianCalendar]
      */
-    public XMLGregorianCalendar getEncryptionIvDt() {
-        return encryptionIvDt;
-    }
-
     /**
      * Sets the value of the encryptionIvDt property.
-     * 
+     *
      * @param value
-     *     allowed object is
-     *     {@link XMLGregorianCalendar }
-     *     
+     * allowed object is
+     * [XMLGregorianCalendar]
      */
-    public void setEncryptionIvDt(XMLGregorianCalendar value) {
-        this.encryptionIvDt = value;
-    }
-
+    @XmlElement(name = "EncryptionIvDt")
+    @XmlSchemaType(name = "dateTime")
+    var encryptionIvDt: XMLGregorianCalendar
     /**
      * Gets the value of the encryptionKeyData property.
-     * 
+     *
      * @return
-     *     possible object is
-     *     {@link String }
-     *     
+     * possible object is
+     * [String]
      */
-    public byte[] getEncryptionKeyData() {
-        return encryptionKeyData;
-    }
-
     /**
      * Sets the value of the encryptionKeyData property.
-     * 
+     *
      * @param value
-     *     allowed object is
-     *     {@link String }
-     *     
+     * allowed object is
+     * [String]
      */
-    public void setEncryptionKeyData(byte[] value) {
-        this.encryptionKeyData = value;
-    }
-
+    @XmlElement(name = "EncryptionKeyData", type = String::class)
+    @XmlJavaTypeAdapter(HexBinaryAdapter::class)
+    @XmlSchemaType(name = "hexBinary")
+    var encryptionKeyData: ByteArray
     /**
      * Gets the value of the encryptedTrack2 property.
-     * 
+     *
      * @return
-     *     possible object is
-     *     {@link String }
-     *     
+     * possible object is
+     * [String]
      */
-    public byte[] getEncryptedTrack2() {
-        return encryptedTrack2;
-    }
-
     /**
      * Sets the value of the encryptedTrack2 property.
-     * 
+     *
      * @param value
-     *     allowed object is
-     *     {@link String }
-     *     
+     * allowed object is
+     * [String]
      */
-    public void setEncryptedTrack2(byte[] value) {
-        this.encryptedTrack2 = value;
-    }
-
+    @XmlElement(name = "EncryptedTrack2", type = String::class)
+    @XmlJavaTypeAdapter(HexBinaryAdapter::class)
+    @XmlSchemaType(name = "hexBinary")
+    var encryptedTrack2: ByteArray
     /**
      * Gets the value of the encryptedCardPAN property.
-     * 
+     *
      * @return
-     *     possible object is
-     *     {@link String }
-     *     
+     * possible object is
+     * [String]
      */
-    public byte[] getEncryptedCardPAN() {
-        return encryptedCardPAN;
-    }
-
     /**
      * Sets the value of the encryptedCardPAN property.
-     * 
+     *
      * @param value
-     *     allowed object is
-     *     {@link String }
-     *     
+     * allowed object is
+     * [String]
      */
-    public void setEncryptedCardPAN(byte[] value) {
-        this.encryptedCardPAN = value;
-    }
+    @XmlElement(name = "EncryptedCardPAN", type = String::class)
+    @XmlJavaTypeAdapter(HexBinaryAdapter::class)
+    @XmlSchemaType(name = "hexBinary")
+    var encryptedCardPAN: ByteArray
 
 }

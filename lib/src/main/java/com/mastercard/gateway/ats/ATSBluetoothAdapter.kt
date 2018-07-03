@@ -5,6 +5,24 @@ import android.bluetooth.BluetoothDevice
 import com.mastercard.gateway.common.*
 import java.net.Socket
 
+/**
+ * This class is used to expose a locally paired bluetooth PED to ATS by acting as a data proxy.
+ * When you start this adapter with a port, a ServerSocket is started and begins listening for incoming
+ * connection requests from ATS. After a request is received, a bluetooth connection is established
+ * with the provided reader. A simple example is illustrated below:
+ *
+ *     int port = 12345; // the ATS configured port for this PED
+ *     BluetoothDevice device = fetchBluetoothDevice(); // user-defined bluetooth device
+ *
+ *     // ready to handle PED connections
+ *     ATSBluetoothAdapter.start(port);
+ *     ATSBluetoothAdapter.setBluetoothDevice(device);
+ *
+ *     // ... handle PED connection requests ...
+ *
+ *     // no longer need to handle PED connections
+ *     ATSBluetoothAdapter.stop();
+ */
 object ATSBluetoothAdapter {
 
     internal const val CONNECTION_ATTEMPTS = 3
@@ -20,13 +38,16 @@ object ATSBluetoothAdapter {
 
 
     /**
-     *
+     * The bluetooth device to connect to when ATS opens a socket
      */
     @JvmStatic
     var bluetoothDevice: BluetoothDevice? = null
 
     /**
+     * Starts listening for incoming ATS connection requests on the specified port.
+     * The port should be the value provided in ATS configuration for this device.
      *
+     * @param port The port to listen on
      */
     @JvmStatic
     fun start(port: Int) {
@@ -39,7 +60,7 @@ object ATSBluetoothAdapter {
     }
 
     /**
-     *
+     * Stops listening for ATS connection requests and closes all connections
      */
     @JvmStatic
     fun stop() {
@@ -50,7 +71,9 @@ object ATSBluetoothAdapter {
     }
 
     /**
+     * Checks whether or not the adapter is listening for ATS connection requests
      *
+     * @return True or False
      */
     @JvmStatic
     fun isRunning(): Boolean {
@@ -109,7 +132,6 @@ object ATSBluetoothAdapter {
             }
 
             // set up communication socket client
-            // no need to call connect, already connected
             atsCommunicationSocketClient = createATSCommunicationSocketClient(socket).apply {
                 connect()
             }
@@ -159,7 +181,7 @@ object ATSBluetoothAdapter {
         }
 
         override fun onError(throwable: Throwable) {
-            "Bluetooth connection closed due to error".log(this, throwable)
+            "Bluetooth connection encountered an error".log(this, throwable)
         }
     }
 

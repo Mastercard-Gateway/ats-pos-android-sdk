@@ -8,67 +8,67 @@ import java.math.BigDecimal
 import java.math.BigInteger
 import javax.xml.datatype.XMLGregorianCalendar
 
-@Root(name = "ServiceRequest", strict = false)
-@Order(elements = ["poSdata", "totalAmount", "agent", "pinPadProgramLoad", "privateData", "encryptionRSA"])
+@Root(name = "ServiceRequest")
+@Order(elements = ["POSdata", "TotalAmount", "Agent", "PINPadProgramLoad", "PrivateData", "EncryptionRSA"])
 
-class ServiceRequest(@Attribute(name = "RequestType", required = true) var requestType: ServiceRequestType,
-                     @Attribute(name = "WorkstationID", required = true) var workstationID: String,
-                     @Attribute(name = "RequestID", required = true) var requestID: String) : ATSMessage {
+class ServiceRequest(@field:Attribute(name = "RequestType", required = true) var requestType: ServiceRequestType,
+                     @field:Attribute(name = "WorkstationID", required = true) var workstationID: String,
+                     @field:Attribute(name = "RequestID", required = true) var requestID: String) : ATSMessage {
 
-    @Element(name = "POSdata")
+    @field:Element(name = "POSdata", required = false)
     var poSdata: POSdata? = null
-    @Element(name = "TotalAmount")
+    @field:Element(name = "TotalAmount", required = false)
     var totalAmount: TotalAmount? = null
-    @Element(name = "Agent")
+    @field:Element(name = "Agent", required = false)
     var agent: AgentOnlineType? = null
-    @Element(name = "PINPadProgramLoad")
+    @field:Element(name = "PINPadProgramLoad", required = false)
     var pinPadProgramLoad: PINPadProgramLoad? = null
-    @Element(name = "PrivateData")
+    @field:Element(name = "PrivateData", required = false)
     var privateData: List<Any>? = null
-    @Element(name = "EncryptionRSA")
+    @field:Element(name = "EncryptionRSA", required = false)
     var encryptionRSA: String? = null
-    @Attribute(name = "ApplicationSender")
+    @field:Attribute(name = "ApplicationSender", required = false)
     var applicationSender: String? = null
-    @Attribute(name = "POPID")
+    @field:Attribute(name = "POPID", required = false)
     var popid: String? = null
 
 
-    @Order(elements = ["forceApplication", "forceContactless", "forceFirmware", "forceOperatingSystem", "installEncrypt"])
+    @Order(elements = ["ForceApplication", "ForceContactless", "ForceFirmware", "ForceOperatingSystem", "InstallEncrypt"])
     class PINPadProgramLoad {
 
-        @Element(name = "ForceApplication")
+        @field:Element(name = "ForceApplication", required = false)
         var forceApplication: Boolean? = null
-        @Element(name = "ForceContactless")
+        @field:Element(name = "ForceContactless", required = false)
         var forceContactless: Boolean? = null
-        @Element(name = "ForceFirmware")
+        @field:Element(name = "ForceFirmware", required = false)
         var forceFirmware: Boolean? = null
-        @Element(name = "ForceOperatingSystem")
+        @field:Element(name = "ForceOperatingSystem", required = false)
         var forceOperatingSystem: Boolean? = null
-        @Element(name = "InstallEncrypt")
+        @field:Element(name = "InstallEncrypt", required = false)
         var installEncrypt: Boolean? = null
 
     }
 
-    @Order(elements = ["posTimeStamp", "shiftNumber", "clerkID", "clerkPermission", "reference", "diagnosisMethod"])
-    class POSdata(@Element(name = "POSTimeStamp", required = true) var posTimeStamp: XMLGregorianCalendar) {
+    @Order(elements = ["POSTimeStamp", "ShiftNumber", "ClerkID", "ClerkPermission", "Reference", "DiagnosisMethod"])
+    class POSdata(@field:Element(name = "POSTimeStamp", required = true) var posTimeStamp: XMLGregorianCalendar) {
 
-        @Element(name = "ShiftNumber")
+        @field:Element(name = "ShiftNumber", required = false)
         var shiftNumber: BigInteger? = null
-        @Element(name = "ClerkID")
+        @field:Element(name = "ClerkID", required = false)
         var clerkID: Int? = null
-        @Element(name = "ClerkPermission")
+        @field:Element(name = "ClerkPermission", required = false)
         var clerkPermission: String? = null
-        @Element(name = "Reference")
+        @field:Element(name = "Reference", required = false)
         var reference: String? = null
-        @Element(name = "DiagnosisMethod")
+        @field:Element(name = "DiagnosisMethod", required = false)
         var diagnosisMethod: String? = null
-        @Attribute(name = "LanguageCode")
+        @field:Attribute(name = "LanguageCode", required = false)
         var languageCode: LanguageCodeType? = null
 
     }
 
     class TotalAmount(var value: BigDecimal) {
-        @Attribute(name = "Currency")
+        @field:Attribute(name = "Currency", required = false)
         var currency: CurrencyCode? = null
     }
 

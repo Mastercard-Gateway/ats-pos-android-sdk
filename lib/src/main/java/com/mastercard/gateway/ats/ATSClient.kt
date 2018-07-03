@@ -13,7 +13,7 @@ class ATSClient(val ipAddress: String, val port: Int) : Closeable {
     interface Callback {
         fun onConnected()
         fun onDisconnected()
-        fun onMessageReceived(message: String)
+        fun onMessageReceived(message: ATSMessage?)
         fun onError(throwable: Throwable)
     }
 
@@ -30,6 +30,7 @@ class ATSClient(val ipAddress: String, val port: Int) : Closeable {
         socketClient.connect(CONNECTION_ATTEMPTS)
     }
 
+    @Deprecated("Use classes that extend ATSMessage")
     fun sendMessage(msg: String) {
         "Sending message:\n$msg".log(this)
         socketClient.write(Message(msg).bytes)
@@ -69,7 +70,7 @@ class ATSClient(val ipAddress: String, val port: Int) : Closeable {
             Message.read(readBuffer)?.let { message ->
                 "Received message:\n${message.content}".log(this@ATSClient)
                 callbacks.forEach { callback ->
-                    callback.onMessageReceived(message.content)
+                    callback.onMessageReceived(Interpreter.deserialize(message))
                 }
             }
         }

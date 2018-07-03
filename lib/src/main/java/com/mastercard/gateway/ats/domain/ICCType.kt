@@ -8,60 +8,60 @@ import org.simpleframework.xml.Root
 @Order(elements = ["aid", "applicationLabel", "ac", "aip", "arc", "atc", "auc", "upn", "tvr", "ctt", "cid", "cvmResults", "termCapUsed", "ictyc", "iavn", "tavn", "language", "tsi", "iacdef", "iacdnl", "iaconl", "iappd", "ctlsFormFactorTag", "ctlsFormFactorValue", "ctlsCustExcData", "iauthd", "isd", "isr"])
 class ICCType {
 
-    @Element(name = "AID")
+    @field:Element(name = "AID", required=false)
     var aid: String? = null
-    @Element(name = "ApplicationLabel")
+    @field:Element(name = "ApplicationLabel", required=false)
     var applicationLabel: String? = null
-    @Element(name = "AC", type = String::class)
+    @field:Element(name = "AC", type = String::class, required=false)
     var ac: ByteArray? = null
-    @Element(name = "AIP", type = String::class)
+    @field:Element(name = "AIP", type = String::class, required=false)
     var aip: ByteArray? = null
-    @Element(name = "ARC")
+    @field:Element(name = "ARC", required=false)
     var arc: String? = null
-    @Element(name = "ATC", type = String::class)
+    @field:Element(name = "ATC", type = String::class, required=false)
     var atc: ByteArray? = null
-    @Element(name = "AUC", type = String::class)
+    @field:Element(name = "AUC", type = String::class, required=false)
     var auc: ByteArray? = null
-    @Element(name = "UPN", type = String::class)
+    @field:Element(name = "UPN", type = String::class, required=false)
     var upn: ByteArray? = null
-    @Element(name = "TVR", type = String::class)
+    @field:Element(name = "TVR", type = String::class, required=false)
     var tvr: ByteArray? = null
-    @Element(name = "CTT", type = String::class)
+    @field:Element(name = "CTT", type = String::class, required=false)
     var ctt: ByteArray? = null
-    @Element(name = "CID", type = String::class)
+    @field:Element(name = "CID", type = String::class, required=false)
     var cid: ByteArray? = null
-    @Element(name = "CVMResults", type = String::class)
+    @field:Element(name = "CVMResults", type = String::class, required=false)
     var cvmResults: ByteArray? = null
-    @Element(name = "TermCapUsed", type = String::class)
+    @field:Element(name = "TermCapUsed", type = String::class, required=false)
     var termCapUsed: ByteArray? = null
-    @Element(name = "ICTYC")
+    @field:Element(name = "ICTYC", required=false)
     var ictyc: String? = null
-    @Element(name = "IAVN", type = String::class)
+    @field:Element(name = "IAVN", type = String::class, required=false)
     var iavn: ByteArray? = null
-    @Element(name = "TAVN", type = String::class)
+    @field:Element(name = "TAVN", type = String::class, required=false)
     var tavn: ByteArray? = null
-    @Element(name = "Language")
+    @field:Element(name = "Language", required=false)
     var language: String? = null
-    @Element(name = "TSI", type = String::class)
+    @field:Element(name = "TSI", type = String::class, required=false)
     var tsi: ByteArray? = null
-    @Element(name = "IACDEF", type = String::class)
+    @field:Element(name = "IACDEF", type = String::class, required=false)
     var iacdef: ByteArray? = null
-    @Element(name = "IACDNL", type = String::class)
+    @field:Element(name = "IACDNL", type = String::class, required=false)
     var iacdnl: ByteArray? = null
-    @Element(name = "IACONL", type = String::class)
+    @field:Element(name = "IACONL", type = String::class, required=false)
     var iaconl: ByteArray? = null
-    @Element(name = "IAPPD", type = String::class)
+    @field:Element(name = "IAPPD", type = String::class, required=false)
     var iappd: ByteArray? = null
-    @Element(name = "CtlsFormFactorTag", type = String::class)
+    @field:Element(name = "CtlsFormFactorTag", type = String::class, required=false)
     var ctlsFormFactorTag: ByteArray? = null
-    @Element(name = "CtlsFormFactorValue", type = String::class)
+    @field:Element(name = "CtlsFormFactorValue", type = String::class, required=false)
     var ctlsFormFactorValue: ByteArray? = null
-    @Element(name = "CtlsCustExcData", type = String::class)
+    @field:Element(name = "CtlsCustExcData", type = String::class, required=false)
     var ctlsCustExcData: ByteArray? = null
-    @Element(name = "IAUTHD", type = String::class)
+    @field:Element(name = "IAUTHD", type = String::class, required=false)
     var iauthd: ByteArray? = null
-    @Element(name = "ISD", type = String::class)
+    @field:Element(name = "ISD", type = String::class, required=false)
     var isd: ByteArray? = null
-    @Element(name = "ISR", type = String::class)
+    @field:Element(name = "ISR", type = String::class, required=false)
     var isr: ByteArray? = null
 }

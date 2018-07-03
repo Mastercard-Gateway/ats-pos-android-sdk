@@ -10,128 +10,128 @@ import java.math.BigInteger
 
 @Root(name = "DeviceResponse", strict = false)
 @Order(elements = ["output", "input", "eventResult", "errorDetail"])
-data class DeviceResponse(@Attribute(name = "RequestType", required = true) var requestType: DeviceRequestType,
-                          @Attribute(name = "RequestID", required = true) var requestID: String,
-                          @Attribute(name = "OverallResult", required = true) var overallResult: RequestResultType) : ATSMessage {
+data class DeviceResponse(@field:Attribute(name = "RequestType", required = true) var requestType: DeviceRequestType,
+                          @field:Attribute(name = "RequestID", required = true) var requestID: String,
+                          @field:Attribute(name = "OverallResult", required = true) var overallResult: RequestResultType) : ATSMessage {
 
-    @Element(name = "Output")
+    @field:Element(name = "Output", required=false)
     var output: List<Output>? = null
-    @Element(name = "Input")
+    @field:Element(name = "Input", required=false)
     var input: DeviceResponse.Input? = null
-    @Element(name = "EventResult")
+    @field:Element(name = "EventResult", required=false)
     var eventResult: DeviceResponse.EventResult? = null
-    @Element(name = "ErrorDetail")
+    @field:Element(name = "ErrorDetail", required=false)
     var errorDetail: ATSErrorDetailType? = null
 
-    @Attribute(name = "ApplicationSender")
+    @field:Attribute(name = "ApplicationSender", required=false)
     var applicationSender: String? = null
-    @Attribute(name = "WorkstationID")
+    @field:Attribute(name = "WorkstationID", required=false)
     var workstationID: String? = null
-    @Attribute(name = "TerminalID")
+    @field:Attribute(name = "TerminalID", required=false)
     var terminalID: String? = null
-    @Attribute(name = "POPID")
+    @field:Attribute(name = "POPID", required=false)
     var popid: String? = null
-    @Attribute(name = "SequenceID")
+    @field:Attribute(name = "SequenceID", required=false)
     var sequenceID: Int? = null
-    @Attribute(name = "ReferenceRequestID")
+    @field:Attribute(name = "ReferenceRequestID", required=false)
     var referenceRequestID: String? = null
 
 
     @Order(elements = ["dispenser", "productCode", "modifiedRequest", "totalAmount", "saleItem", "acquirer", "authResponse", "transactionLimits", "oaCentreDetails"])
     class EventResult {
 
-        @Element(name = "Dispenser", type = Short::class)
+        @field:Element(name = "Dispenser", type = Short::class, required=false)
         var dispenser: List<Short>? = null
-        @Element(name = "ProductCode")
+        @field:Element(name = "ProductCode", required=false)
         var productCode: List<BigInteger>? = null
-        @Element(name = "ModifiedRequest")
+        @field:Element(name = "ModifiedRequest", required=false)
         var modifiedRequest: CardRequestType? = null
-        @Element(name = "TotalAmount")
+        @field:Element(name = "TotalAmount", required=false)
         var totalAmount: TotalAmountType? = null
-        @Element(name = "SaleItem")
+        @field:Element(name = "SaleItem", required=false)
         var saleItem: List<SaleItemType>? = null
-        @Element(name = "Acquirer")
+        @field:Element(name = "Acquirer", required=false)
         var acquirer: Acquirer? = null
-        @Element(name = "AuthResponse")
+        @field:Element(name = "AuthResponse", required=false)
         var authResponse: AuthResponse? = null
-        @Element(name = "TransactionLimits")
+        @field:Element(name = "TransactionLimits", required=false)
         var transactionLimits: TransactionLimits? = null
-        @Element(name = "OACentreDetails")
+        @field:Element(name = "OACentreDetails", required=false)
         var oaCentreDetails: OACentreDetails? = null
 
         class Acquirer {
-            @Attribute(name = "MerchantID")
+            @field:Attribute(name = "MerchantID", required=false)
             var merchantID: String? = null
-            @Attribute(name = "AcquirerID")
+            @field:Attribute(name = "AcquirerID", required=false)
             var acquirerID: String? = null
-            @Attribute(name = "MerchantReference")
+            @field:Attribute(name = "MerchantReference", required=false)
             var merchantReference: String? = null
-            @Attribute(name = "CreditPlan")
+            @field:Attribute(name = "CreditPlan", required=false)
             var creditPlan: String? = null
         }
 
         @Order(elements = ["authARC", "authCode", "authResult", "icc"])
         class AuthResponse {
-            @Element(name = "AuthARC")
+            @field:Element(name = "AuthARC", required=false)
             var authARC: String? = null
-            @Element(name = "AuthCode")
+            @field:Element(name = "AuthCode", required=false)
             var authCode: String? = null
-            @Element(name = "AuthResult")
+            @field:Element(name = "AuthResult", required=false)
             var authResult: String? = null
-            @Element(name = "ICC")
+            @field:Element(name = "ICC", required=false)
             var icc: ICCType? = null
         }
 
         @Order(elements = ["oaCentreName", "refundOnline", "refundOnlineCtls", "reversalMode", "reverseOnline", "iccNoTrack2"])
         class OACentreDetails {
-            @Element(name = "OACentreName")
+            @field:Element(name = "OACentreName", required=false)
             var oaCentreName: String? = null
-            @Element(name = "RefundOnline")
+            @field:Element(name = "RefundOnline", required=false)
             var refundOnline: OARefundOnline? = null
-            @Element(name = "RefundOnlineCtls")
+            @field:Element(name = "RefundOnlineCtls", required=false)
             var refundOnlineCtls: OARefundOnline? = null
-            @Element(name = "ReversalMode")
+            @field:Element(name = "ReversalMode", required=false)
             var reversalMode: OAReversalMode? = null
-            @Element(name = "ReverseOnline")
+            @field:Element(name = "ReverseOnline", required=false)
             var reverseOnline: OAReverseOnline? = null
-            @Element(name = "ICCNoTrack2")
+            @field:Element(name = "ICCNoTrack2", required=false)
             var iccNoTrack2: OAICCNoTrack2? = null
         }
 
         @Order(elements = ["authFlags", "limitFloor", "limitPostComms", "ceiling", "ceilingCDCVM", "ceilingCash", "ceilingFPA", "readTLV"])
         class TransactionLimits {
-            @Element(name = "AuthFlags")
+            @field:Element(name = "AuthFlags", required=false)
             var authFlags: String? = null
-            @Element(name = "LimitFloor")
+            @field:Element(name = "LimitFloor", required=false)
             var limitFloor: BigDecimal? = null
-            @Element(name = "LimitPostComms")
+            @field:Element(name = "LimitPostComms", required=false)
             var limitPostComms: BigDecimal? = null
-            @Element(name = "Ceiling")
+            @field:Element(name = "Ceiling", required=false)
             var ceiling: BigDecimal? = null
-            @Element(name = "CeilingCDCVM")
+            @field:Element(name = "CeilingCDCVM", required=false)
             var ceilingCDCVM: BigDecimal? = null
-            @Element(name = "CeilingCash")
+            @field:Element(name = "CeilingCash", required=false)
             var ceilingCash: BigDecimal? = null
-            @Element(name = "CeilingFPA")
+            @field:Element(name = "CeilingFPA", required=false)
             var ceilingFPA: BigDecimal? = null
-            @Element(name = "ReadTLV")
+            @field:Element(name = "ReadTLV", required=false)
             var readTLV: BigInteger? = null
         }
 
     }
 
     @Order(elements = ["secureData", "inputValue"])
-    data class Input(@Attribute(name = "InDeviceTarget", required = true) var inDeviceTarget: DeviceType,
-                     @Attribute(name = "InResult", required = true) var inResult: RequestResultType) {
+    data class Input(@field:Attribute(name = "InDeviceTarget", required = true) var inDeviceTarget: DeviceType,
+                     @field:Attribute(name = "InResult", required = true) var inResult: RequestResultType) {
 
-        @Element(name = "SecureData")
+        @field:Element(name = "SecureData", required=false)
         var secureData: List<SecureDataFlow>? = null
-        @Element(name = "InputValue")
+        @field:Element(name = "InputValue", required=false)
         var inputValue: InputValueType? = null
 
     }
 
-    data class Output(@Attribute(name = "OutDeviceTarget", required = true) var outDeviceTarget: DeviceType,
-                      @Attribute(name = "OutResult", required = true) var outResult: RequestResultType)
+    data class Output(@field:Attribute(name = "OutDeviceTarget", required = true) var outDeviceTarget: DeviceType,
+                      @field:Attribute(name = "OutResult", required = true) var outResult: RequestResultType)
 
 }

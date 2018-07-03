@@ -9,8 +9,8 @@ import javax.xml.datatype.XMLGregorianCalendar
 @Root(name = "E2EEValues", strict = false)
 @Order(elements = ["encryptionIvDt", "encryptionKeyData", "encryptedTrack2", "encryptedCardPAN"])
 class E2EEValues {
-    @Element(name = "EncryptionIvDt") var encryptionIvDt: XMLGregorianCalendar? = null
-    @Element(name = "EncryptionKeyData", type = String::class) var encryptionKeyData: ByteArray? = null
-    @Element(name = "EncryptedTrack2", type = String::class) var encryptedTrack2: ByteArray? = null
-    @Element(name = "EncryptedCardPAN", type = String::class) var encryptedCardPAN: ByteArray? = null
+    @field:Element(name = "EncryptionIvDt", required=false) var encryptionIvDt: XMLGregorianCalendar? = null
+    @field:Element(name = "EncryptionKeyData", type = String::class, required=false) var encryptionKeyData: ByteArray? = null
+    @field:Element(name = "EncryptedTrack2", type = String::class, required=false) var encryptedTrack2: ByteArray? = null
+    @field:Element(name = "EncryptedCardPAN", type = String::class, required=false) var encryptedCardPAN: ByteArray? = null
 }

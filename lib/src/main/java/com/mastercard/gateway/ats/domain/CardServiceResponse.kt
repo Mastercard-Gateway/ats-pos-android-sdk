@@ -12,159 +12,159 @@ import javax.xml.datatype.XMLGregorianCalendar
 
 @Root(name = "CardServiceResponse")
 @Order(elements = ["terminal", "errorDetail", "tender", "loyalty", "saleItem", "originalHeader", "cardValue", "privateData"])
-data class CardServiceResponse(@Attribute(name = "RequestType", required = true) var requestType: CardRequestType,
-                               @Attribute(name = "WorkstationID", required = true) var workstationID: String,
-                               @Attribute(name = "RequestID", required = true) var requestID: String,
-                               @Attribute(name = "OverallResult", required = true) var overallResult: RequestResultType) : ATSMessage {
+data class CardServiceResponse(@field:Attribute(name = "RequestType", required = true) var requestType: CardRequestType,
+                               @field:Attribute(name = "WorkstationID", required = true) var workstationID: String,
+                               @field:Attribute(name = "RequestID", required = true) var requestID: String,
+                               @field:Attribute(name = "OverallResult", required = true) var overallResult: RequestResultType) : ATSMessage {
 
-    @Element(name = "Terminal")
+    @field:Element(name = "Terminal", required=false)
     var terminal: CardServiceResponse.Terminal? = null
-    @Element(name = "ErrorDetail")
+    @field:Element(name = "ErrorDetail", required=false)
     var errorDetail: ATSErrorDetailType? = null
-    @Element(name = "Tender")
+    @field:Element(name = "Tender", required=false)
     var tender: CardServiceResponse.Tender? = null
-    @Element(name = "Loyalty")
+    @field:Element(name = "Loyalty", required=false)
     var loyalty: CardServiceResponse.Loyalty? = null
-    @Element(name = "SaleItem")
+    @field:Element(name = "SaleItem", required=false)
     var saleItem: List<SaleItemType>? = null
-    @Element(name = "OriginalHeader")
+    @field:Element(name = "OriginalHeader", required=false)
     var originalHeader: CardServiceResponse.OriginalHeader? = null
-    @Element(name = "CardValue")
+    @field:Element(name = "CardValue", required=false)
     var cardValue: CardValueICCType? = null
-    @Element(name = "PrivateData")
+    @field:Element(name = "PrivateData", required=false)
     var privateData: List<String>? = null
-    @Attribute(name = "ApplicationSender")
+    @field:Attribute(name = "ApplicationSender", required=false)
     var applicationSender: String? = null
-    @Attribute(name = "POPID")
+    @field:Attribute(name = "POPID", required=false)
     var popid: String? = null
 
     @Order(elements = ["loyaltyCard", "loyaltyAmount", "loyaltyApprovalCode", "enabled", "customerName", "points", "bonus", "incentive", "updated"])
-    data class Loyalty(@Attribute(name = "LoyaltyFlag", required = true) var loyaltyFlag: Boolean = false) {
+    data class Loyalty(@field:Attribute(name = "LoyaltyFlag", required = true) var loyaltyFlag: Boolean = false) {
 
-        @Element(name = "LoyaltyCard")
+        @field:Element(name = "LoyaltyCard", required=false)
         var loyaltyCard: CardServiceResponse.Loyalty.LoyaltyCard? = null
-        @Element(name = "LoyaltyAmount")
+        @field:Element(name = "LoyaltyAmount", required=false)
         var loyaltyAmount: CardServiceResponse.Loyalty.LoyaltyAmount? = null
-        @Element(name = "LoyaltyApprovalCode")
+        @field:Element(name = "LoyaltyApprovalCode", required=false)
         var loyaltyApprovalCode: CardServiceResponse.Loyalty.LoyaltyApprovalCode? = null
-        @Element(name = "Enabled")
+        @field:Element(name = "Enabled", required=false)
         var enabled: Boolean? = null
-        @Element(name = "CustomerName")
+        @field:Element(name = "CustomerName", required=false)
         var customerName: String? = null
-        @Element(name = "Points")
+        @field:Element(name = "Points", required=false)
         var points: BigInteger? = null
-        @Element(name = "Bonus")
+        @field:Element(name = "Bonus", required=false)
         var bonus: Boolean? = null
-        @Element(name = "Incentive")
+        @field:Element(name = "Incentive", required=false)
         var incentive: BigInteger? = null
-        @Element(name = "Updated")
+        @field:Element(name = "Updated", required=false)
         var updated: XMLGregorianCalendar? = null
-        @Attribute(name = "LoyaltyTimeStamp")
+        @field:Attribute(name = "LoyaltyTimeStamp", required=false)
         var loyaltyTimeStamp: XMLGregorianCalendar? = null
 
         class LoyaltyAmount {
             var value: Float = 0f
-            @Attribute(name = "OriginalLoyaltyAmount")
+            @field:Attribute(name = "OriginalLoyaltyAmount", required=false)
             var originalLoyaltyAmount: Float? = null
         }
 
         class LoyaltyApprovalCode {
             var value: String? = null
-            @Attribute(name = "LoyaltyAcquirerID")
+            @field:Attribute(name = "LoyaltyAcquirerID", required=false)
             var loyaltyAcquirerID: String? = null
-            @Attribute(name = "LoyaltyAcquirerBatch")
+            @field:Attribute(name = "LoyaltyAcquirerBatch", required=false)
             var loyaltyAcquirerBatch: String? = null
         }
 
         class LoyaltyCard : CardTrack() {
-            @Attribute(name = "LoyaltyPAN")
+            @field:Attribute(name = "LoyaltyPAN")
             var loyaltyPAN: String? = null
         }
     }
 
-    data class OriginalHeader(@Attribute(name = "RequestType", required = true) var requestType: CardRequestType,
-                              @Attribute(name = "WorkstationID", required = true) var workstationID: String,
-                              @Attribute(name = "RequestID", required = true) var requestID: String,
-                              @Attribute(name = "OverallResult", required = true) var overallResult: RequestResultType) {
+    data class OriginalHeader(@field:Attribute(name = "RequestType", required = true) var requestType: CardRequestType,
+                              @field:Attribute(name = "WorkstationID", required = true) var workstationID: String,
+                              @field:Attribute(name = "RequestID", required = true) var requestID: String,
+                              @field:Attribute(name = "OverallResult", required = true) var overallResult: RequestResultType) {
 
-        @Attribute(name = "ApplicationSender")
+        @field:Attribute(name = "ApplicationSender", required=false)
         var applicationSender: String? = null
-        @Attribute(name = "POPID")
+        @field:Attribute(name = "POPID", required=false)
         var popid: String? = null
     }
 
     @Order(elements = ["totalAmount", "authorisation", "restrictionCodes"])
     class Tender {
 
-        @Element(name = "TotalAmount")
+        @field:Element(name = "TotalAmount", required=false)
         var totalAmount: TotalAmountType? = null
-        @Element(name = "Authorisation")
+        @field:Element(name = "Authorisation", required=false)
         var authorisation: Authorisation? = null
-        @Element(name = "RestrictionCodes")
+        @field:Element(name = "RestrictionCodes", required=false)
         var restrictionCodes: List<BigInteger>? = null
-        @Attribute(name = "LanguageCode")
+        @field:Attribute(name = "LanguageCode", required=false)
         var languageCode: LanguageCodeType? = null
 
-        data class Authorisation(@Attribute(name = "AcquirerID", required = true) var acquirerID: String,
-                                 @Attribute(name = "TimeStamp", required = true) var timeStamp: XMLGregorianCalendar) {
+        data class Authorisation(@field:Attribute(name = "AcquirerID", required = true) var acquirerID: String,
+                                 @field:Attribute(name = "TimeStamp", required = true) var timeStamp: XMLGregorianCalendar) {
 
-            @Attribute(name = "IssuerID")
+            @field:Attribute(name = "IssuerID", required=false)
             var issuerID: String? = null
-            @Attribute(name = "CardPAN")
+            @field:Attribute(name = "CardPAN", required=false)
             var cardPAN: String? = null
-            @Attribute(name = "StartDate")
+            @field:Attribute(name = "StartDate", required=false)
             var startDate: String? = null
-            @Attribute(name = "ExpiryDate")
+            @field:Attribute(name = "ExpiryDate", required=false)
             var expiryDate: String? = null
-            @Attribute(name = "IssueNumber")
+            @field:Attribute(name = "IssueNumber", required=false)
             var issueNumber: String? = null
-            @Attribute(name = "Token")
+            @field:Attribute(name = "Token", required=false)
             var token: String? = null
-            @Attribute(name = "ActionCode")
+            @field:Attribute(name = "ActionCode", required=false)
             var actionCode: String? = null
-            @Attribute(name = "ApprovalCode")
+            @field:Attribute(name = "ApprovalCode", required=false)
             var approvalCode: String? = null
-            @Attribute(name = "AcquirerBatch")
+            @field:Attribute(name = "AcquirerBatch", required=false)
             var acquirerBatch: String? = null
-            @Attribute(name = "CardCircuit")
+            @field:Attribute(name = "CardCircuit", required=false)
             var cardCircuit: String? = null
-            @Attribute(name = "FiscalReceipt")
+            @field:Attribute(name = "FiscalReceipt", required=false)
             var fiscalReceipt: Boolean? = null
-            @Attribute(name = "TimeDisplay")
+            @field:Attribute(name = "TimeDisplay", required=false)
             var timeDisplay: Boolean? = null
-            @Attribute(name = "LoyaltyAllowed")
+            @field:Attribute(name = "LoyaltyAllowed", required=false)
             var loyaltyAllowed: Boolean? = null
-            @Attribute(name = "ReceiptCopies")
+            @field:Attribute(name = "ReceiptCopies", required=false)
             var receiptCopies: BigInteger? = null
-            @Attribute(name = "Merchant")
+            @field:Attribute(name = "Merchant", required=false)
             var merchant: String? = null
-            @Attribute(name = "AuthorisationType")
+            @field:Attribute(name = "AuthorisationType", required=false)
             var authorisationType: AuthorisationMethodType? = null
-            @Attribute(name = "ReceiptNumber")
+            @field:Attribute(name = "ReceiptNumber", required=false)
             var receiptNumber: String? = null
-            @Attribute(name = "CaptureReference")
+            @field:Attribute(name = "CaptureReference", required=false)
             var captureReference: String? = null
-            @Attribute(name = "TrackingReference")
+            @field:Attribute(name = "TrackingReference", required=false)
             var trackingReference: String? = null
-            @Attribute(name = "CardVerification")
+            @field:Attribute(name = "CardVerification", required=false)
             var cardVerification: CardVerificationType? = null
-            @Attribute(name = "CV2Result")
+            @field:Attribute(name = "CV2Result", required=false)
             var cv2Result: AdditionalResponseType? = null
-            @Attribute(name = "PostCodeResult")
+            @field:Attribute(name = "PostCodeResult", required=false)
             var postCodeResult: AdditionalResponseType? = null
-            @Attribute(name = "AddressResult")
+            @field:Attribute(name = "AddressResult", required=false)
             var addressResult: AdditionalResponseType? = null
         }
     }
 
-    data class Terminal(@Attribute(name = "TerminalID", required = true) var terminalID: String) {
-        @Attribute(name = "TerminalBatch")
+    data class Terminal(@field:Attribute(name = "TerminalID", required = true) var terminalID: String) {
+        @field:Attribute(name = "TerminalBatch", required=false)
         var terminalBatch: String? = null
-        @Attribute(name = "MerchantID")
+        @field:Attribute(name = "MerchantID", required=false)
         var merchantID: String? = null
-        @Attribute(name = "STAN")
+        @field:Attribute(name = "STAN", required=false)
         var stan: Long? = null
-        @Attribute(name = "APACS50TN")
+        @field:Attribute(name = "APACS50TN", required=false)
         var apacs50TN: BigInteger? = null
     }
 

@@ -1,5 +1,6 @@
 package com.mastercard.gateway.ats
 
+import com.mastercard.gateway.ats.domain.ATSMessage
 import com.mastercard.gateway.ats.domain.CardServiceResponse
 import com.mastercard.gateway.ats.domain.DeviceResponse
 import com.mastercard.gateway.ats.domain.ServiceResponse
@@ -10,7 +11,8 @@ internal class Interpreter {
 
     companion object {
 
-        fun deserialize(message: Message): Any? {
+        @JvmStatic
+        fun deserialize(message: Message): ATSMessage? {
             val serializer = Persister()
             return when {
                 "CardServiceResponse" in message.content -> serializer.read(CardServiceResponse::class.java, message.content)
@@ -20,6 +22,7 @@ internal class Interpreter {
             }
         }
 
+        @JvmStatic
         fun serialize(obj: Any): Message {
             val out = ByteArrayOutputStream()
             val serializer = Persister()

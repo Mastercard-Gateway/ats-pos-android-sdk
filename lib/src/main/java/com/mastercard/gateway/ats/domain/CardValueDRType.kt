@@ -11,64 +11,64 @@ import java.math.BigInteger
 @Order(elements = ["encryptionVersion", "e2EEEncValues", "p2PEEncValues", "track2", "cardPAN", "cadLuhn", "startDate", "expiryDate", "cardCircuit", "issueNumber", "serviceCode", "token", "contactless", "cardType", "readTLV", "features", "terminalAttributes", "terminalID", "readerSerialNo", "icc"])
 class CardValueDRType {
 
-    @Element(name = "EncryptionVersion")
+    @field:Element(name = "EncryptionVersion", required=false)
     var encryptionVersion: BigInteger? = null
-    @Element(name = "TerminalAttributes", type = String::class)
+    @field:Element(name = "TerminalAttributes", type = String::class, required=false)
     var terminalAttributes: ByteArray? = null
-    @Element(name = "E2EEEncValues")
+    @field:Element(name = "E2EEEncValues", required=false)
     var e2EEEncValues: E2EEValues? = null
-    @Element(name = "P2PEEncValues")
+    @field:Element(name = "P2PEEncValues", required=false)
     var p2PEEncValues: P2PEValues? = null
-    @Element(name = "Track2")
+    @field:Element(name = "Track2", required=false)
     var track2: CardTrack? = null
-    @Element(name = "CardPAN")
+    @field:Element(name = "CardPAN", required=false)
     var cardPAN: String? = null
-    @Element(name = "CADLuhn")
+    @field:Element(name = "CADLuhn", required=false)
     var cadLuhn: CADLuhn? = null
-    @Element(name = "StartDate")
+    @field:Element(name = "StartDate", required=false)
     var startDate: String? = null
-    @Element(name = "ExpiryDate")
+    @field:Element(name = "ExpiryDate", required=false)
     var expiryDate: String? = null
-    @Element(name = "CardCircuit")
+    @field:Element(name = "CardCircuit", required=false)
     var cardCircuit: String? = null
-    @Element(name = "IssueNumber")
+    @field:Element(name = "IssueNumber", required=false)
     var issueNumber: String? = null
-    @Element(name = "ServiceCode")
+    @field:Element(name = "ServiceCode", required=false)
     var serviceCode: String? = null
-    @Element(name = "Token")
+    @field:Element(name = "Token", required=false)
     var token: String? = null
-    @Element(name = "Contactless")
+    @field:Element(name = "Contactless", required=false)
     var contactless: Boolean? = null
-    @Element(name = "CardType")
+    @field:Element(name = "CardType", required=false)
     var cardType: String? = null
-    @Element(name = "ReadTLV")
+    @field:Element(name = "ReadTLV", required=false)
     var readTLV: String? = null
-    @Element(name = "Features")
+    @field:Element(name = "Features", required=false)
     var features: Features? = null
-    @Element(name = "TerminalID")
+    @field:Element(name = "TerminalID", required=false)
     var terminalID: String? = null
-    @Element(name = "ReaderSerialNo")
+    @field:Element(name = "ReaderSerialNo", required=false)
     var readerSerialNo: String? = null
-    @Element(name = "ICC")
+    @field:Element(name = "ICC", required=false)
     var icc: ICCType? = null
 
 
     class CADLuhn {
-        @Attribute(name = "Mod10")
+        @field:Attribute(name = "Mod10", required=false)
         var mod10: Boolean? = null
-        @Attribute(name = "Mod11")
+        @field:Attribute(name = "Mod11", required=false)
         var mod11: Boolean? = null
-        @Attribute(name = "MC")
+        @field:Attribute(name = "MC", required=false)
         var mc: Boolean? = null
-        @Attribute(name = "BPA")
+        @field:Attribute(name = "BPA", required=false)
         var bpa: Boolean? = null
-        @Attribute(name = "BPARearranged")
+        @field:Attribute(name = "BPARearranged", required=false)
         var bpaRearranged: Boolean? = null
     }
 
     @Order(elements = ["feature"])
     class Features {
-        @Element(name = "Feature")
+        @field:Element(name = "Feature", required=false)
         var feature: List<CardFeatureType>? = null
     }
 

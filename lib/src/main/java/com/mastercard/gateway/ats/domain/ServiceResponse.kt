@@ -10,146 +10,149 @@ import javax.xml.datatype.XMLGregorianCalendar
 
 @Suppress("ArrayInDataClass")
 @Root(name = "ServiceResponse", strict = false)
-@Order(elements = ["terminal", "errorDetail", "authorisation", "reconciliation", "submission", "diagnosisResult", "originalHeader", "privateData", "encryptionModulus", "encryptionExponent", "reference", "versions"])
-data class ServiceResponse(@Attribute(name = "RequestType", required = true) var requestType: ServiceRequestType,
-                           @Attribute(name = "WorkstationID", required = true) var workstationID: String,
-                           @Attribute(name = "RequestID", required = true) var requestID: String,
-                           @Attribute(name = "OverallResult", required = true) var overallResult: RequestResultType) : ATSMessage {
+@Order(elements = ["Terminal", "ErrorDetail", "Authorisation", "Reconciliation", "Submission", "DiagnosisResult", "OriginalHeader", "PrivateData", "EncryptionModulus", "EncryptionExponent", "Reference", "Versions"])
+data class ServiceResponse(@field:Attribute(name = "RequestType", required = true) var requestType: ServiceRequestType,
+                           @field:Attribute(name = "WorkstationID", required = true) var workstationID: String,
+                           @field:Attribute(name = "RequestID", required = true) var requestID: String,
+                           @field:Attribute(name = "OverallResult", required = true) var overallResult: RequestResultType) : ATSMessage {
+
+    @Deprecated("Required empty constructor for SimpleXML, do not use")
+    constructor() : this(ServiceRequestType.AcquireDevice, "", "", RequestResultType.Aborted)
 
 
-    @Element(name = "Terminal")
+    @field:Element(name = "Terminal", required = false)
     var terminal: Terminal? = null
-    @Element(name = "ErrorDetail")
+    @field:Element(name = "ErrorDetail", required = false)
     var errorDetail: ATSErrorDetailType? = null
-    @Element(name = "Authorisation")
+    @field:Element(name = "Authorisation", required = false)
     var authorisation: Authorisation? = null
-    @Element(name = "Reconciliation")
+    @field:Element(name = "Reconciliation", required = false)
     var reconciliation: Reconciliation? = null
-    @Element(name = "Submission")
+    @field:Element(name = "Submission", required = false)
     var submission: Submission? = null
-    @Element(name = "DiagnosisResult")
+    @field:Element(name = "DiagnosisResult", required = false)
     var diagnosisResult: String? = null
-    @Element(name = "OriginalHeader")
+    @field:Element(name = "OriginalHeader", required = false)
     var originalHeader: OriginalHeader? = null
-    @Element(name = "PrivateData")
+    @field:Element(name = "PrivateData", required = false)
     var privateData: List<Any>? = null
-    @Element(name = "EncryptionModulus", type = String::class)
+    @field:Element(name = "EncryptionModulus", type = String::class, required = false)
     var encryptionModulus: ByteArray? = null
-    @Element(name = "EncryptionExponent", type = String::class)
+    @field:Element(name = "EncryptionExponent", type = String::class, required = false)
     var encryptionExponent: ByteArray? = null
-    @Element(name = "Reference")
+    @field:Element(name = "Reference", required = false)
     var reference: String? = null
-    @Element(name = "Versions")
+    @field:Element(name = "Versions", required = false)
     var versions: List<Versions>? = null
-    @Attribute(name = "ApplicationSender")
+    @field:Attribute(name = "ApplicationSender", required = false)
     var applicationSender: String? = null
-    @Attribute(name = "POPID")
+    @field:Attribute(name = "POPID", required = false)
     var popid: String? = null
 
 
-    data class Authorisation(@Attribute(name = "AcquirerID", required = true) var acquirerID: String,
-                             @Attribute(name = "TimeStamp", required = true) var timeStamp: XMLGregorianCalendar) {
-        @Attribute(name = "ApprovalCode")
+    data class Authorisation(@field:Attribute(name = "AcquirerID", required = true) var acquirerID: String,
+                             @field:Attribute(name = "TimeStamp", required = true) var timeStamp: XMLGregorianCalendar) {
+        @field:Attribute(name = "ApprovalCode", required = false)
         var approvalCode: String? = null
-        @Attribute(name = "AcquirerBatch")
+        @field:Attribute(name = "AcquirerBatch", required = false)
         var acquirerBatch: String? = null
     }
 
-    data class OriginalHeader(@Attribute(name = "RequestType", required = true) var requestType: ServiceRequestType,
-                              @Attribute(name = "WorkstationID", required = true) var workstationID: String,
-                              @Attribute(name = "RequestID", required = true) var requestID: String,
-                              @Attribute(name = "OverallResult", required = true) var overallResult: RequestResultType) {
+    data class OriginalHeader(@field:Attribute(name = "RequestType", required = true) var requestType: ServiceRequestType,
+                              @field:Attribute(name = "WorkstationID", required = true) var workstationID: String,
+                              @field:Attribute(name = "RequestID", required = true) var requestID: String,
+                              @field:Attribute(name = "OverallResult", required = true) var overallResult: RequestResultType) {
 
-        @Attribute(name = "ApplicationSender")
+        @field:Attribute(name = "ApplicationSender", required = false)
         var applicationSender: String? = null
-        @Attribute(name = "POPID")
+        @field:Attribute(name = "POPID", required = false)
         var popid: String? = null
     }
 
-    @Order(elements = ["totalAmount"])
-    data class Reconciliation(@Element(name = "TotalAmount", required = true) var totalAmount: List<TotalAmount>) {
+    @Order(elements = ["TotalAmount"])
+    data class Reconciliation(@field:Element(name = "TotalAmount", required = true) var totalAmount: List<TotalAmount>) {
 
-        @Attribute(name = "LanguageCode")
+        @field:Attribute(name = "LanguageCode", required = false)
         var languageCode: LanguageCodeType? = null
 
         data class TotalAmount(var value: BigDecimal,
-                               @Attribute(name = "NumberPayments", required = true) var numberPayments: BigInteger,
-                               @Attribute(name = "PaymentType", required = true) var paymentType: TransactionType) {
+                               @field:Attribute(name = "NumberPayments", required = true) var numberPayments: BigInteger,
+                               @field:Attribute(name = "PaymentType", required = true) var paymentType: TransactionType) {
 
-            @Attribute(name = "Currency")
+            @field:Attribute(name = "Currency", required = false)
             var currency: CurrencyCode? = null
-            @Attribute(name = "CardCircuit")
+            @field:Attribute(name = "CardCircuit", required = false)
             var cardCircuit: String? = null
-            @Attribute(name = "Acquirer")
+            @field:Attribute(name = "Acquirer", required = false)
             var acquirer: String? = null
-            @Attribute(name = "NumberHeld")
+            @field:Attribute(name = "NumberHeld", required = false)
             var numberHeld: BigInteger? = null
-            @Attribute(name = "AmountHeld")
+            @field:Attribute(name = "AmountHeld", required = false)
             var amountHeld: BigDecimal? = null
         }
     }
 
-    @Order(elements = ["successful", "failed"])
-    data class Submission(@Element(name = "Successful", required = true) var successful: Successful,
-                          @Element(name = "Failed", required = true) var failed: Failed) {
+    @Order(elements = ["Successful", "Failed"])
+    data class Submission(@field:Element(name = "Successful", required = true) var successful: Successful,
+                          @field:Element(name = "Failed", required = true) var failed: Failed) {
 
-        @Attribute(name = "LanguageCode")
+        @field:Attribute(name = "LanguageCode", required = false)
         var languageCode: LanguageCodeType? = null
 
         data class Failed(var value: BigDecimal,
-                          @Attribute(name = "NumberPayments", required = true) var numberPayments: BigInteger)
+                          @field:Attribute(name = "NumberPayments", required = true) var numberPayments: BigInteger)
 
         data class Successful(var value: BigDecimal,
-                              @Attribute(name = "NumberPayments", required = true) var numberPayments: BigInteger)
+                              @field:Attribute(name = "NumberPayments", required = true) var numberPayments: BigInteger)
     }
 
-    data class Terminal(@Attribute(name = "TerminalID", required = true) var terminalID: String) {
-        @Attribute(name = "TerminalBatch")
+    data class Terminal(@field:Attribute(name = "TerminalID", required = true) var terminalID: String) {
+        @field:Attribute(name = "TerminalBatch", required = false)
         var terminalBatch: String? = null
-        @Attribute(name = "STAN")
+        @field:Attribute(name = "STAN", required = false)
         var stan: Long? = null
     }
 
-    @Order(elements = ["devices"])
-    data class Versions(@Element(name = "Devices", required = true) var devices: List<Devices>) {
+    @Order(elements = ["Devices"])
+    data class Versions(@field:Element(name = "Devices", required = true) var devices: List<Devices>) {
 
-        @Order(elements = ["device"])
-        data class Devices(@Element(name = "Device", required = true) var device: List<Device>) {
+        @Order(elements = ["Device"])
+        data class Devices(@field:Element(name = "Device", required = true) var device: List<Device>) {
 
-            @Order(elements = ["serialNumber", "timeStamp", "ptid", "manufacturer", "model", "applicationName", "applicationVersion", "contactlessKernelName", "contactlessKernelVersion", "firmwareName", "firmwareVersion", "osName", "osVersion", "encryptionModuleName", "encryptionModuleVersion", "product"])
-            data class Device(@Attribute(name = "POPID", required = true) var popid: String) {
+            @Order(elements = ["SerialNumber", "TimeStamp", "PTID", "Manufacturer", "Model", "ApplicationName", "ApplicationVersion", "ContactlessKernelName", "ContactlessKernelVersion", "FirmwareName", "FirmwareVersion", "OSName", "OSVersion", "EncryptionModuleName", "EncryptionModuleVersion", "Product"])
+            data class Device(@field:Attribute(name = "POPID", required = true) var popid: String) {
 
-                @Element(name = "SerialNumber")
+                @field:Element(name = "SerialNumber", required = false)
                 var serialNumber: String? = null
-                @Element(name = "TimeStamp")
+                @field:Element(name = "TimeStamp", required = false)
                 var timeStamp: XMLGregorianCalendar? = null
-                @Element(name = "PTID")
+                @field:Element(name = "PTID", required = false)
                 var ptid: String? = null
-                @Element(name = "Manufacturer")
+                @field:Element(name = "Manufacturer", required = false)
                 var manufacturer: String? = null
-                @Element(name = "Model")
+                @field:Element(name = "Model", required = false)
                 var model: String? = null
-                @Element(name = "ApplicationName")
+                @field:Element(name = "ApplicationName", required = false)
                 var applicationName: String? = null
-                @Element(name = "ApplicationVersion")
+                @field:Element(name = "ApplicationVersion", required = false)
                 var applicationVersion: String? = null
-                @Element(name = "ContactlessKernelName")
+                @field:Element(name = "ContactlessKernelName", required = false)
                 var contactlessKernelName: String? = null
-                @Element(name = "ContactlessKernelVersion")
+                @field:Element(name = "ContactlessKernelVersion", required = false)
                 var contactlessKernelVersion: String? = null
-                @Element(name = "FirmwareName")
+                @field:Element(name = "FirmwareName", required = false)
                 var firmwareName: String? = null
-                @Element(name = "FirmwareVersion")
+                @field:Element(name = "FirmwareVersion", required = false)
                 var firmwareVersion: String? = null
-                @Element(name = "OSName")
+                @field:Element(name = "OSName", required = false)
                 var osName: String? = null
-                @Element(name = "OSVersion")
+                @field:Element(name = "OSVersion", required = false)
                 var osVersion: String? = null
-                @Element(name = "EncryptionModuleName")
+                @field:Element(name = "EncryptionModuleName", required = false)
                 var encryptionModuleName: String? = null
-                @Element(name = "EncryptionModuleVersion")
+                @field:Element(name = "EncryptionModuleVersion", required = false)
                 var encryptionModuleVersion: String? = null
-                @Element(name = "Product")
+                @field:Element(name = "Product", required = false)
                 var product: String? = null
             }
 

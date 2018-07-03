@@ -11,27 +11,27 @@ import java.math.BigInteger
 @Root(name = "SaleItemType")
 @Order(elements = ["productCode", "amount", "unitMeasure", "unitPrice", "quantity", "taxCode", "additionalProductCode", "additionalProductInfo", "typeMovement", "saleChannel", "vatRate"])
 data class SaleItemType(
-        @Element(name = "ProductCode", required = true) var productCode: BigInteger,
-        @Element(name = "Amount", required = true) var amount: BigDecimal,
-        @Attribute(name = "ItemID", required = true) var itemID: String) {
+        @field:Element(name = "ProductCode", required = true) var productCode: BigInteger,
+        @field:Element(name = "Amount", required = true) var amount: BigDecimal,
+        @field:Attribute(name = "ItemID", required = true) var itemID: String) {
 
-    @Element(name = "UnitMeasure")
+    @field:Element(name = "UnitMeasure", required=false)
     var unitMeasure: UnitOfMeasureCode? = null
-    @Element(name = "UnitPrice")
+    @field:Element(name = "UnitPrice", required=false)
     var unitPrice: BigDecimal? = null
-    @Element(name = "Quantity")
+    @field:Element(name = "Quantity", required=false)
     var quantity: BigDecimal? = null
-    @Element(name = "TaxCode")
+    @field:Element(name = "TaxCode", required=false)
     var taxCode: String? = null
-    @Element(name = "AdditionalProductCode")
+    @field:Element(name = "AdditionalProductCode", required=false)
     var additionalProductCode: Long? = null
-    @Element(name = "AdditionalProductInfo")
+    @field:Element(name = "AdditionalProductInfo", required=false)
     var additionalProductInfo: String? = null
-    @Element(name = "TypeMovement")
+    @field:Element(name = "TypeMovement", required=false)
     var typeMovement: String? = null
-    @Element(name = "SaleChannel")
+    @field:Element(name = "SaleChannel", required=false)
     var saleChannel: String? = null
-    @Element(name = "VATRate")
+    @field:Element(name = "VATRate", required=false)
     var vatRate: BigDecimal? = null
 
 }

@@ -6,4 +6,4 @@ import org.simpleframework.xml.Root
 
 @Root(name = "SecureDataFlow")
 @Order(elements = ["hex"])
-data class SecureDataFlow(@Element(name = "Hex", required = true, type = String::class) protected var hex: List<ByteArray>)
+data class SecureDataFlow(@field:Element(name = "Hex", required = true, type = String::class) protected var hex: List<ByteArray>)

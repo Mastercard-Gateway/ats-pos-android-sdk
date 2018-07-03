@@ -9,36 +9,36 @@ import java.math.BigInteger
 @Suppress("ArrayInDataClass")
 @Root(name = "EncryptedCardValueType", strict = false)
 @Order(elements = ["track1", "track2", "track3", "barcode", "cardPAN", "startDate", "expiryDate", "issueNumber", "serviceCode", "tokenSalt", "cv2", "postCode", "address", "encryptionID", "encryptionKey", "encryptionRSA"])
-data class EncryptedCardValueType(@Element(name = "EncryptionID", required = true) var encryptionID: BigInteger,
-                                  @Element(name = "EncryptionKey", required = true, type = String::class) var encryptionKey: ByteArray) {
+data class EncryptedCardValueType(@field:Element(name = "EncryptionID", required = true) var encryptionID: BigInteger,
+                                  @field:Element(name = "EncryptionKey", required = true, type = String::class) var encryptionKey: ByteArray) {
 
-    @Element(name = "Track1", type = String::class)
+    @field:Element(name = "Track1", type = String::class, required=false)
     var track1: ByteArray? = null
-    @Element(name = "Track2", type = String::class)
+    @field:Element(name = "Track2", type = String::class, required=false)
     var track2: ByteArray? = null
-    @Element(name = "Track3", type = String::class)
+    @field:Element(name = "Track3", type = String::class, required=false)
     var track3: ByteArray? = null
-    @Element(name = "Barcode", type = String::class)
+    @field:Element(name = "Barcode", type = String::class, required=false)
     var barcode: ByteArray? = null
-    @Element(name = "CardPAN", type = String::class)
+    @field:Element(name = "CardPAN", type = String::class, required=false)
     var cardPAN: ByteArray? = null
-    @Element(name = "StartDate", type = String::class)
+    @field:Element(name = "StartDate", type = String::class, required=false)
     var startDate: ByteArray? = null
-    @Element(name = "ExpiryDate", type = String::class)
+    @field:Element(name = "ExpiryDate", type = String::class, required=false)
     var expiryDate: ByteArray? = null
-    @Element(name = "IssueNumber", type = String::class)
+    @field:Element(name = "IssueNumber", type = String::class, required=false)
     var issueNumber: ByteArray? = null
-    @Element(name = "ServiceCode", type = String::class)
+    @field:Element(name = "ServiceCode", type = String::class, required=false)
     var serviceCode: ByteArray? = null
-    @Element(name = "TokenSalt", type = String::class)
+    @field:Element(name = "TokenSalt", type = String::class, required=false)
     var tokenSalt: ByteArray? = null
-    @Element(name = "CV2", type = String::class)
+    @field:Element(name = "CV2", type = String::class, required=false)
     var cv2: ByteArray? = null
-    @Element(name = "PostCode", type = String::class)
+    @field:Element(name = "PostCode", type = String::class, required=false)
     var postCode: ByteArray? = null
-    @Element(name = "Address", type = String::class)
+    @field:Element(name = "Address", type = String::class, required=false)
     var address: ByteArray? = null
-    @Element(name = "EncryptionRSA")
+    @field:Element(name = "EncryptionRSA", required=false)
     var encryptionRSA: String? = null
 
 }

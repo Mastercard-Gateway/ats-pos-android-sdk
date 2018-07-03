@@ -10,54 +10,54 @@ import java.math.BigInteger
 
 @Root(name = "DeviceRequest", strict = false)
 @Order(elements = ["output", "input", "event"])
-data class DeviceRequest(@Attribute(name = "RequestType", required = true) var requestType: DeviceRequestType,
-                         @Attribute(name = "WorkstationID", required = true) var workstationID: String,
-                         @Attribute(name = "RequestID", required = true) var requestID: String) : ATSMessage {
+data class DeviceRequest(@field:Attribute(name = "RequestType", required = true) var requestType: DeviceRequestType,
+                         @field:Attribute(name = "WorkstationID", required = true) var workstationID: String,
+                         @field:Attribute(name = "RequestID", required = true) var requestID: String) : ATSMessage {
 
-    @Element(name = "Output")
+    @field:Element(name = "Output", required=false)
     var output: List<Output>? = null
-    @Element(name = "Input")
+    @field:Element(name = "Input", required=false)
     var input: DeviceRequest.Input? = null
-    @Element(name = "Event")
+    @field:Element(name = "Event", required=false)
     var event: DeviceRequest.Event? = null
-    @Attribute(name = "ApplicationSender")
+    @field:Attribute(name = "ApplicationSender", required=false)
     var applicationSender: String? = null
-    @Attribute(name = "TerminalID")
+    @field:Attribute(name = "TerminalID", required=false)
     var terminalID: String? = null
-    @Attribute(name = "POPID")
+    @field:Attribute(name = "POPID", required=false)
     var popid: String? = null
-    @Attribute(name = "SequenceID")
+    @field:Attribute(name = "SequenceID", required=false)
     var sequenceID: Int? = null
 
 
     @Order(elements = ["eventData"])
-    data class Event(@Element(name = "EventData", required = true) var eventData: EventData,
-                     @Attribute(name = "EventType", required = true) var eventType: EventTypes) {
+    data class Event(@field:Element(name = "EventData", required = true) var eventData: EventData,
+                     @field:Attribute(name = "EventType", required = true) var eventType: EventTypes) {
 
         @Order(elements = ["dispenser", "totalAmount", "cardIdent", "dataRequired", "productsAllowed"])
         class EventData {
 
-            @Element(name = "Dispenser")
+            @field:Element(name = "Dispenser", required=false)
             var dispenser: Short? = null
-            @Element(name = "TotalAmount")
+            @field:Element(name = "TotalAmount", required=false)
             var totalAmount: TotalAmountType? = null
-            @Element(name = "CardIdent")
+            @field:Element(name = "CardIdent", required=false)
             var cardIdent: CardValueDRType? = null
-            @Element(name = "DataRequired")
+            @field:Element(name = "DataRequired", required=false)
             var dataRequired: List<DataRequiredType>? = null
-            @Element(name = "ProductsAllowed")
+            @field:Element(name = "ProductsAllowed", required=false)
             var productsAllowed: DeviceRequest.Event.EventData.ProductsAllowed? = null
 
             @Order(elements = ["productCode"])
-            data class ProductsAllowed(@Element(name = "ProductCode", required = true) var productCode: List<ProductCode>) {
+            data class ProductsAllowed(@field:Element(name = "ProductCode", required = true) var productCode: List<ProductCode>) {
 
                 class ProductCode {
                     var value: BigInteger? = null
-                    @Attribute(name = "Name")
+                    @field:Attribute(name = "Name", required=false)
                     var name: String? = null
-                    @Attribute(name = "UnitMeasure")
+                    @field:Attribute(name = "UnitMeasure", required=false)
                     var unitMeasure: UnitOfMeasureCode? = null
-                    @Attribute(name = "Quantity")
+                    @field:Attribute(name = "Quantity", required=false)
                     var quantity: BigDecimal? = null
                 }
             }
@@ -68,105 +68,105 @@ data class DeviceRequest(@Attribute(name = "RequestType", required = true) var r
 
 
     @Order(elements = ["command", "inSecureData"])
-    data class Input(@Attribute(name = "InDeviceTarget", required = true) var inDeviceTarget: DeviceType) {
+    data class Input(@field:Attribute(name = "InDeviceTarget", required = true) var inDeviceTarget: DeviceType) {
 
-        @Element(name = "Command")
+        @field:Element(name = "Command", required=false)
         var command: Command? = null
-        @Element(name = "InSecureData")
+        @field:Element(name = "InSecureData", required=false)
         var inSecureData: List<SecureDataFlow>? = null
 
         class Command {
             var value: CommandType? = null
-            @Attribute(name = "Length")
+            @field:Attribute(name = "Length", required=false)
             var length: BigInteger? = null
-            @Attribute(name = "MinLength")
+            @field:Attribute(name = "MinLength", required=false)
             var minLength: BigInteger? = null
-            @Attribute(name = "MaxLength")
+            @field:Attribute(name = "MaxLength", required=false)
             var maxLength: BigInteger? = null
-            @Attribute(name = "Decimals")
+            @field:Attribute(name = "Decimals", required=false)
             var decimals: BigInteger? = null
-            @Attribute(name = "Separator")
+            @field:Attribute(name = "Separator", required=false)
             var separator: SeparatorType? = null
-            @Attribute(name = "CardReadElement")
+            @field:Attribute(name = "CardReadElement", required=false)
             var cardReadElement: CardReadType? = null
-            @Attribute(name = "TimeOut")
+            @field:Attribute(name = "TimeOut", required=false)
             var timeOut: BigInteger? = null
-            @Attribute(name = "DataRequired")
+            @field:Attribute(name = "DataRequired", required=false)
             var dataRequired: DataRequiredType? = null
         }
     }
 
     @Order(elements = ["textLine", "buzzer", "outSecureData", "mac", "imageFile"])
-    data class Output(@Attribute(name = "OutDeviceTarget", required = true) var outDeviceTarget: DeviceType) {
+    data class Output(@field:Attribute(name = "OutDeviceTarget", required = true) var outDeviceTarget: DeviceType) {
 
-        @Element(name = "TextLine")
+        @field:Element(name = "TextLine", required=false)
         var textLine: List<TextLine>? = null
-        @Element(name = "Buzzer")
+        @field:Element(name = "Buzzer", required=false)
         var buzzer: Buzzer? = null
-        @Element(name = "OutSecureData")
+        @field:Element(name = "OutSecureData", required=false)
         var outSecureData: List<SecureDataFlow>? = null
-        @Element(name = "MAC")
+        @field:Element(name = "MAC", required=false)
         var mac: MACType? = null
-        @Element(name = "ImageFile")
+        @field:Element(name = "ImageFile", required=false)
         var imageFile: String? = null
-        @Attribute(name = "InputSynchronize")
+        @field:Attribute(name = "InputSynchronize", required=false)
         var inputSynchronize: Boolean? = null
-        @Attribute(name = "Complete")
+        @field:Attribute(name = "Complete", required=false)
         var complete: Boolean? = null
-        @Attribute(name = "Immediate")
+        @field:Attribute(name = "Immediate", required=false)
         var immediate: Boolean? = null
-        @Attribute(name = "Category")
+        @field:Attribute(name = "Category", required=false)
         var category: BigInteger? = null
-        @Attribute(name = "Code")
+        @field:Attribute(name = "Code", required=false)
         var code: BigInteger? = null
-        @Attribute(name = "TimeOut")
+        @field:Attribute(name = "TimeOut", required=false)
         var timeOut: BigInteger? = null
 
 
         class Buzzer {
             var value: Boolean = false
-            @Attribute(name = "DurationBeep")
+            @field:Attribute(name = "DurationBeep", required=false)
             var durationBeep: BigInteger? = null
-            @Attribute(name = "CounterBeep")
+            @field:Attribute(name = "CounterBeep", required=false)
             var counterBeep: BigInteger? = null
-            @Attribute(name = "DurationPause")
+            @field:Attribute(name = "DurationPause", required=false)
             var durationPause: BigInteger? = null
         }
 
 
         class TextLine {
             var value: String? = null
-            @Attribute(name = "Row")
+            @field:Attribute(name = "Row", required=false)
             var row: Byte? = null
-            @Attribute(name = "Column")
+            @field:Attribute(name = "Column", required=false)
             var column: Byte? = null
-            @Attribute(name = "CharSet")
+            @field:Attribute(name = "CharSet", required=false)
             var charSet: Byte? = null
-            @Attribute(name = "Erase")
+            @field:Attribute(name = "Erase", required=false)
             var erase: Boolean? = null
-            @Attribute(name = "Echo")
+            @field:Attribute(name = "Echo", required=false)
             var echo: Boolean? = null
-            @Attribute(name = "Cursor")
+            @field:Attribute(name = "Cursor", required=false)
             var cursor: Boolean? = null
-            @Attribute(name = "TimeOut")
+            @field:Attribute(name = "TimeOut", required=false)
             var timeOut: BigInteger? = null
-            @Attribute(name = "Color")
+            @field:Attribute(name = "Color", required=false)
             var color: ColorType? = null
-            @Attribute(name = "Alignment")
+            @field:Attribute(name = "Alignment", required=false)
             var alignment: AlignmentType? = null
-            @Attribute(name = "Height")
+            @field:Attribute(name = "Height", required=false)
             var height: HeightType? = null
-            @Attribute(name = "Width")
+            @field:Attribute(name = "Width", required=false)
             var width: WidthType? = null
-            @Attribute(name = "CharStyle1")
+            @field:Attribute(name = "CharStyle1", required=false)
             var charStyle1: CharStyleType? = null
-            @Attribute(name = "CharStyle2")
+            @field:Attribute(name = "CharStyle2", required=false)
             var charStyle2: CharStyleType? = null
-            @Attribute(name = "CharStyle3")
+            @field:Attribute(name = "CharStyle3", required=false)
             var charStyle3: CharStyleType? = null
-            @Attribute(name = "PaperCut")
+            @field:Attribute(name = "PaperCut", required=false)
             var paperCut: Boolean? = null
-            @Attribute(name = "MenuItem")
+            @field:Attribute(name = "MenuItem", required=false)
             var menuItem: Int? = null
         }
     }

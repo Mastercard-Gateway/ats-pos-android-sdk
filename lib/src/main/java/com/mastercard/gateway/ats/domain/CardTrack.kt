@@ -14,5 +14,7 @@ import org.simpleframework.xml.Root
 
 @Root(name = "CardTrack", strict = false)
 @Order(elements = ["_byte", "ascii"])
-open class CardTrack(@field:Element(name = "Byte", type = String::class) var _byte: ByteArray? = null,
-                     @field:Element(name = "Ascii") var ascii: String? = null)
+open class CardTrack {
+    @Element(name = "Byte", type = String::class) var _byte: ByteArray? = null
+    @Element(name = "Ascii") var ascii: String? = null
+}

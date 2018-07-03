@@ -8,4 +8,4 @@ import java.util.ArrayList
 
 @Root(name = "MACType")
 @Order(elements = ["hex"])
-data class MACType(@field:Element(name = "Hex", required = true, type = String::class) var hex: List<ByteArray> = ArrayList<ByteArray>())
+data class MACType(@Element(name = "Hex", required = true, type = String::class) var hex: List<ByteArray>)

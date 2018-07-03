@@ -28,7 +28,7 @@ data class CardServiceRequest(@Element(name = "POSdata", required = true) var po
     @Element(name = "EncryptedCardValue")
     var encryptedCardValue: EncryptedCardValueType? = null
     @Element(name = "Acquirer")
-    var acquirer: CardServiceRequest.Acquirer? = null
+    var acquirer: Acquirer? = null
     @Element(name = "PrivateData")
     var privateData: List<Any>? = null
     @Element(name = "Encryption")

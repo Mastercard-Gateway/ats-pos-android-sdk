@@ -5,7 +5,7 @@ import org.simpleframework.xml.Order
 import org.simpleframework.xml.Root
 
 @Root(name = "ICCType", strict = false)
-@Order(elements = arrayOf("aid", "applicationLabel", "ac", "aip", "arc", "atc", "auc", "upn", "tvr", "ctt", "cid", "cvmResults", "termCapUsed", "ictyc", "iavn", "tavn", "language", "tsi", "iacdef", "iacdnl", "iaconl", "iappd", "ctlsFormFactorTag", "ctlsFormFactorValue", "ctlsCustExcData", "iauthd", "isd", "isr"))
+@Order(elements = ["aid", "applicationLabel", "ac", "aip", "arc", "atc", "auc", "upn", "tvr", "ctt", "cid", "cvmResults", "termCapUsed", "ictyc", "iavn", "tavn", "language", "tsi", "iacdef", "iacdnl", "iaconl", "iappd", "ctlsFormFactorTag", "ctlsFormFactorValue", "ctlsCustExcData", "iauthd", "isd", "isr"])
 class ICCType {
 
     @Element(name = "AID")

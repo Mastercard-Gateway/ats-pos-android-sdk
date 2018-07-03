@@ -2,10 +2,14 @@ package com.mastercard.gateway.ats.domain
 
 import org.simpleframework.xml.Attribute
 import org.simpleframework.xml.Root
-import java.math.BigInteger
 
+@Suppress("PLATFORM_CLASS_MAPPED_TO_KOTLIN")
 @Root(name = "ATSResponseType", strict = false)
-data class ATSResponseType(@field:Attribute(name = "Code", required = true) var code: BigInteger, @field:Attribute(name = "Category", required = true) var category: BigInteger) {
+class ATSResponseType {
+    @field:Attribute(name = "Code", required = true)
+    lateinit var code: Integer
+    @field:Attribute(name = "Category", required = true)
+    lateinit var category: Integer
     @field:Attribute(name = "Description", required = false)
     var description: String? = null
 }

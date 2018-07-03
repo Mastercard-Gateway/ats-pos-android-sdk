@@ -5,8 +5,9 @@ import org.simpleframework.xml.Root
 import java.math.BigDecimal
 
 @Root(name = "TotalAmountType")
-data class TotalAmountType(var value: BigDecimal? = null) {
+class TotalAmountType {
 
+    lateinit var value: BigDecimal
     @field:Attribute(name = "Currency", required=false)
     var currency: CurrencyCode? = null
     @field:Attribute(name = "PaymentAmount", required=false)

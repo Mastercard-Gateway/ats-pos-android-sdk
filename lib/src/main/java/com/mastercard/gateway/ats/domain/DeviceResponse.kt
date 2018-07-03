@@ -9,9 +9,7 @@ import java.math.BigDecimal
 import java.math.BigInteger
 
 @Root(name = "DeviceResponse", strict = false)
-data class DeviceResponse(@field:Attribute(name = "RequestType", required = true) var requestType: DeviceRequestType,
-                          @field:Attribute(name = "RequestID", required = true) var requestID: String,
-                          @field:Attribute(name = "OverallResult", required = true) var overallResult: RequestResultType) : ATSMessage {
+class DeviceResponse : ATSMessage {
 
     @field:Element(name = "Output", required=false)
     var output: List<Output>? = null
@@ -34,6 +32,12 @@ data class DeviceResponse(@field:Attribute(name = "RequestType", required = true
     var sequenceID: Int? = null
     @field:Attribute(name = "ReferenceRequestID", required=false)
     var referenceRequestID: String? = null
+    @field:Attribute(name = "RequestType", required = true)
+    lateinit var requestType: DeviceRequestType
+    @field:Attribute(name = "RequestID", required = true)
+    lateinit var requestID: String
+    @field:Attribute(name = "OverallResult", required = true)
+    lateinit var overallResult: RequestResultType
 
 
     class EventResult {
@@ -115,17 +119,24 @@ data class DeviceResponse(@field:Attribute(name = "RequestType", required = true
 
     }
 
-    data class Input(@field:Attribute(name = "InDeviceTarget", required = true) var inDeviceTarget: DeviceType,
-                     @field:Attribute(name = "InResult", required = true) var inResult: RequestResultType) {
+    class Input {
 
         @field:Element(name = "SecureData", required=false)
         var secureData: List<SecureDataFlow>? = null
         @field:Element(name = "InputValue", required=false)
         var inputValue: InputValueType? = null
+        @field:Attribute(name = "InDeviceTarget", required = true)
+        lateinit var inDeviceTarget: DeviceType
+        @field:Attribute(name = "InResult", required = true)
+        lateinit var inResult: RequestResultType
 
     }
 
-    data class Output(@field:Attribute(name = "OutDeviceTarget", required = true) var outDeviceTarget: DeviceType,
-                      @field:Attribute(name = "OutResult", required = true) var outResult: RequestResultType)
+    class Output {
+        @field:Attribute(name = "OutDeviceTarget", required = true)
+        lateinit var outDeviceTarget: DeviceType
+        @field:Attribute(name = "OutResult", required = true)
+        lateinit var outResult: RequestResultType
+    }
 
 }

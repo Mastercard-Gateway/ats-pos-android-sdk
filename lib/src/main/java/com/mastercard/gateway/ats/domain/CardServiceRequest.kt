@@ -1,9 +1,6 @@
 package com.mastercard.gateway.ats.domain
 
-import org.simpleframework.xml.Attribute
-import org.simpleframework.xml.Element
-import org.simpleframework.xml.Order
-import org.simpleframework.xml.Root
+import org.simpleframework.xml.*
 
 import java.math.BigInteger
 import java.util.*
@@ -11,11 +8,9 @@ import java.util.*
 import javax.xml.datatype.XMLGregorianCalendar
 
 @Root(name = "CardServiceRequest", strict = false)
-data class CardServiceRequest(@field:Element(name = "POSdata", required = true) var poSdata: POSdata,
-                              @field:Attribute(name = "RequestType", required = true) var requestType: CardRequestType,
-                              @field:Attribute(name = "WorkstationID", required = true) var workstationID: String,
-                              @field:Attribute(name = "RequestID", required = true) var requestID: String) : ATSMessage {
-
+class CardServiceRequest : ATSMessage {
+    @field:Element(name = "POSdata", required = true)
+    lateinit var poSdata: POSdata
     @field:Element(name = "Loyalty", required = false)
     var loyalty: CardServiceRequest.Loyalty? = null
     @field:Element(name = "CardCircuitCollection", required = false)
@@ -42,6 +37,12 @@ data class CardServiceRequest(@field:Element(name = "POSdata", required = true) 
     var applicationSender: String? = null
     @field:Attribute(name = "POPID", required=false)
     var popid: String? = null
+    @field:Attribute(name = "RequestType", required = true)
+    lateinit var requestType: CardRequestType
+    @field:Attribute(name = "WorkstationID", required = true)
+    lateinit var workstationID: String
+    @field:Attribute(name = "RequestID", required = true)
+    lateinit var requestID: String
     @field:Attribute(name = "ReferenceNumber", required=false)
     var referenceNumber: String? = null
 
@@ -64,15 +65,19 @@ data class CardServiceRequest(@field:Element(name = "POSdata", required = true) 
     }
 
 
-    data class CardCircuitCollection(@field:Element(name = "CardCircuit", required = true) var cardCircuit: List<CardCircuit>) {
+    class CardCircuitCollection {
 
-        data class CardCircuit(var value: String? = null) {
+        @field:ElementList(name = "CardCircuit", required = true)
+        lateinit var cardCircuit: List<CardCircuit>
+
+        class CardCircuit {
+            lateinit var value: String
             @field:Attribute(name = "CardCircuitState", required=false)
             var cardCircuitState: CardCircuitStateType? = null
         }
     }
 
-    data class Loyalty(@field:Attribute(name = "LoyaltyFlag", required = true) var loyaltyFlag: Boolean = false) {
+    class Loyalty {
 
         @field:Element(name = "LoyaltyCard", required=false)
         var loyaltyCard: CardServiceRequest.Loyalty.LoyaltyCard? = null
@@ -80,6 +85,8 @@ data class CardServiceRequest(@field:Element(name = "POSdata", required = true) 
         var moPrule: CardServiceRequest.Loyalty.MOPrule? = null
         @field:Element(name = "LoyaltyAmount", required=false)
         var loyaltyAmount: Float? = null
+        @field:Attribute(name = "LoyaltyFlag", required = true)
+        var loyaltyFlag: Boolean = false
 
 
         class LoyaltyCard : CardTrack() {
@@ -87,11 +94,15 @@ data class CardServiceRequest(@field:Element(name = "POSdata", required = true) 
             var loyaltyPAN: String? = null
         }
 
-        data class MOPrule(@field:Attribute(name = "CardPAN", required = true) var cardPAN: String,
-                           @field:Attribute(name = "CardCircuit", required = true) var cardCircuit: String)
+        class MOPrule {
+            @field:Attribute(name = "CardPAN", required = true)
+            lateinit var cardPAN: String
+            @field:Attribute(name = "CardCircuit", required = true)
+            lateinit var cardCircuit: String
+        }
     }
 
-    class OriginalTransaction() {
+    class OriginalTransaction {
         @field:Attribute(name = "TerminalID", required=false)
         var terminalID: String? = null
         @field:Attribute(name = "TerminalBatch", required=false)
@@ -104,7 +115,9 @@ data class CardServiceRequest(@field:Element(name = "POSdata", required = true) 
         var trackingReference: String? = null
     }
 
-    data class POSdata(@field:Element(name = "POSTimeStamp", required = true) var posTimeStamp: Date) {
+    class POSdata {
+        @field:Element(name = "POSTimeStamp", required = true)
+        lateinit var posTimeStamp: Date
         @field:Element(name = "ServiceLevel", required=false)
         var serviceLevel: String? = null
         @field:Element(name = "ShiftNumber", required=false)

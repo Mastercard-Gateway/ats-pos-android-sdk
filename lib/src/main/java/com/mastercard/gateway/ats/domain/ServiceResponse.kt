@@ -2,18 +2,14 @@ package com.mastercard.gateway.ats.domain
 
 import org.simpleframework.xml.Attribute
 import org.simpleframework.xml.Element
-import org.simpleframework.xml.Order
+import org.simpleframework.xml.ElementList
 import org.simpleframework.xml.Root
 import java.math.BigDecimal
-import java.math.BigInteger
 import javax.xml.datatype.XMLGregorianCalendar
 
 @Suppress("ArrayInDataClass")
 @Root(name = "ServiceResponse", strict = false)
-data class ServiceResponse(@field:Attribute(name = "RequestType", required = true) var requestType: ServiceRequestType = ServiceRequestType.AcquireDevice,
-                           @field:Attribute(name = "WorkstationID", required = true) var workstationID: String = "",
-                           @field:Attribute(name = "RequestID", required = true) var requestID: String = "",
-                           @field:Attribute(name = "OverallResult", required = true) var overallResult: RequestResultType =RequestResultType.Aborted) : ATSMessage {
+class ServiceResponse : ATSMessage {
 
     @field:Element(name = "Terminal", required = false)
     var terminal: Terminal? = null
@@ -43,36 +39,57 @@ data class ServiceResponse(@field:Attribute(name = "RequestType", required = tru
     var applicationSender: String? = null
     @field:Attribute(name = "POPID", required = false)
     var popid: String? = null
+    @field:Attribute(name = "RequestType", required = true)
+    lateinit var requestType: ServiceRequestType
+    @field:Attribute(name = "WorkstationID", required = true)
+    lateinit var workstationID: String
+    @field:Attribute(name = "RequestID", required = true)
+    lateinit var requestID: String
+    @field:Attribute(name = "OverallResult", required = true)
+    lateinit var overallResult: RequestResultType
 
 
-    data class Authorisation(@field:Attribute(name = "AcquirerID", required = true) var acquirerID: String,
-                             @field:Attribute(name = "TimeStamp", required = true) var timeStamp: XMLGregorianCalendar) {
+    class Authorisation {
         @field:Attribute(name = "ApprovalCode", required = false)
         var approvalCode: String? = null
         @field:Attribute(name = "AcquirerBatch", required = false)
         var acquirerBatch: String? = null
+        @field:Attribute(name = "AcquirerID", required = true)
+        lateinit var acquirerID: String
+        @field:Attribute(name = "TimeStamp", required = true)
+        lateinit var timeStamp: XMLGregorianCalendar
     }
 
-    data class OriginalHeader(@field:Attribute(name = "RequestType", required = true) var requestType: ServiceRequestType,
-                              @field:Attribute(name = "WorkstationID", required = true) var workstationID: String,
-                              @field:Attribute(name = "RequestID", required = true) var requestID: String,
-                              @field:Attribute(name = "OverallResult", required = true) var overallResult: RequestResultType) {
+    class OriginalHeader {
 
         @field:Attribute(name = "ApplicationSender", required = false)
         var applicationSender: String? = null
         @field:Attribute(name = "POPID", required = false)
         var popid: String? = null
+        @field:Attribute(name = "RequestType", required = true)
+        lateinit var requestType: ServiceRequestType
+        @field:Attribute(name = "WorkstationID", required = true)
+        lateinit var workstationID: String
+        @field:Attribute(name = "RequestID", required = true)
+        lateinit var requestID: String
+        @field:Attribute(name = "OverallResult", required = true)
+        lateinit var overallResult: RequestResultType
     }
 
-    data class Reconciliation(@field:Element(name = "TotalAmount", required = true) var totalAmount: List<TotalAmount>) {
+    class Reconciliation {
 
+        @field:ElementList(name = "TotalAmount", required = true)
+        lateinit var totalAmount: List<TotalAmount>
         @field:Attribute(name = "LanguageCode", required = false)
         var languageCode: LanguageCodeType? = null
 
-        data class TotalAmount(var value: BigDecimal,
-                               @field:Attribute(name = "NumberPayments", required = true) var numberPayments: BigInteger,
-                               @field:Attribute(name = "PaymentType", required = true) var paymentType: TransactionType) {
+        class TotalAmount {
 
+            lateinit var value: BigDecimal
+            @field:Attribute(name = "NumberPayments", required = true)
+            lateinit var numberPayments: Integer
+            @field:Attribute(name = "PaymentType", required = true)
+            lateinit var paymentType: TransactionType
             @field:Attribute(name = "Currency", required = false)
             var currency: CurrencyCode? = null
             @field:Attribute(name = "CardCircuit", required = false)
@@ -80,38 +97,54 @@ data class ServiceResponse(@field:Attribute(name = "RequestType", required = tru
             @field:Attribute(name = "Acquirer", required = false)
             var acquirer: String? = null
             @field:Attribute(name = "NumberHeld", required = false)
-            var numberHeld: BigInteger? = null
+            var numberHeld: Integer? = null
             @field:Attribute(name = "AmountHeld", required = false)
             var amountHeld: BigDecimal? = null
         }
     }
 
-    data class Submission(@field:Element(name = "Successful", required = true) var successful: Successful,
-                          @field:Element(name = "Failed", required = true) var failed: Failed) {
+    class Submission {
 
+        @field:Element(name = "Successful", required = true)
+        lateinit var successful: Successful
+        @field:Element(name = "Failed", required = true)
+        lateinit var failed: Failed
         @field:Attribute(name = "LanguageCode", required = false)
         var languageCode: LanguageCodeType? = null
 
-        data class Failed(var value: BigDecimal,
-                          @field:Attribute(name = "NumberPayments", required = true) var numberPayments: BigInteger)
+        class Failed {
+            lateinit var value: BigDecimal
+            @field:Attribute(name = "NumberPayments", required = true)
+            lateinit var numberPayments: Integer
+        }
 
-        data class Successful(var value: BigDecimal,
-                              @field:Attribute(name = "NumberPayments", required = true) var numberPayments: BigInteger)
+        class Successful {
+            lateinit var value: BigDecimal
+            @field:Attribute(name = "NumberPayments", required = true)
+            lateinit var numberPayments: Integer
+        }
     }
 
-    data class Terminal(@field:Attribute(name = "TerminalID", required = true) var terminalID: String) {
+    class Terminal {
+        @field:Attribute(name = "TerminalID", required = true)
+        lateinit var terminalID: String
         @field:Attribute(name = "TerminalBatch", required = false)
         var terminalBatch: String? = null
         @field:Attribute(name = "STAN", required = false)
         var stan: Long? = null
     }
 
-    data class Versions(@field:Element(name = "Devices", required = true) var devices: List<Devices>) {
+    class Versions {
 
-        data class Devices(@field:Element(name = "Device", required = true) var device: List<Device>) {
+        @field:ElementList(name = "Devices", required = true)
+        lateinit var devices: List<Devices>
 
-            data class Device(@field:Attribute(name = "POPID", required = true) var popid: String) {
+        class Devices {
 
+            @field:ElementList(name = "Device", required = true)
+            lateinit var device: List<Device>
+
+            class Device {
                 @field:Element(name = "SerialNumber", required = false)
                 var serialNumber: String? = null
                 @field:Element(name = "TimeStamp", required = false)
@@ -144,6 +177,8 @@ data class ServiceResponse(@field:Attribute(name = "RequestType", required = tru
                 var encryptionModuleVersion: String? = null
                 @field:Element(name = "Product", required = false)
                 var product: String? = null
+                @field:Attribute(name = "POPID", required = true)
+                lateinit var popid: String
             }
 
         }

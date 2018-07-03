@@ -51,9 +51,11 @@ public class MainActivity extends AppCompatActivity {
 
     void acquireDevice() {
 
-        ServiceRequest request = new ServiceRequest(ServiceRequestType.AcquireDevice, "43214321", "9");
-
-//        request.setApplicationSender("ATS_Testing");
+        ServiceRequest request = new ServiceRequest();
+        request.setRequestType(ServiceRequestType.AcquireDevice);
+        request.setWorkstationID("43214321");
+        request.setRequestID("9");
+        request.setApplicationSender("ATS_Testing");
 
 
         ats.sendMessage(request);
@@ -62,13 +64,22 @@ public class MainActivity extends AppCompatActivity {
     void startTransactionWithReader(String popid) {
 
 
-        CardServiceRequest.POSdata posData = new CardServiceRequest.POSdata(new Date());
+
+        CardServiceRequest cardServiceRequest = new CardServiceRequest();
+
+        cardServiceRequest.setRequestType(CardRequestType.CardPayment);
+        cardServiceRequest.setWorkstationID("43214321");
+        cardServiceRequest.setRequestID("9");
+
+        CardServiceRequest.POSdata posData = new CardServiceRequest.POSdata();
+        posData.setPosTimeStamp(new Date());
         posData.setTransactionNumber(new BigInteger("2"));
+        cardServiceRequest.setPoSdata(posData);
 
-
-        CardServiceRequest cardServiceRequest = new CardServiceRequest(posData, CardRequestType.CardPayment, "12342", "2");
         cardServiceRequest.setPopid(popid);
-        TotalAmountType totalAmountType = new TotalAmountType(new BigDecimal("10.00"));
+
+        TotalAmountType totalAmountType = new TotalAmountType();
+        totalAmountType.value = new BigDecimal("10.00");
         totalAmountType.setPaymentAmount(new BigDecimal("10.00"));
         cardServiceRequest.setTotalAmount(totalAmountType);
 

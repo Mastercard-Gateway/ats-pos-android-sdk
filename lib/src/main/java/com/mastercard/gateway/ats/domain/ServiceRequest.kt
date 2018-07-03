@@ -9,9 +9,7 @@ import java.math.BigInteger
 import javax.xml.datatype.XMLGregorianCalendar
 
 @Root(name = "ServiceRequest")
-class ServiceRequest(@field:Attribute(name = "RequestType", required = true) var requestType: ServiceRequestType,
-                     @field:Attribute(name = "WorkstationID", required = true) var workstationID: String,
-                     @field:Attribute(name = "RequestID", required = true) var requestID: String) : ATSMessage {
+class ServiceRequest : ATSMessage {
 
     @field:Element(name = "POSdata", required = false)
     var poSdata: POSdata? = null
@@ -29,6 +27,12 @@ class ServiceRequest(@field:Attribute(name = "RequestType", required = true) var
     var applicationSender: String? = null
     @field:Attribute(name = "POPID", required = false)
     var popid: String? = null
+    @field:Attribute(name = "RequestType", required = true)
+    lateinit var requestType: ServiceRequestType
+    @field:Attribute(name = "WorkstationID", required = true)
+    lateinit var workstationID: String
+    @field:Attribute(name = "RequestID", required = true)
+    lateinit var requestID: String
 
 
     class PINPadProgramLoad {
@@ -47,8 +51,10 @@ class ServiceRequest(@field:Attribute(name = "RequestType", required = true) var
     }
 
 
-    class POSdata(@field:Element(name = "POSTimeStamp", required = true) var posTimeStamp: XMLGregorianCalendar) {
+    class POSdata {
 
+        @field:Element(name = "POSTimeStamp", required = true)
+        lateinit var posTimeStamp: XMLGregorianCalendar
         @field:Element(name = "ShiftNumber", required = false)
         var shiftNumber: BigInteger? = null
         @field:Element(name = "ClerkID", required = false)
@@ -64,7 +70,8 @@ class ServiceRequest(@field:Attribute(name = "RequestType", required = true) var
 
     }
 
-    class TotalAmount(var value: BigDecimal) {
+    class TotalAmount {
+        lateinit var value: BigDecimal
         @field:Attribute(name = "Currency", required = false)
         var currency: CurrencyCode? = null
     }

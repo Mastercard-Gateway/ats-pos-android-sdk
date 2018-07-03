@@ -4,5 +4,9 @@ import org.simpleframework.xml.Element
 import org.simpleframework.xml.Root
 
 @Root(name = "ATSErrorDetailType", strict = false)
-data class ATSErrorDetailType @JvmOverloads constructor(@field:Element(name = "Error", required = true) var error: ATSErrorType,
-                                                        @field:Element(name = "Response", required = false) var response: ATSResponseType? = null)
+class ATSErrorDetailType {
+    @field:Element(name = "Error", required = true)
+    lateinit var error: ATSErrorType
+    @field:Element(name = "Response", required = false)
+    var response: ATSResponseType? = null
+}

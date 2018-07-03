@@ -1,17 +1,13 @@
+@file:Suppress("PLATFORM_CLASS_MAPPED_TO_KOTLIN")
+
 package com.mastercard.gateway.ats.domain
 
-import org.simpleframework.xml.Attribute
-import org.simpleframework.xml.Element
-import org.simpleframework.xml.Order
-import org.simpleframework.xml.Root
+import org.simpleframework.xml.*
 
 import java.math.BigDecimal
-import java.math.BigInteger
 
 @Root(name = "DeviceRequest", strict = false)
-data class DeviceRequest(@field:Attribute(name = "RequestType", required = true) var requestType: DeviceRequestType,
-                         @field:Attribute(name = "WorkstationID", required = true) var workstationID: String,
-                         @field:Attribute(name = "RequestID", required = true) var requestID: String) : ATSMessage {
+class DeviceRequest : ATSMessage {
 
     @field:Element(name = "Output", required=false)
     var output: List<Output>? = null
@@ -27,11 +23,21 @@ data class DeviceRequest(@field:Attribute(name = "RequestType", required = true)
     var popid: String? = null
     @field:Attribute(name = "SequenceID", required=false)
     var sequenceID: Int? = null
+    @field:Attribute(name = "RequestType", required = true)
+    lateinit var requestType: DeviceRequestType
+    @field:Attribute(name = "WorkstationID", required = true)
+    lateinit var workstationID: String
+    @field:Attribute(name = "RequestID", required = true)
+    lateinit var requestID: String
 
 
-    data class Event(@field:Element(name = "EventData", required = true) var eventData: EventData,
-                     @field:Attribute(name = "EventType", required = true) var eventType: EventTypes) {
+    class Event {
 
+        @field:Element(name = "EventData", required = true)
+        lateinit var eventData: EventData
+        @field:Attribute(name = "EventType", required = true)
+        lateinit var eventType: EventTypes
+        
         class EventData {
 
             @field:Element(name = "Dispenser", required=false)
@@ -45,10 +51,13 @@ data class DeviceRequest(@field:Attribute(name = "RequestType", required = true)
             @field:Element(name = "ProductsAllowed", required=false)
             var productsAllowed: DeviceRequest.Event.EventData.ProductsAllowed? = null
 
-            data class ProductsAllowed(@field:Element(name = "ProductCode", required = true) var productCode: List<ProductCode>) {
+            class ProductsAllowed {
+
+                @field:ElementList(name = "ProductCode", required = true)
+                lateinit var productCode: List<ProductCode>
 
                 class ProductCode {
-                    var value: BigInteger? = null
+                    var value: Integer? = null
                     @field:Attribute(name = "Name", required=false)
                     var name: String? = null
                     @field:Attribute(name = "UnitMeasure", required=false)
@@ -63,35 +72,37 @@ data class DeviceRequest(@field:Attribute(name = "RequestType", required = true)
     }
 
 
-    data class Input(@field:Attribute(name = "InDeviceTarget", required = true) var inDeviceTarget: DeviceType) {
+    class Input {
 
         @field:Element(name = "Command", required=false)
         var command: Command? = null
         @field:Element(name = "InSecureData", required=false)
         var inSecureData: List<SecureDataFlow>? = null
+        @field:Attribute(name = "InDeviceTarget", required = true)
+        lateinit var inDeviceTarget: DeviceType
 
         class Command {
             var value: CommandType? = null
             @field:Attribute(name = "Length", required=false)
-            var length: BigInteger? = null
+            var length: Integer? = null
             @field:Attribute(name = "MinLength", required=false)
-            var minLength: BigInteger? = null
+            var minLength: Integer? = null
             @field:Attribute(name = "MaxLength", required=false)
-            var maxLength: BigInteger? = null
+            var maxLength: Integer? = null
             @field:Attribute(name = "Decimals", required=false)
-            var decimals: BigInteger? = null
+            var decimals: Integer? = null
             @field:Attribute(name = "Separator", required=false)
             var separator: SeparatorType? = null
             @field:Attribute(name = "CardReadElement", required=false)
             var cardReadElement: CardReadType? = null
             @field:Attribute(name = "TimeOut", required=false)
-            var timeOut: BigInteger? = null
+            var timeOut: Integer? = null
             @field:Attribute(name = "DataRequired", required=false)
             var dataRequired: DataRequiredType? = null
         }
     }
 
-    data class Output(@field:Attribute(name = "OutDeviceTarget", required = true) var outDeviceTarget: DeviceType) {
+    class Output {
 
         @field:Element(name = "TextLine", required=false)
         var textLine: List<TextLine>? = null
@@ -110,21 +121,23 @@ data class DeviceRequest(@field:Attribute(name = "RequestType", required = true)
         @field:Attribute(name = "Immediate", required=false)
         var immediate: Boolean? = null
         @field:Attribute(name = "Category", required=false)
-        var category: BigInteger? = null
+        var category: Integer? = null
         @field:Attribute(name = "Code", required=false)
-        var code: BigInteger? = null
+        var code: Integer? = null
         @field:Attribute(name = "TimeOut", required=false)
-        var timeOut: BigInteger? = null
+        var timeOut: Integer? = null
+        @field:Attribute(name = "OutDeviceTarget", required = true)
+        lateinit var outDeviceTarget: DeviceType
 
 
         class Buzzer {
             var value: Boolean = false
             @field:Attribute(name = "DurationBeep", required=false)
-            var durationBeep: BigInteger? = null
+            var durationBeep: Integer? = null
             @field:Attribute(name = "CounterBeep", required=false)
-            var counterBeep: BigInteger? = null
+            var counterBeep: Integer? = null
             @field:Attribute(name = "DurationPause", required=false)
-            var durationPause: BigInteger? = null
+            var durationPause: Integer? = null
         }
 
 
@@ -143,7 +156,7 @@ data class DeviceRequest(@field:Attribute(name = "RequestType", required = true)
             @field:Attribute(name = "Cursor", required=false)
             var cursor: Boolean? = null
             @field:Attribute(name = "TimeOut", required=false)
-            var timeOut: BigInteger? = null
+            var timeOut: Integer? = null
             @field:Attribute(name = "Color", required=false)
             var color: ColorType? = null
             @field:Attribute(name = "Alignment", required=false)

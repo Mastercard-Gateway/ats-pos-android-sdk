@@ -4,11 +4,17 @@ import org.simpleframework.xml.Attribute
 import org.simpleframework.xml.Root
 import java.math.BigInteger
 
+@Suppress("PLATFORM_CLASS_MAPPED_TO_KOTLIN")
 @Root(name = "ATSErrorType", strict = false)
-data class ATSErrorType(@field:Attribute(name = "Category", required = true) val category: BigInteger,
-                        @field:Attribute(name = "Code", required = true) val code: BigInteger) {
+class ATSErrorType {
+
+    @field:Attribute(name = "Category", required = true)
+    lateinit var category: Integer
+    @field:Attribute(name = "Code", required = true)
+    lateinit var code: Integer
     @field:Attribute(name = "Description", required = false)
     var description: String? = null
     @field:Attribute(name = "Severity", required = false)
     var severity: BigInteger? = null
+
 }

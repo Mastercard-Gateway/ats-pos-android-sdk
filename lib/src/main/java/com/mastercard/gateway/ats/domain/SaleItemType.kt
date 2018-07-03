@@ -6,13 +6,9 @@ import org.simpleframework.xml.Order
 import org.simpleframework.xml.Root
 
 import java.math.BigDecimal
-import java.math.BigInteger
 
 @Root(name = "SaleItemType")
-data class SaleItemType(
-        @field:Element(name = "ProductCode", required = true) var productCode: BigInteger,
-        @field:Element(name = "Amount", required = true) var amount: BigDecimal,
-        @field:Attribute(name = "ItemID", required = true) var itemID: String) {
+class SaleItemType {
 
     @field:Element(name = "UnitMeasure", required=false)
     var unitMeasure: UnitOfMeasureCode? = null
@@ -32,6 +28,12 @@ data class SaleItemType(
     var saleChannel: String? = null
     @field:Element(name = "VATRate", required=false)
     var vatRate: BigDecimal? = null
+    @field:Element(name = "ProductCode", required = true)
+    lateinit var productCode: Integer
+    @field:Element(name = "Amount", required = true)
+    lateinit var amount: BigDecimal
+    @field:Attribute(name = "ItemID", required = true)
+    lateinit var itemID: String
 
 }
 

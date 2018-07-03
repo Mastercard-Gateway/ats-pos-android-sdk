@@ -110,7 +110,9 @@ object ATSBluetoothAdapter {
 
             // set up communication socket client
             // no need to call connect, already connected
-            atsCommunicationSocketClient = createATSCommunicationSocketClient(socket)
+            atsCommunicationSocketClient = createATSCommunicationSocketClient(socket).apply {
+                connect()
+            }
 
             "Connecting to bluetooth device: ${bluetoothDevice!!.name}".log(this)
             bluetoothSocketClient = createBluetoothSocketClient(bluetoothDevice!!).apply {

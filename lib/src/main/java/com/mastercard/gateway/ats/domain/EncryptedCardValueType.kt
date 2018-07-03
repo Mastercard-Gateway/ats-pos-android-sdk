@@ -8,7 +8,6 @@ import java.math.BigInteger
 
 @Suppress("ArrayInDataClass")
 @Root(name = "EncryptedCardValueType", strict = false)
-@Order(elements = ["track1", "track2", "track3", "barcode", "cardPAN", "startDate", "expiryDate", "issueNumber", "serviceCode", "tokenSalt", "cv2", "postCode", "address", "encryptionID", "encryptionKey", "encryptionRSA"])
 data class EncryptedCardValueType(@field:Element(name = "EncryptionID", required = true) var encryptionID: BigInteger,
                                   @field:Element(name = "EncryptionKey", required = true, type = String::class) var encryptionKey: ByteArray) {
 

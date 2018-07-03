@@ -22,10 +22,7 @@ import org.jetbrains.annotations.NotNull;
 
 import java.math.BigDecimal;
 import java.math.BigInteger;
-
-import javax.xml.datatype.DatatypeConfigurationException;
-import javax.xml.datatype.DatatypeFactory;
-import javax.xml.datatype.XMLGregorianCalendar;
+import java.util.Date;
 
 public class MainActivity extends AppCompatActivity {
 
@@ -62,10 +59,10 @@ public class MainActivity extends AppCompatActivity {
         ats.sendMessage(request);
     }
 
-    void startTransactionWithReader(String popid) throws DatatypeConfigurationException {
+    void startTransactionWithReader(String popid) {
 
 
-        CardServiceRequest.POSdata posData = new CardServiceRequest.POSdata(DatatypeFactory.newInstance().newXMLGregorianCalendar());
+        CardServiceRequest.POSdata posData = new CardServiceRequest.POSdata(new Date());
         posData.setTransactionNumber(new BigInteger("2"));
 
 
@@ -106,13 +103,9 @@ public class MainActivity extends AppCompatActivity {
             if (message instanceof ServiceResponse) {
                 ServiceResponse serviceResponse = (ServiceResponse) message;
 
-                if(serviceResponse.getRequestType() == ServiceRequestType.AcquireDevice && serviceResponse.getOverallResult() == RequestResultType.Success) {
+                if (serviceResponse.getRequestType() == ServiceRequestType.AcquireDevice && serviceResponse.getOverallResult() == RequestResultType.Success) {
                     String popId = serviceResponse.getPopid();
-                    try {
-                        startTransactionWithReader(popId);
-                    } catch (DatatypeConfigurationException e) {
-                        e.printStackTrace();
-                    }
+                    startTransactionWithReader(popId);
                 }
             } else if (message instanceof CardServiceResponse) {
                 CardServiceResponse cardServiceResponse = (CardServiceResponse) message;

@@ -5,7 +5,6 @@ import org.simpleframework.xml.Order
 import org.simpleframework.xml.Root
 
 @Root(name = "CardValueICCType", strict = false)
-@Order(elements = ["track1", "track2", "track3", "barcode", "inString", "cardPAN", "startDate", "expiryDate", "cardCircuit", "issueNumber", "serviceCode", "token", "cv2", "postCode", "address", "icc"])
 class CardValueICCType {
 
     @field:Element(name = "Track1", required=false)

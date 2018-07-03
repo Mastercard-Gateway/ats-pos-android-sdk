@@ -7,7 +7,6 @@ import org.simpleframework.xml.Root
 import javax.xml.datatype.XMLGregorianCalendar
 
 @Root(name = "E2EEValues", strict = false)
-@Order(elements = ["encryptionIvDt", "encryptionKeyData", "encryptedTrack2", "encryptedCardPAN"])
 class E2EEValues {
     @field:Element(name = "EncryptionIvDt", required=false) var encryptionIvDt: XMLGregorianCalendar? = null
     @field:Element(name = "EncryptionKeyData", type = String::class, required=false) var encryptionKeyData: ByteArray? = null

@@ -9,7 +9,6 @@ import java.math.BigDecimal
 import java.math.BigInteger
 
 @Root(name = "DeviceRequest", strict = false)
-@Order(elements = ["output", "input", "event"])
 data class DeviceRequest(@field:Attribute(name = "RequestType", required = true) var requestType: DeviceRequestType,
                          @field:Attribute(name = "WorkstationID", required = true) var workstationID: String,
                          @field:Attribute(name = "RequestID", required = true) var requestID: String) : ATSMessage {
@@ -30,11 +29,9 @@ data class DeviceRequest(@field:Attribute(name = "RequestType", required = true)
     var sequenceID: Int? = null
 
 
-    @Order(elements = ["eventData"])
     data class Event(@field:Element(name = "EventData", required = true) var eventData: EventData,
                      @field:Attribute(name = "EventType", required = true) var eventType: EventTypes) {
 
-        @Order(elements = ["dispenser", "totalAmount", "cardIdent", "dataRequired", "productsAllowed"])
         class EventData {
 
             @field:Element(name = "Dispenser", required=false)
@@ -48,7 +45,6 @@ data class DeviceRequest(@field:Attribute(name = "RequestType", required = true)
             @field:Element(name = "ProductsAllowed", required=false)
             var productsAllowed: DeviceRequest.Event.EventData.ProductsAllowed? = null
 
-            @Order(elements = ["productCode"])
             data class ProductsAllowed(@field:Element(name = "ProductCode", required = true) var productCode: List<ProductCode>) {
 
                 class ProductCode {
@@ -67,7 +63,6 @@ data class DeviceRequest(@field:Attribute(name = "RequestType", required = true)
     }
 
 
-    @Order(elements = ["command", "inSecureData"])
     data class Input(@field:Attribute(name = "InDeviceTarget", required = true) var inDeviceTarget: DeviceType) {
 
         @field:Element(name = "Command", required=false)
@@ -96,7 +91,6 @@ data class DeviceRequest(@field:Attribute(name = "RequestType", required = true)
         }
     }
 
-    @Order(elements = ["textLine", "buzzer", "outSecureData", "mac", "imageFile"])
     data class Output(@field:Attribute(name = "OutDeviceTarget", required = true) var outDeviceTarget: DeviceType) {
 
         @field:Element(name = "TextLine", required=false)

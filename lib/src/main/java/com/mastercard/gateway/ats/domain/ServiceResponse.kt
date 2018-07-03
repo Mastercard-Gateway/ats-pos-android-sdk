@@ -10,15 +10,10 @@ import javax.xml.datatype.XMLGregorianCalendar
 
 @Suppress("ArrayInDataClass")
 @Root(name = "ServiceResponse", strict = false)
-@Order(elements = ["Terminal", "ErrorDetail", "Authorisation", "Reconciliation", "Submission", "DiagnosisResult", "OriginalHeader", "PrivateData", "EncryptionModulus", "EncryptionExponent", "Reference", "Versions"])
-data class ServiceResponse(@field:Attribute(name = "RequestType", required = true) var requestType: ServiceRequestType,
-                           @field:Attribute(name = "WorkstationID", required = true) var workstationID: String,
-                           @field:Attribute(name = "RequestID", required = true) var requestID: String,
-                           @field:Attribute(name = "OverallResult", required = true) var overallResult: RequestResultType) : ATSMessage {
-
-    @Deprecated("Required empty constructor for SimpleXML, do not use")
-    constructor() : this(ServiceRequestType.AcquireDevice, "", "", RequestResultType.Aborted)
-
+data class ServiceResponse(@field:Attribute(name = "RequestType", required = true) var requestType: ServiceRequestType = ServiceRequestType.AcquireDevice,
+                           @field:Attribute(name = "WorkstationID", required = true) var workstationID: String = "",
+                           @field:Attribute(name = "RequestID", required = true) var requestID: String = "",
+                           @field:Attribute(name = "OverallResult", required = true) var overallResult: RequestResultType =RequestResultType.Aborted) : ATSMessage {
 
     @field:Element(name = "Terminal", required = false)
     var terminal: Terminal? = null
@@ -69,7 +64,6 @@ data class ServiceResponse(@field:Attribute(name = "RequestType", required = tru
         var popid: String? = null
     }
 
-    @Order(elements = ["TotalAmount"])
     data class Reconciliation(@field:Element(name = "TotalAmount", required = true) var totalAmount: List<TotalAmount>) {
 
         @field:Attribute(name = "LanguageCode", required = false)
@@ -92,7 +86,6 @@ data class ServiceResponse(@field:Attribute(name = "RequestType", required = tru
         }
     }
 
-    @Order(elements = ["Successful", "Failed"])
     data class Submission(@field:Element(name = "Successful", required = true) var successful: Successful,
                           @field:Element(name = "Failed", required = true) var failed: Failed) {
 
@@ -113,13 +106,10 @@ data class ServiceResponse(@field:Attribute(name = "RequestType", required = tru
         var stan: Long? = null
     }
 
-    @Order(elements = ["Devices"])
     data class Versions(@field:Element(name = "Devices", required = true) var devices: List<Devices>) {
 
-        @Order(elements = ["Device"])
         data class Devices(@field:Element(name = "Device", required = true) var device: List<Device>) {
 
-            @Order(elements = ["SerialNumber", "TimeStamp", "PTID", "Manufacturer", "Model", "ApplicationName", "ApplicationVersion", "ContactlessKernelName", "ContactlessKernelVersion", "FirmwareName", "FirmwareVersion", "OSName", "OSVersion", "EncryptionModuleName", "EncryptionModuleVersion", "Product"])
             data class Device(@field:Attribute(name = "POPID", required = true) var popid: String) {
 
                 @field:Element(name = "SerialNumber", required = false)

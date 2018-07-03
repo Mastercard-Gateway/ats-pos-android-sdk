@@ -11,7 +11,6 @@ import javax.xml.datatype.XMLGregorianCalendar
 
 
 @Root(name = "CardServiceResponse")
-@Order(elements = ["terminal", "errorDetail", "tender", "loyalty", "saleItem", "originalHeader", "cardValue", "privateData"])
 data class CardServiceResponse(@field:Attribute(name = "RequestType", required = true) var requestType: CardRequestType,
                                @field:Attribute(name = "WorkstationID", required = true) var workstationID: String,
                                @field:Attribute(name = "RequestID", required = true) var requestID: String,
@@ -38,7 +37,6 @@ data class CardServiceResponse(@field:Attribute(name = "RequestType", required =
     @field:Attribute(name = "POPID", required=false)
     var popid: String? = null
 
-    @Order(elements = ["loyaltyCard", "loyaltyAmount", "loyaltyApprovalCode", "enabled", "customerName", "points", "bonus", "incentive", "updated"])
     data class Loyalty(@field:Attribute(name = "LoyaltyFlag", required = true) var loyaltyFlag: Boolean = false) {
 
         @field:Element(name = "LoyaltyCard", required=false)
@@ -93,7 +91,6 @@ data class CardServiceResponse(@field:Attribute(name = "RequestType", required =
         var popid: String? = null
     }
 
-    @Order(elements = ["totalAmount", "authorisation", "restrictionCodes"])
     class Tender {
 
         @field:Element(name = "TotalAmount", required=false)

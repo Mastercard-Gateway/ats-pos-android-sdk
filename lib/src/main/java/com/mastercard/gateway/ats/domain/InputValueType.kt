@@ -5,7 +5,6 @@ import org.simpleframework.xml.Order
 import org.simpleframework.xml.Root
 
 @Root(name = "InputValueType")
-@Order(elements = ["track1", "track2", "track3", "icc", "barcode", "inBoolean", "inNumber", "inString", "cardPAN", "startDate", "expiryDate"])
 class InputValueType {
 
     @field:Element(name = "Track1", required=false)

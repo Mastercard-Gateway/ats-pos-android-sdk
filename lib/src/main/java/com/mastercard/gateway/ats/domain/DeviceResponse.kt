@@ -9,7 +9,6 @@ import java.math.BigDecimal
 import java.math.BigInteger
 
 @Root(name = "DeviceResponse", strict = false)
-@Order(elements = ["output", "input", "eventResult", "errorDetail"])
 data class DeviceResponse(@field:Attribute(name = "RequestType", required = true) var requestType: DeviceRequestType,
                           @field:Attribute(name = "RequestID", required = true) var requestID: String,
                           @field:Attribute(name = "OverallResult", required = true) var overallResult: RequestResultType) : ATSMessage {
@@ -37,7 +36,6 @@ data class DeviceResponse(@field:Attribute(name = "RequestType", required = true
     var referenceRequestID: String? = null
 
 
-    @Order(elements = ["dispenser", "productCode", "modifiedRequest", "totalAmount", "saleItem", "acquirer", "authResponse", "transactionLimits", "oaCentreDetails"])
     class EventResult {
 
         @field:Element(name = "Dispenser", type = Short::class, required=false)
@@ -70,7 +68,6 @@ data class DeviceResponse(@field:Attribute(name = "RequestType", required = true
             var creditPlan: String? = null
         }
 
-        @Order(elements = ["authARC", "authCode", "authResult", "icc"])
         class AuthResponse {
             @field:Element(name = "AuthARC", required=false)
             var authARC: String? = null
@@ -82,7 +79,6 @@ data class DeviceResponse(@field:Attribute(name = "RequestType", required = true
             var icc: ICCType? = null
         }
 
-        @Order(elements = ["oaCentreName", "refundOnline", "refundOnlineCtls", "reversalMode", "reverseOnline", "iccNoTrack2"])
         class OACentreDetails {
             @field:Element(name = "OACentreName", required=false)
             var oaCentreName: String? = null
@@ -98,7 +94,6 @@ data class DeviceResponse(@field:Attribute(name = "RequestType", required = true
             var iccNoTrack2: OAICCNoTrack2? = null
         }
 
-        @Order(elements = ["authFlags", "limitFloor", "limitPostComms", "ceiling", "ceilingCDCVM", "ceilingCash", "ceilingFPA", "readTLV"])
         class TransactionLimits {
             @field:Element(name = "AuthFlags", required=false)
             var authFlags: String? = null
@@ -120,7 +115,6 @@ data class DeviceResponse(@field:Attribute(name = "RequestType", required = true
 
     }
 
-    @Order(elements = ["secureData", "inputValue"])
     data class Input(@field:Attribute(name = "InDeviceTarget", required = true) var inDeviceTarget: DeviceType,
                      @field:Attribute(name = "InResult", required = true) var inResult: RequestResultType) {
 

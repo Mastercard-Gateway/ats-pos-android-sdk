@@ -8,7 +8,6 @@ import java.math.BigInteger
 
 @Suppress("ArrayInDataClass")
 @Root(name = "CardValueDRType", strict = false)
-@Order(elements = ["encryptionVersion", "e2EEEncValues", "p2PEEncValues", "track2", "cardPAN", "cadLuhn", "startDate", "expiryDate", "cardCircuit", "issueNumber", "serviceCode", "token", "contactless", "cardType", "readTLV", "features", "terminalAttributes", "terminalID", "readerSerialNo", "icc"])
 class CardValueDRType {
 
     @field:Element(name = "EncryptionVersion", required=false)
@@ -66,7 +65,6 @@ class CardValueDRType {
         var bpaRearranged: Boolean? = null
     }
 
-    @Order(elements = ["feature"])
     class Features {
         @field:Element(name = "Feature", required=false)
         var feature: List<CardFeatureType>? = null

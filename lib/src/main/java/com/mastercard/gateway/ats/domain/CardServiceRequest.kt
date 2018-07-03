@@ -6,11 +6,11 @@ import org.simpleframework.xml.Order
 import org.simpleframework.xml.Root
 
 import java.math.BigInteger
+import java.util.*
 
 import javax.xml.datatype.XMLGregorianCalendar
 
 @Root(name = "CardServiceRequest", strict = false)
-@Order(elements = ["poSdata", "loyalty", "cardCircuitCollection", "originalTransaction", "totalAmount", "saleItem", "cardValue", "encryptedCardValue", "acquirer", "privateData", "encryption", "validation"])
 data class CardServiceRequest(@field:Element(name = "POSdata", required = true) var poSdata: POSdata,
                               @field:Attribute(name = "RequestType", required = true) var requestType: CardRequestType,
                               @field:Attribute(name = "WorkstationID", required = true) var workstationID: String,
@@ -64,7 +64,6 @@ data class CardServiceRequest(@field:Element(name = "POSdata", required = true) 
     }
 
 
-    @Order(elements = ["cardCircuit"])
     data class CardCircuitCollection(@field:Element(name = "CardCircuit", required = true) var cardCircuit: List<CardCircuit>) {
 
         data class CardCircuit(var value: String? = null) {
@@ -73,7 +72,6 @@ data class CardServiceRequest(@field:Element(name = "POSdata", required = true) 
         }
     }
 
-    @Order(elements = ["loyaltyCard", "moPrule", "loyaltyAmount"])
     data class Loyalty(@field:Attribute(name = "LoyaltyFlag", required = true) var loyaltyFlag: Boolean = false) {
 
         @field:Element(name = "LoyaltyCard", required=false)
@@ -106,8 +104,7 @@ data class CardServiceRequest(@field:Element(name = "POSdata", required = true) 
         var trackingReference: String? = null
     }
 
-    @Order(elements = ["posTimeStamp", "serviceLevel", "shiftNumber", "clerkID", "outdoorPosition", "manualPAN", "contactless", "contactlessReceipt", "chip", "swipe", "clerkPermission", "tightControl", "splitPayment", "voiceReferral", "transactionNumber", "reference", "cardHolderLocation"])
-    data class POSdata(@field:Element(name = "POSTimeStamp", required = true) var posTimeStamp: XMLGregorianCalendar) {
+    data class POSdata(@field:Element(name = "POSTimeStamp", required = true) var posTimeStamp: Date) {
         @field:Element(name = "ServiceLevel", required=false)
         var serviceLevel: String? = null
         @field:Element(name = "ShiftNumber", required=false)

@@ -9,7 +9,6 @@ import java.math.BigDecimal
 import java.math.BigInteger
 
 @Root(name = "SaleItemType")
-@Order(elements = ["productCode", "amount", "unitMeasure", "unitPrice", "quantity", "taxCode", "additionalProductCode", "additionalProductInfo", "typeMovement", "saleChannel", "vatRate"])
 data class SaleItemType(
         @field:Element(name = "ProductCode", required = true) var productCode: BigInteger,
         @field:Element(name = "Amount", required = true) var amount: BigDecimal,

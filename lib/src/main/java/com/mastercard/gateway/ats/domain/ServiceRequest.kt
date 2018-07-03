@@ -9,8 +9,6 @@ import java.math.BigInteger
 import javax.xml.datatype.XMLGregorianCalendar
 
 @Root(name = "ServiceRequest")
-@Order(elements = ["POSdata", "TotalAmount", "Agent", "PINPadProgramLoad", "PrivateData", "EncryptionRSA"])
-
 class ServiceRequest(@field:Attribute(name = "RequestType", required = true) var requestType: ServiceRequestType,
                      @field:Attribute(name = "WorkstationID", required = true) var workstationID: String,
                      @field:Attribute(name = "RequestID", required = true) var requestID: String) : ATSMessage {
@@ -33,7 +31,6 @@ class ServiceRequest(@field:Attribute(name = "RequestType", required = true) var
     var popid: String? = null
 
 
-    @Order(elements = ["ForceApplication", "ForceContactless", "ForceFirmware", "ForceOperatingSystem", "InstallEncrypt"])
     class PINPadProgramLoad {
 
         @field:Element(name = "ForceApplication", required = false)
@@ -49,7 +46,7 @@ class ServiceRequest(@field:Attribute(name = "RequestType", required = true) var
 
     }
 
-    @Order(elements = ["POSTimeStamp", "ShiftNumber", "ClerkID", "ClerkPermission", "Reference", "DiagnosisMethod"])
+
     class POSdata(@field:Element(name = "POSTimeStamp", required = true) var posTimeStamp: XMLGregorianCalendar) {
 
         @field:Element(name = "ShiftNumber", required = false)

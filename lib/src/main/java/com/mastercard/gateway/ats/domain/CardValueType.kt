@@ -9,7 +9,6 @@ import java.math.BigInteger
 
 @Suppress("ArrayInDataClass")
 @Root(name = "CardValueType", strict = false)
-@Order(elements = ["track1", "track2", "track3", "icc", "barcode", "inString", "cardPAN", "startDate", "expiryDate", "endDate", "cardCircuit", "issueNumber", "serviceCode", "tokenSalt", "token", "cv2", "postCode", "address", "extendedPolicy", "mileage", "registration", "idChecked", "supplementary"])
 class CardValueType {
     @field:Element(name = "Track1", required=false) var track1: CardTrack? = null
     @field:Element(name = "Track2", required=false) var track2: CardTrack? = null

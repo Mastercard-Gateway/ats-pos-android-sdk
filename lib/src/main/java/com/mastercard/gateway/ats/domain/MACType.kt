@@ -7,5 +7,4 @@ import org.simpleframework.xml.Root
 import java.util.ArrayList
 
 @Root(name = "MACType")
-@Order(elements = ["hex"])
 data class MACType(@field:Element(name = "Hex", required = true, type = String::class) var hex: List<ByteArray>)

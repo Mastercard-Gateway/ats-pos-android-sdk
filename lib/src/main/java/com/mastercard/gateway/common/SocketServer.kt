@@ -49,6 +49,10 @@ internal class SocketServer(port: Int) : Closeable {
         callbacks.remove(callback)
     }
 
+    fun isRunning(): Boolean {
+        return serverSocket.isBound && !serverSocket.isClosed
+    }
+
     /**
      * Closes the ServerSocket and removes all callbacks
      */
@@ -62,7 +66,7 @@ internal class SocketServer(port: Int) : Closeable {
     }
 
     private fun runConnectLoop() {
-        while (serverSocket.isBound && !serverSocket.isClosed) {
+        while (isRunning()) {
             val incomingSocket = serverSocket.accept()
 
             val msg = handler.obtainMessage(EVENT_NEW_CONNECTION, incomingSocket)

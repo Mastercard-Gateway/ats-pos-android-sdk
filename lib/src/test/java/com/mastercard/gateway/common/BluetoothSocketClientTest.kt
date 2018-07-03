@@ -30,9 +30,9 @@ class BluetoothSocketClientTest {
         whenever(mockBluetoothDevice.uuids).thenReturn(arrayOf(parcelUuid))
         whenever(parcelUuid.uuid).thenReturn(uuid)
         whenever(mockBluetoothDevice.createRfcommSocketToServiceRecord(any())).thenReturn(mockBluetoothSocket)
-        socketClient = BluetoothSocketClient(device = mockBluetoothDevice, secure = true)
+        atsCommunicationSocketClient = BluetoothSocketClient(device = mockBluetoothDevice, secure = true)
 
-        socketClient?.connect()
+        atsCommunicationSocketClient?.connect()
 
         verify(mockBluetoothDevice, times(1)).uuids
         verify(mockBluetoothDevice, times(1)).createRfcommSocketToServiceRecord(any())
@@ -46,9 +46,9 @@ class BluetoothSocketClientTest {
         whenever(mockBluetoothDevice.uuids).thenReturn(arrayOf(parcelUuid))
         whenever(parcelUuid.uuid).thenReturn(uuid)
         whenever(mockBluetoothDevice.createRfcommSocketToServiceRecord(any())).thenReturn(mockBluetoothSocket)
-        socketClient = BluetoothSocketClient(device = mockBluetoothDevice, secure = false)
+        atsCommunicationSocketClient = BluetoothSocketClient(device = mockBluetoothDevice, secure = false)
 
-        socketClient?.connect()
+        atsCommunicationSocketClient?.connect()
 
         verify(mockBluetoothDevice, times(1)).uuids
         verify(mockBluetoothDevice, times(0)).createRfcommSocketToServiceRecord(uuid)

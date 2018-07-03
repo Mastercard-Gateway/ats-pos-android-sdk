@@ -31,11 +31,7 @@ public class MainActivity extends AppCompatActivity {
         WifiManager wifiManager = (WifiManager) getApplicationContext().getSystemService(Context.WIFI_SERVICE);
         ((TextView) findViewById(R.id.hello)).setText(Formatter.formatIpAddress(wifiManager.getConnectionInfo().getIpAddress()));
 
-        ATSDiagnostics.setLogLevel(Log.VERBOSE);
-        ATSDiagnostics.startLogCapture();
-
 //        ATSBluetoothAdapter.setBluetoothDevice("Miura 183");
-        ATSBluetoothAdapter.init(2002);
 
 //        ats = new ATSClient("10.157.193.8", 20002);
         ats = new ATSClient("10.157.196.212", 20002);
@@ -69,9 +65,9 @@ public class MainActivity extends AppCompatActivity {
         ats.sendMessage(xml);
     }
 
-    void startTransactionWithBluetoothCardReader(String bluetoothDeviceName) {
+    void startTransactionWithBluetoothCardReader() {
 
-        ATSBluetoothAdapter.setBluetoothDevice(bluetoothDeviceName);
+//        ATSBluetoothAdapter.setBluetoothDevice(bluetoothDeviceName);
 
         String xml = "<?xml version=\"1.0\" encoding=\"UTF-8\"?>\n" +
                 "<CardServiceRequest RequestType=\"CardPayment\" ApplicationSender=\"ATSClient\" WorkstationID=\"43214321\"  RequestID=\"2\">\n" +
@@ -93,7 +89,6 @@ public class MainActivity extends AppCompatActivity {
             Log.i("MainActivity", "ATS connected");
 
             acquireDevice();
-//            startTransactionWithBluetoothCardReader("Simplify 780");
         }
 
 
@@ -102,7 +97,7 @@ public class MainActivity extends AppCompatActivity {
             Log.i("MainActivity", "Received message:\n" + message);
 
             if (message.contains("ServiceResponse") && message.contains("AcquireDevice") && message.contains("OverallResult=\"Success\"")) {
-                startTransactionWithBluetoothCardReader("Miura 183");
+                startTransactionWithBluetoothCardReader();
 //                Pattern pattern = Pattern.compile("POPID=\"([^\"]+)\"");
 //                Matcher m = pattern.matcher(message);
 //                if (m.find()) {
@@ -123,7 +118,7 @@ public class MainActivity extends AppCompatActivity {
         public void onDisconnected() {
             Log.i("MainActivity", "ATS disconnected");
 
-            Log.v("MainActivity", "Total log:\n" + ATSDiagnostics.stopLogCapture());
+            Log.v("MainActivity", "Total log:\n" + ATSDiagnostics.getLog());
             ATSDiagnostics.clearLog();
         }
     }

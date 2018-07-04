@@ -1,6 +1,7 @@
 package com.mastercard.gateway.ats
 
 import android.annotation.SuppressLint
+import android.bluetooth.BluetoothAdapter
 import android.bluetooth.BluetoothDevice
 import com.mastercard.gateway.common.*
 import java.net.Socket
@@ -185,6 +186,32 @@ object ATSBluetoothAdapter {
         }
     }
 
+
+    /**
+     *  Get the list of bonded devices
+     *
+     *  @return list of names of bonded devices or null, if Bluetooth is not supported
+     */
+    @JvmStatic
+    fun getDeviceNames(): List<String>? {
+
+        val bluetoothAdapter = BluetoothAdapter.getDefaultAdapter() ?: return null
+
+        val list = mutableListOf<String>()
+        bluetoothAdapter.bondedDevices.map { it.name }.toCollection(list)
+        return list
+    }
+
+    /**
+     *  Get the list of bonded devices
+     *
+     *  @return list of bonded devices or null, if Bluetooth is not supported
+     */
+    @JvmStatic
+    fun getDevices(): List<BluetoothDevice>? {
+        val bluetoothAdapter = BluetoothAdapter.getDefaultAdapter() ?: return null
+        return bluetoothAdapter.bondedDevices.toList()
+    }
 
     // SAVE THIS STUBBED OUT WORK FOR BLUETOOTH DEVICE LIST METHODS
 

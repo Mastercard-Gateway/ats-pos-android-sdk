@@ -26,6 +26,7 @@ import java.net.Socket
  */
 object ATSBluetoothAdapter {
 
+    internal const val DEFAULT_DEVICE_PREFIXES = arrayOf("Miura")
     internal const val CONNECTION_ATTEMPTS = 3
 
     internal var atsSocketServer: SocketServer? = null
@@ -207,10 +208,27 @@ object ATSBluetoothAdapter {
      *
      *  @return list of bonded devices or null, if Bluetooth is not supported
      */
+//    @JvmStatic
+//    fun getDevices(): List<BluetoothDevice>? {
+//        val bluetoothAdapter = BluetoothAdapter.getDefaultAdapter() ?: return null
+//        return bluetoothAdapter.bondedDevices.toList()
+//    }
+
+    /**
+     *  Returns a list of supported bluetooth devices, filtered by name prefix
+     *
+     *  @return The list of supported bluetooth devices
+     */
     @JvmStatic
-    fun getDevices(): List<BluetoothDevice>? {
-        val bluetoothAdapter = BluetoothAdapter.getDefaultAdapter() ?: return null
-        return bluetoothAdapter.bondedDevices.toList()
+    fun getDevices(): List<BluetoothDevice> {
+        return BluetoothAdapter.getDefaultAdapter()?.bondedDevices?.filter { device ->
+            DEFAULT_DEVICE_PREFIXES.forEach { prefix ->
+                if (device.name.startsWith(prefix)) {
+                    return@filter true
+                }
+            }
+            return@filter false
+        } ?: listOf()
     }
 
     // SAVE THIS STUBBED OUT WORK FOR BLUETOOTH DEVICE LIST METHODS

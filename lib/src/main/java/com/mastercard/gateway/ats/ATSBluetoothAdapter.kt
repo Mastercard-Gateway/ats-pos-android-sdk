@@ -26,7 +26,7 @@ import java.net.Socket
  */
 object ATSBluetoothAdapter {
 
-    internal const val DEFAULT_DEVICE_PREFIXES = arrayOf("Miura")
+    internal val DEFAULT_DEVICE_PREFIXES = arrayOf("Miura")
     internal const val CONNECTION_ATTEMPTS = 3
 
     internal var atsSocketServer: SocketServer? = null
@@ -199,7 +199,14 @@ object ATSBluetoothAdapter {
         val bluetoothAdapter = BluetoothAdapter.getDefaultAdapter() ?: return null
 
         val list = mutableListOf<String>()
-        bluetoothAdapter.bondedDevices.map { it.name }.toCollection(list)
+        bluetoothAdapter.bondedDevices.map { it.name }.filter {
+            DEFAULT_DEVICE_PREFIXES.forEach { prefix ->
+                if (it.startsWith(prefix)) {
+                    return@filter true
+                }
+            }
+            return@filter false
+        }.toCollection(list)
         return list
     }
 

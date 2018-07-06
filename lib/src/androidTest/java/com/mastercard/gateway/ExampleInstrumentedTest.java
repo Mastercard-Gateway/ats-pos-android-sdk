@@ -1,4 +1,4 @@
-package com.mastercard.gateway.ats;
+package com.mastercard.ats;
 
 import android.content.Context;
 import android.support.test.InstrumentationRegistry;

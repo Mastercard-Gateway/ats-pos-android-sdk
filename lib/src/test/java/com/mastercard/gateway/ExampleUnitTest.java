@@ -1,4 +1,4 @@
-package com.mastercard.gateway.ats;
+package com.mastercard.ats;
 
 import org.junit.Test;
 

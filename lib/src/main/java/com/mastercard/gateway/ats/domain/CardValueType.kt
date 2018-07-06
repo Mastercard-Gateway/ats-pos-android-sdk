@@ -2,7 +2,6 @@ package com.mastercard.gateway.ats.domain
 
 import org.simpleframework.xml.Element
 import org.simpleframework.xml.Root
-import java.math.BigInteger
 
 
 @Suppress("ArrayInDataClass")
@@ -47,7 +46,7 @@ class CardValueType {
     @field:Element(name = "ExtendedPolicy", required = false)
     var extendedPolicy: Any? = null
     @field:Element(name = "Mileage", required = false)
-    var mileage: BigInteger? = null
+    var mileage: Int? = null
     @field:Element(name = "Registration", required = false)
     var registration: String? = null
     @field:Element(name = "IDChecked", required = false)

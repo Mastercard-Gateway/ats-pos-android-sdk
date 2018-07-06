@@ -25,7 +25,6 @@ import com.mastercard.gateway.ats.domain.TotalAmountType;
 import org.jetbrains.annotations.NotNull;
 
 import java.math.BigDecimal;
-import java.math.BigInteger;
 import java.util.Date;
 
 public class MainActivity extends AppCompatActivity {
@@ -79,7 +78,7 @@ public class MainActivity extends AppCompatActivity {
 
         CardServiceRequest.POSdata posData = new CardServiceRequest.POSdata();
         posData.setPosTimeStamp(new Date());
-        posData.setTransactionNumber(new BigInteger("2"));
+        posData.setTransactionNumber(2);
         cardServiceRequest.setPoSdata(posData);
 
         cardServiceRequest.setPopid(popid);

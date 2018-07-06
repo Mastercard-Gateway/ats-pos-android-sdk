@@ -2,8 +2,7 @@ package com.mastercard.gateway.ats.domain
 
 import org.simpleframework.xml.*
 import java.math.BigDecimal
-import java.math.BigInteger
- import java.util.Date
+import java.util.*
 
 @Root(name = "ServiceRequest")
 class ServiceRequest : ATSMessage {
@@ -53,7 +52,7 @@ class ServiceRequest : ATSMessage {
         @field:Element(name = "POSTimeStamp", required = true)
         lateinit var posTimeStamp: Date
         @field:Element(name = "ShiftNumber", required = false)
-        var shiftNumber: BigInteger? = null
+        var shiftNumber: Int? = null
         @field:Element(name = "ClerkID", required = false)
         var clerkID: Int? = null
         @field:Element(name = "ClerkPermission", required = false)

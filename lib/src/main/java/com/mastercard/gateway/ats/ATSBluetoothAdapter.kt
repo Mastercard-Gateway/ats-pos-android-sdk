@@ -26,8 +26,9 @@ import java.net.Socket
  */
 object ATSBluetoothAdapter {
 
-    internal val DEFAULT_DEVICE_PREFIXES = arrayOf("Miura")
     internal const val CONNECTION_ATTEMPTS = 3
+
+    internal val DEFAULT_DEVICE_PREFIXES = arrayOf("Miura")
 
     internal var atsSocketServer: SocketServer? = null
     internal var atsCommunicationSocketClient: BasicSocketClient? = null
@@ -80,6 +81,33 @@ object ATSBluetoothAdapter {
     @JvmStatic
     fun isRunning(): Boolean {
         return atsSocketServer?.isRunning() ?: false
+    }
+
+    /**
+     *  Returns a list of supported bluetooth devices, filtered by supported name prefix
+     *
+     *  @return The list of supported bluetooth devices
+     */
+    @JvmStatic
+    fun getDevices(): List<BluetoothDevice> {
+        return BluetoothAdapter.getDefaultAdapter()?.bondedDevices?.filter { device ->
+            DEFAULT_DEVICE_PREFIXES.forEach { prefix ->
+                if (device.name.startsWith(prefix)) {
+                    return@filter true
+                }
+            }
+            return@filter false
+        } ?: listOf()
+    }
+
+    /**
+     *  Returns a list of supported bluetooth device names, filtered by supported name prefix
+     *
+     *  @return The list of supported bluetooth device names
+     */
+    @JvmStatic
+    fun getDeviceNames(): List<String> {
+        return getDevices().map { it.name }
     }
 
 
@@ -186,100 +214,4 @@ object ATSBluetoothAdapter {
             "Bluetooth connection encountered an error".log(this, throwable)
         }
     }
-
-
-    /**
-     *  Get the list of bonded devices
-     *
-     *  @return list of names of bonded devices or null, if Bluetooth is not supported
-     */
-    @JvmStatic
-    fun getDeviceNames(): List<String>? {
-
-        val bluetoothAdapter = BluetoothAdapter.getDefaultAdapter() ?: return null
-
-        val list = mutableListOf<String>()
-        bluetoothAdapter.bondedDevices.map { it.name }.filter {
-            DEFAULT_DEVICE_PREFIXES.forEach { prefix ->
-                if (it.startsWith(prefix)) {
-                    return@filter true
-                }
-            }
-            return@filter false
-        }.toCollection(list)
-        return list
-    }
-
-    /**
-     *  Get the list of bonded devices
-     *
-     *  @return list of bonded devices or null, if Bluetooth is not supported
-     */
-//    @JvmStatic
-//    fun getDevices(): List<BluetoothDevice>? {
-//        val bluetoothAdapter = BluetoothAdapter.getDefaultAdapter() ?: return null
-//        return bluetoothAdapter.bondedDevices.toList()
-//    }
-
-    /**
-     *  Returns a list of supported bluetooth devices, filtered by name prefix
-     *
-     *  @return The list of supported bluetooth devices
-     */
-    @JvmStatic
-    fun getDevices(): List<BluetoothDevice> {
-        return BluetoothAdapter.getDefaultAdapter()?.bondedDevices?.filter { device ->
-            DEFAULT_DEVICE_PREFIXES.forEach { prefix ->
-                if (device.name.startsWith(prefix)) {
-                    return@filter true
-                }
-            }
-            return@filter false
-        } ?: listOf()
-    }
-
-    // SAVE THIS STUBBED OUT WORK FOR BLUETOOTH DEVICE LIST METHODS
-
-//    internal var bluetoothAdapter: BluetoothAdapter = BluetoothAdapter.getDefaultAdapter()
-
-//    @JvmStatic
-//    fun init(port: Int) {
-//        if (::atsSocketServer.isInitialized) {
-//            throw IllegalStateException("ATSBluetoothAdapter has already been initialized")
-//        }
-//
-//        atsSocketServer = SocketServer(port).apply {
-//            addCallback(ATSServerSocketCallback())
-//        }
-//    }
-
-//    @JvmStatic
-//    @JvmOverloads
-//    fun setBluetoothDevice(deviceName: String?, secure: Boolean = true) {
-//        if (!deviceName.isNullOrEmpty()) {
-//            "Looking for Bluetooth device: $deviceName".log(this)
-//            val bondedDevices = bluetoothAdapter.bondedDevices
-//            val device = try {
-//                bondedDevices.first { deviceName == it.name }
-//            } catch (exception: NoSuchElementException) {
-//                null
-//            }
-//
-//
-//
-//            when (device) {
-//                null -> throw RuntimeException("No device found with name: $deviceName")
-//                else -> {
-//                    bluetoothSocketClient = BluetoothSocketClient(device = device, secure = secure).apply {
-//                        addCallback(bluetoothSocketCallback)
-//                    }
-//                    "Found: $deviceName".log(this)
-//                }
-//            }
-//        } else {
-//            // Close and null out bluetooth socket client if name is null
-//            bluetoothSocketClient?.close()
-//            bluetoothSocketClient = null
-//        }
-//    }
 }

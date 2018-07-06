@@ -5,7 +5,8 @@ package com.mastercard.gateway.ats.domain
 import org.simpleframework.xml.Attribute
 import org.simpleframework.xml.Element
 import org.simpleframework.xml.Root
-import javax.xml.datatype.XMLGregorianCalendar
+import org.simpleframework.xml.Text
+import java.util.Date
 
 
 @Root(name = "CardServiceResponse")
@@ -59,13 +60,14 @@ class CardServiceResponse : ATSMessage {
         @field:Element(name = "Incentive", required = false)
         var incentive: Integer? = null
         @field:Element(name = "Updated", required = false)
-        var updated: XMLGregorianCalendar? = null
+        var updated: Date? = null
         @field:Attribute(name = "LoyaltyTimeStamp", required = false)
-        var loyaltyTimeStamp: XMLGregorianCalendar? = null
+        var loyaltyTimeStamp: Date? = null
         @field:Attribute(name = "LoyaltyFlag", required = true)
         var loyaltyFlag: Boolean = false
 
         class LoyaltyAmount {
+            @field:Text
             var value: Float = 0f
             @field:Attribute(name = "OriginalLoyaltyAmount", required = false)
             var originalLoyaltyAmount: Float? = null
@@ -163,7 +165,7 @@ class CardServiceResponse : ATSMessage {
             @field:Attribute(name = "AcquirerID", required = true)
             lateinit var acquirerID: String
             @field:Attribute(name = "TimeStamp", required = true)
-            lateinit var timeStamp: XMLGregorianCalendar
+            lateinit var timeStamp: Date
         }
     }
 

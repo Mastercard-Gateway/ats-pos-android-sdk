@@ -1,11 +1,8 @@
 package com.mastercard.gateway.ats.domain
 
-import org.simpleframework.xml.Attribute
-import org.simpleframework.xml.Element
-import org.simpleframework.xml.ElementList
-import org.simpleframework.xml.Root
+import org.simpleframework.xml.*
 import java.math.BigDecimal
-import javax.xml.datatype.XMLGregorianCalendar
+ import java.util.Date
 
 @Suppress("ArrayInDataClass")
 @Root(name = "ServiceResponse", strict = false)
@@ -57,7 +54,7 @@ class ServiceResponse : ATSMessage {
         @field:Attribute(name = "AcquirerID", required = true)
         lateinit var acquirerID: String
         @field:Attribute(name = "TimeStamp", required = true)
-        lateinit var timeStamp: XMLGregorianCalendar
+        lateinit var timeStamp: Date
     }
 
     class OriginalHeader {
@@ -85,6 +82,7 @@ class ServiceResponse : ATSMessage {
 
         class TotalAmount {
 
+            @field:Text
             lateinit var value: BigDecimal
             @field:Attribute(name = "NumberPayments", required = true)
             lateinit var numberPayments: Integer
@@ -113,12 +111,14 @@ class ServiceResponse : ATSMessage {
         var languageCode: LanguageCodeType? = null
 
         class Failed {
+            @field:Text
             lateinit var value: BigDecimal
             @field:Attribute(name = "NumberPayments", required = true)
             lateinit var numberPayments: Integer
         }
 
         class Successful {
+            @field:Text
             lateinit var value: BigDecimal
             @field:Attribute(name = "NumberPayments", required = true)
             lateinit var numberPayments: Integer
@@ -148,7 +148,7 @@ class ServiceResponse : ATSMessage {
                 @field:Element(name = "SerialNumber", required = false)
                 var serialNumber: String? = null
                 @field:Element(name = "TimeStamp", required = false)
-                var timeStamp: XMLGregorianCalendar? = null
+                var timeStamp: Date? = null
                 @field:Element(name = "PTID", required = false)
                 var ptid: String? = null
                 @field:Element(name = "Manufacturer", required = false)

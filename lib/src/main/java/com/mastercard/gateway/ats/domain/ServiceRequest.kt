@@ -1,12 +1,9 @@
 package com.mastercard.gateway.ats.domain
 
-import org.simpleframework.xml.Attribute
-import org.simpleframework.xml.Element
-import org.simpleframework.xml.Order
-import org.simpleframework.xml.Root
+import org.simpleframework.xml.*
 import java.math.BigDecimal
 import java.math.BigInteger
-import javax.xml.datatype.XMLGregorianCalendar
+ import java.util.Date
 
 @Root(name = "ServiceRequest")
 class ServiceRequest : ATSMessage {
@@ -19,7 +16,7 @@ class ServiceRequest : ATSMessage {
     var agent: AgentOnlineType? = null
     @field:Element(name = "PINPadProgramLoad", required = false)
     var pinPadProgramLoad: PINPadProgramLoad? = null
-    @field:Element(name = "PrivateData", required = false)
+    @field:ElementList(name = "PrivateData", required = false)
     var privateData: List<Any>? = null
     @field:Element(name = "EncryptionRSA", required = false)
     var encryptionRSA: String? = null
@@ -54,7 +51,7 @@ class ServiceRequest : ATSMessage {
     class POSdata {
 
         @field:Element(name = "POSTimeStamp", required = true)
-        lateinit var posTimeStamp: XMLGregorianCalendar
+        lateinit var posTimeStamp: Date
         @field:Element(name = "ShiftNumber", required = false)
         var shiftNumber: BigInteger? = null
         @field:Element(name = "ClerkID", required = false)
@@ -71,6 +68,7 @@ class ServiceRequest : ATSMessage {
     }
 
     class TotalAmount {
+        @field:Text
         lateinit var value: BigDecimal
         @field:Attribute(name = "Currency", required = false)
         var currency: CurrencyCode? = null

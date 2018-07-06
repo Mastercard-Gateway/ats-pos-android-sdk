@@ -5,7 +5,7 @@ import org.simpleframework.xml.*
 import java.math.BigInteger
 import java.util.*
 
-import javax.xml.datatype.XMLGregorianCalendar
+ import java.util.Date
 
 @Root(name = "CardServiceRequest", strict = false)
 class CardServiceRequest : ATSMessage {
@@ -71,6 +71,7 @@ class CardServiceRequest : ATSMessage {
         lateinit var cardCircuit: List<CardCircuit>
 
         class CardCircuit {
+            @field:Text
             lateinit var value: String
             @field:Attribute(name = "CardCircuitState", required=false)
             var cardCircuitState: CardCircuitStateType? = null
@@ -110,7 +111,7 @@ class CardServiceRequest : ATSMessage {
         @field:Attribute(name = "STAN", required=false)
         var stan: Long? = null
         @field:Attribute(name = "TimeStamp", required=false)
-        var timeStamp: XMLGregorianCalendar? = null
+        var timeStamp: Date? = null
         @field:Attribute(name = "TrackingReference", required=false)
         var trackingReference: String? = null
     }

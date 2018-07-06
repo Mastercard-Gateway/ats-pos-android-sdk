@@ -37,8 +37,9 @@ class ATSClient(val ipAddress: String, val port: Int) : Closeable {
     }
 
     fun sendMessage(message: ATSMessage) {
-        "Sending message:\n$message".log(this)
-        socketClient.write(Interpreter.serialize(message).bytes)
+        val serializedMessage = Interpreter.serialize(message)
+        "Sending message:\n${serializedMessage.content}".log(this)
+        socketClient.write(serializedMessage.bytes)
     }
 
     override fun close() {

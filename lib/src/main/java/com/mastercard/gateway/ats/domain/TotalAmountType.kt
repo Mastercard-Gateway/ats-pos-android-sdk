@@ -1,12 +1,15 @@
 package com.mastercard.gateway.ats.domain
 
 import org.simpleframework.xml.Attribute
+import org.simpleframework.xml.Element
 import org.simpleframework.xml.Root
+import org.simpleframework.xml.Text
 import java.math.BigDecimal
 
 @Root(name = "TotalAmountType")
 class TotalAmountType {
 
+    @field:Text
     lateinit var value: BigDecimal
     @field:Attribute(name = "Currency", required=false)
     var currency: CurrencyCode? = null

@@ -137,16 +137,16 @@ object ATSBluetoothAdapter {
 
     internal class ATSServerSocketCallback : SocketServer.Callback {
         override fun incomingSocket(socket: Socket) {
-            "Received incoming ATS socket".log(this)
+            "Received incoming ATS socket".logV(this)
 
             if (bluetoothDevice == null) {
-                "No bluetooth device defined, closing incoming socket".log(this)
+                "No bluetooth device defined, closing incoming socket".logV(this)
                 socket.close()
                 return
             }
 
             if (atsCommunicationSocketClient?.isConnected() == true) {
-                "Communication socket already open, closing incoming socket".log(this)
+                "Communication socket already open, closing incoming socket".logV(this)
                 socket.close()
                 return
             }

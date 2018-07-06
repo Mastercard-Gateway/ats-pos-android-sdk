@@ -4,18 +4,18 @@ import android.bluetooth.BluetoothDevice
 import android.bluetooth.BluetoothSocket
 import java.io.InputStream
 import java.io.OutputStream
-import java.util.*
 
+/**
+ * @see { @link SocketClient } implementation that connects to the provided @see { @link android.bluetooth.BluetoothDevice }
+ */
 internal class BluetoothSocketClient(val device: BluetoothDevice, val secure: Boolean = true): SocketClient() {
-
-    private val MY_UUID = UUID.fromString("8ce255c0-200a-11e0-ac64-0800200c9a66")
 
     var socket: BluetoothSocket? = null
 
     override fun connectToSocket() {
         socket = when (secure) {
-            true -> device.createRfcommSocketToServiceRecord(MY_UUID)
-            false -> device.createInsecureRfcommSocketToServiceRecord(MY_UUID)
+            true -> device.createRfcommSocketToServiceRecord(device.uuids[0].uuid)
+            false -> device.createInsecureRfcommSocketToServiceRecord(device.uuids[0].uuid)
         }.apply {
             connect()
         }

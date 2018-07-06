@@ -5,6 +5,9 @@ import java.io.OutputStream
 import java.net.InetSocketAddress
 import java.net.Socket
 
+/**
+ * @see { @link SocketClient } implementation that connects to the provided IP Address and a port
+ */
 internal class IPSocketClient(val ip: String, val port: Int): SocketClient() {
 
     companion object {

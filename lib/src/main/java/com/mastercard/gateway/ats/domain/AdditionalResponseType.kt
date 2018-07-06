@@ -5,5 +5,5 @@ enum class AdditionalResponseType {
     NotChecked,
     Match,
     NotMatched,
-    PartialMatch
+    PartialMatch;
 }

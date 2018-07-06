@@ -9,14 +9,23 @@ import android.text.format.Formatter;
 import android.util.Log;
 import android.widget.TextView;
 
-import com.mastercard.gateway.ats.ATSBluetoothAdapter;
 import com.mastercard.gateway.ats.ATSClient;
 import com.mastercard.gateway.ats.ATSDiagnostics;
+import com.mastercard.gateway.ats.domain.ATSMessage;
+import com.mastercard.gateway.ats.domain.CardRequestType;
+import com.mastercard.gateway.ats.domain.CardServiceRequest;
+import com.mastercard.gateway.ats.domain.CardServiceResponse;
+import com.mastercard.gateway.ats.domain.DeviceResponse;
+import com.mastercard.gateway.ats.domain.RequestResultType;
+import com.mastercard.gateway.ats.domain.ServiceRequest;
+import com.mastercard.gateway.ats.domain.ServiceRequestType;
+import com.mastercard.gateway.ats.domain.ServiceResponse;
+import com.mastercard.gateway.ats.domain.TotalAmountType;
 
 import org.jetbrains.annotations.NotNull;
 
-import java.util.regex.Matcher;
-import java.util.regex.Pattern;
+import java.math.BigDecimal;
+import java.util.Date;
 
 public class MainActivity extends AppCompatActivity {
 
@@ -33,8 +42,8 @@ public class MainActivity extends AppCompatActivity {
 
 //        ATSBluetoothAdapter.setBluetoothDevice("Miura 183");
 
-//        ats = new ATSClient("10.157.193.8", 20002);
-        ats = new ATSClient("10.157.196.212", 20002);
+        ats = new ATSClient("10.157.193.8", 20002);
+//        ats = new ATSClient("10.157.196.212", 20002);
         ats.addCallback(new ATSCallback());
         ats.connect();
     }
@@ -46,23 +55,51 @@ public class MainActivity extends AppCompatActivity {
     }
 
     void acquireDevice() {
-//        String xml = "<?xml version=\"1.0\" encoding=\"UTF-8\"?>\n<ServiceRequest RequestType=\"AcquireDevice\" ApplicationSender=\"ATSClient\" WorkstationID=\"12342\" RequestID=\"9\"/>";
-        String xml = "<?xml version=\"1.0\" encoding=\"UTF-8\"?>\n<ServiceRequest RequestType=\"AcquireDevice\" ApplicationSender=\"ATSClient\" WorkstationID=\"43214321\" RequestID=\"9\"/>";
 
-        ats.sendMessage(xml);
+//        String xml = "<?xml version=\"1.0\" encoding=\"UTF-8\"?>\n<ServiceRequest RequestType=\"AcquireDevice\" ApplicationSender=\"ATSClient\" WorkstationID=\"12342\" RequestID=\"9\"/>";
+
+        ServiceRequest request = new ServiceRequest();
+        request.setRequestType(ServiceRequestType.AcquireDevice);
+        request.setWorkstationID("43214321");
+        request.setRequestID("9");
+        request.setApplicationSender("ATS_Testing");
+
+        ats.sendMessage(request);
     }
 
     void startTransactionWithReader(String popid) {
-        String xml = "<?xml version=\"1.0\" encoding=\"UTF-8\"?>\n" +
-                "<CardServiceRequest RequestType=\"CardPayment\" ApplicationSender=\"ATSClient\" WorkstationID=\"12342\" RequestID=\"2\" POPID=\"" + popid + "\">\n" +
-                "  <POSdata>\n" +
-                "    <POSTimeStamp>2010-05-19T15:11:31.765625+01:00</POSTimeStamp>\n" +
-                "    <TransactionNumber>2</TransactionNumber>\n" +
-                "  </POSdata>\n" +
-                "  <TotalAmount PaymentAmount=\"10.00\">10.00</TotalAmount>\n" +
-                "</CardServiceRequest>";
 
-        ats.sendMessage(xml);
+
+        CardServiceRequest cardServiceRequest = new CardServiceRequest();
+
+        cardServiceRequest.setRequestType(CardRequestType.CardPayment);
+        cardServiceRequest.setWorkstationID("43214321");
+        cardServiceRequest.setRequestID("9");
+
+        CardServiceRequest.POSdata posData = new CardServiceRequest.POSdata();
+        posData.setPosTimeStamp(new Date());
+        posData.setTransactionNumber(2);
+        cardServiceRequest.setPoSdata(posData);
+
+        cardServiceRequest.setPopid(popid);
+
+        TotalAmountType totalAmountType = new TotalAmountType();
+        totalAmountType.value = new BigDecimal("10.00");
+        totalAmountType.setPaymentAmount(new BigDecimal("10.00"));
+        cardServiceRequest.setTotalAmount(totalAmountType);
+
+        ats.sendMessage(cardServiceRequest);
+
+//        String xml = "<?xml version=\"1.0\" encoding=\"UTF-8\"?>\n" +
+//                "<CardServiceRequest RequestType=\"CardPayment\" ApplicationSender=\"ATSClient\" WorkstationID=\"12342\" RequestID=\"2\" POPID=\"" + popid + "\">\n" +
+//                "  <POSdata>\n" +
+//                "    <POSTimeStamp>2010-05-19T15:11:31.765625+01:00</POSTimeStamp>\n" +
+//                "    <TransactionNumber>2</TransactionNumber>\n" +
+//                "  </POSdata>\n" +
+//                "  <TotalAmount PaymentAmount=\"10.00\">10.00</TotalAmount>\n" +
+//                "</CardServiceRequest>";
+//
+//        ats.sendMessage(xml);
     }
 
     void startTransactionWithBluetoothCardReader() {
@@ -93,19 +130,25 @@ public class MainActivity extends AppCompatActivity {
 
 
         @Override
-        public void onMessageReceived(@NotNull String message) {
+        public void onMessageReceived(@Nullable ATSMessage message) {
             Log.i("MainActivity", "Received message:\n" + message);
 
-            if (message.contains("ServiceResponse") && message.contains("AcquireDevice") && message.contains("OverallResult=\"Success\"")) {
-                startTransactionWithBluetoothCardReader();
-//                Pattern pattern = Pattern.compile("POPID=\"([^\"]+)\"");
-//                Matcher m = pattern.matcher(message);
-//                if (m.find()) {
-//                    String popId = m.group(1);
-//                    startTransactionWithReader(popId);
-//                }
-            } else if (message.contains("CardServiceResponse")) {
+
+            if (message instanceof ServiceResponse) {
+                ServiceResponse serviceResponse = (ServiceResponse) message;
+
+                if (serviceResponse.getRequestType() == ServiceRequestType.AcquireDevice && serviceResponse.getOverallResult() == RequestResultType.Success) {
+                    String popId = serviceResponse.getPopid();
+                    startTransactionWithReader(popId);
+
+//                    startTransactionWithBluetoothCardReader();
+                }
+            } else if (message instanceof CardServiceResponse) {
+                CardServiceResponse cardServiceResponse = (CardServiceResponse) message;
+
                 ats.close();
+            } else if (message instanceof DeviceResponse) {
+                DeviceResponse deviceResponse = (DeviceResponse) message;
             }
         }
 

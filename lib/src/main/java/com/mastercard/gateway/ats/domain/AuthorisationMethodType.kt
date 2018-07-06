@@ -1,6 +1,6 @@
 package com.mastercard.gateway.ats.domain
 
-enum class AuthorisationType {
+enum class AuthorisationMethodType {
     Online,
     Offline,
     Manual,

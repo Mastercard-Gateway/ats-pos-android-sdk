@@ -1,5 +1,6 @@
 package com.mastercard.gateway.ats
 
+import com.mastercard.gateway.ats.domain.ATSMessage
 import com.mastercard.gateway.common.*
 import java.io.Closeable
 
@@ -12,7 +13,7 @@ class ATSClient(val ipAddress: String, val port: Int) : Closeable {
     interface Callback {
         fun onConnected()
         fun onDisconnected()
-        fun onMessageReceived(message: String)
+        fun onMessageReceived(message: ATSMessage?)
         fun onError(throwable: Throwable)
     }
 
@@ -29,9 +30,16 @@ class ATSClient(val ipAddress: String, val port: Int) : Closeable {
         socketClient.connect(CONNECTION_ATTEMPTS)
     }
 
+    @Deprecated("Use classes that extend ATSMessage")
     fun sendMessage(msg: String) {
         "Sending message:\n$msg".log(this)
         socketClient.write(Message(msg).bytes)
+    }
+
+    fun sendMessage(message: ATSMessage) {
+        val serializedMessage = Interpreter.serialize(message)
+        "Sending message:\n${serializedMessage.content}".log(this)
+        socketClient.write(serializedMessage.bytes)
     }
 
     override fun close() {
@@ -63,7 +71,7 @@ class ATSClient(val ipAddress: String, val port: Int) : Closeable {
             Message.read(readBuffer)?.let { message ->
                 "Received message:\n${message.content}".log(this@ATSClient)
                 callbacks.forEach { callback ->
-                    callback.onMessageReceived(message.content)
+                    callback.onMessageReceived(Interpreter.deserialize(message))
                 }
             }
         }

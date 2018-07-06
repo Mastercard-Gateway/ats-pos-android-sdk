@@ -1,7 +1,5 @@
 package com.mastercard.gateway.ats
 
-import com.mastercard.gateway.ats.domain.CardRequestType
-import com.mastercard.gateway.ats.domain.CardServiceResponse
 import org.junit.Assert.assertNotNull
 import org.junit.Assert.assertTrue
 import org.junit.Test

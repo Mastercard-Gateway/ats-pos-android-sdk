@@ -18,8 +18,8 @@ public class SampleApplication extends Application {
     public void onCreate() {
         super.onCreate();
 
+        // init ATS diagnostics
         ATSDiagnostics.setLogLevel(Log.VERBOSE);
-        ATSDiagnostics.startLogCapture();
 
         BluetoothAdapter bluetoothAdapter = BluetoothAdapter.getDefaultAdapter();
         Set<BluetoothDevice> bondedDevices = bluetoothAdapter.getBondedDevices();

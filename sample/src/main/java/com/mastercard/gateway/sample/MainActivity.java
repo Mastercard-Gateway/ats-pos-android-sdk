@@ -42,6 +42,9 @@ public class MainActivity extends AppCompatActivity {
 
 //        ATSBluetoothAdapter.setBluetoothDevice("Miura 183");
 
+        // start capturing ATS logs
+        ATSDiagnostics.startLogCapture();
+
         ats = new ATSClient("10.157.193.8", 20002);
 //        ats = new ATSClient("10.157.196.212", 20002);
         ats.addCallback(new ATSCallback());
@@ -162,6 +165,7 @@ public class MainActivity extends AppCompatActivity {
             Log.i("MainActivity", "ATS disconnected");
 
             Log.v("MainActivity", "Total log:\n" + ATSDiagnostics.getLog());
+            ATSDiagnostics.stopLogCapture();
             ATSDiagnostics.clearLog();
         }
     }

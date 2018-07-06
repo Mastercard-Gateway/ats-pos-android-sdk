@@ -84,12 +84,12 @@ object ATSBluetoothAdapter {
     }
 
     /**
-     *  Returns a list of supported bluetooth devices, filtered by supported name prefix
+     *  Returns a list of supported bluetooth card readers that have previously been paired to this device.
      *
-     *  @return The list of supported bluetooth devices
+     *  @return The list of previously paired supported bluetooth devices
      */
     @JvmStatic
-    fun getDevices(): List<BluetoothDevice> {
+    fun getSupportedDevices(): List<BluetoothDevice> {
         return BluetoothAdapter.getDefaultAdapter()?.bondedDevices?.filter { device ->
             DEFAULT_DEVICE_PREFIXES.forEach { prefix ->
                 if (device.name.startsWith(prefix)) {
@@ -98,16 +98,6 @@ object ATSBluetoothAdapter {
             }
             return@filter false
         } ?: listOf()
-    }
-
-    /**
-     *  Returns a list of supported bluetooth device names, filtered by supported name prefix
-     *
-     *  @return The list of supported bluetooth device names
-     */
-    @JvmStatic
-    fun getDeviceNames(): List<String> {
-        return getDevices().map { it.name }
     }
 
 

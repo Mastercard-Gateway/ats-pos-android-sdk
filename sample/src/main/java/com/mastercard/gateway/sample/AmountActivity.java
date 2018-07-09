@@ -1,6 +1,7 @@
 package com.mastercard.gateway.sample;
 
 import android.app.Activity;
+import android.content.Intent;
 import android.content.SharedPreferences;
 import android.os.Bundle;
 import android.preference.PreferenceManager;
@@ -77,19 +78,29 @@ public class AmountActivity extends Activity implements ATSClient.Callback {
         if (message instanceof CardServiceResponse) {
             CardServiceResponse response = (CardServiceResponse) message;
 
+
+            Intent intent = new Intent(AmountActivity.this, ResultActivity.class);
+            intent.putExtra("Action", action.equals(Action.Payment) ? "Payment" : "Authorization");
+
             if (response.overallResult.equals(RequestResultType.Success)) {
-                //TODO navigate to success screen
+                intent.putExtra("Result", "Success");
             } else {
-                //TODO navigate to error screen
+                intent.putExtra("Result", "Error");
             }
 
+            startActivity(intent);
+
             ((SampleApplication) getApplication()).getAtsClient().close();
+            finish();
         }
     }
 
     @Override
     public void onError(@NotNull Throwable throwable) {
-        //TODO Navigate to error screen
+        Intent intent = new Intent(AmountActivity.this, ResultActivity.class);
+        intent.putExtra("Action", action.equals(Action.Payment) ? "Payment" : "Authorization");
+        intent.putExtra("Result", "Error");
+        startActivity(intent);
     }
 
     private void createATSMessage(String amount) {

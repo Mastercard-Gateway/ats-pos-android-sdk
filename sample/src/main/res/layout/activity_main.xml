@@ -1,51 +1,18 @@
 <?xml version="1.0" encoding="utf-8"?>
-<android.support.constraint.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
+<layout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
-    xmlns:tools="http://schemas.android.com/tools"
-    android:layout_width="match_parent"
-    android:layout_height="match_parent"
-    android:paddingTop="@dimen/material_baseline_grid_2x">
+    xmlns:tools="http://schemas.android.com/tools">
 
-    <LinearLayout
-        android:id="@+id/create_configuration"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:orientation="vertical"
-        app:layout_constraintBottom_toBottomOf="parent"
-        app:layout_constraintLeft_toLeftOf="parent"
-        app:layout_constraintRight_toRightOf="parent"
-        app:layout_constraintTop_toTopOf="parent">
-
-        <TextView
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:text="@string/no_configuration_created_yet"
-            android:textSize="@dimen/material_tooltip_text_size" />
-
-        <Button
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_gravity="center_horizontal"
-            android:padding="@dimen/material_baseline_grid_2x"
-            android:text="@string/create_a_configuration"
-            android:textAllCaps="false" />
-
-    </LinearLayout>
-
-
-    <android.support.v7.widget.CardView
-        android:id="@+id/show_configuration"
+    <android.support.constraint.ConstraintLayout
         android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:layout_margin="@dimen/material_baseline_grid_2x"
-        app:cardCornerRadius="@dimen/material_baseline_grid_1.5x">
+        android:layout_height="match_parent"
+        android:paddingTop="@dimen/material_baseline_grid_2x">
 
         <LinearLayout
-            android:layout_width="match_parent"
+            android:id="@+id/create_configuration"
+            android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:gravity="center_horizontal"
             android:orientation="vertical"
-            android:padding="@dimen/material_baseline_grid_3x"
             app:layout_constraintBottom_toBottomOf="parent"
             app:layout_constraintLeft_toLeftOf="parent"
             app:layout_constraintRight_toRightOf="parent"
@@ -54,102 +21,139 @@
             <TextView
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:text="@string/ats_ip"
+                android:text="@string/no_configuration_created_yet"
                 android:textSize="@dimen/material_tooltip_text_size" />
 
-            <TextView
-                android:id="@+id/ats_ip"
+            <Button
+                android:id="@+id/create_config_button"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:textColor="@color/material_color_black"
-                android:textSize="@dimen/material_typography_locale_headline_text_size"
-                tools:text="216.3.128.12" />
-
-            <TextView
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:layout_marginTop="@dimen/material_baseline_grid_2.5x"
-                android:text="@string/bluetooth_port"
-                android:textAllCaps="true"
-                android:textSize="@dimen/material_tooltip_text_size" />
-
-            <TextView
-                android:id="@+id/bluetooth_port"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:text="@string/bluetooth_port"
-                android:textColor="@color/material_color_black"
-                android:textSize="@dimen/material_typography_locale_headline_text_size"
-                tools:text="3003" />
-
-            <TextView
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:layout_marginTop="@dimen/material_baseline_grid_2.5x"
-                android:text="@string/device"
-                android:textAllCaps="true"
-                android:textSize="@dimen/material_tooltip_text_size" />
-
-            <TextView
-                android:id="@+id/device_name"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:text="@string/device"
-                android:textColor="@color/material_color_black"
-                android:textSize="@dimen/material_typography_locale_headline_text_size"
-                tools:text="MIURA 183" />
-
-            <TextView
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:layout_marginTop="@dimen/material_baseline_grid_2.5x"
-                android:text="@string/ats_workstation_id"
-                android:textAllCaps="true"
-                android:textSize="@dimen/material_tooltip_text_size" />
-
-            <TextView
-                android:id="@+id/ats_workstation_id"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:textColor="@color/material_color_black"
-                android:textSize="@dimen/material_typography_locale_headline_text_size"
-                tools:text="1234567" />
-
-            <TextView
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:layout_marginTop="@dimen/material_baseline_grid_2.5x"
-                android:text="@string/ats_pop_id"
-                android:textAllCaps="true"
-                android:textSize="@dimen/material_tooltip_text_size" />
-
-            <TextView
-                android:id="@+id/ats_pop_id"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:textColor="@color/material_color_black"
-                android:textSize="@dimen/material_typography_locale_headline_text_size"
-                tools:text="1234567" />
+                android:layout_gravity="center_horizontal"
+                android:padding="@dimen/material_baseline_grid_2x"
+                android:text="@string/create_a_configuration"
+                android:textAllCaps="false" />
 
         </LinearLayout>
 
-    </android.support.v7.widget.CardView>
 
-    <android.support.v7.widget.AppCompatButton
-        android:id="@+id/next"
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:layout_margin="@dimen/material_baseline_grid_2.5x"
-        android:padding="@dimen/material_baseline_grid_1.5x"
-        android:text="@string/next"
-        android:textAllCaps="false"
-        app:layout_constraintBottom_toBottomOf="parent"
-        app:layout_constraintTop_toBottomOf="@id/show_configuration" />
+        <android.support.v7.widget.CardView
+            android:id="@+id/show_configuration"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_margin="@dimen/material_baseline_grid_2x"
+            app:cardCornerRadius="@dimen/material_baseline_grid_1.5x">
 
-    <android.support.constraint.Group
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:visibility="gone"
-        app:constraint_referenced_ids="show_configuration, next" />
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:gravity="center_horizontal"
+                android:orientation="vertical"
+                android:padding="@dimen/material_baseline_grid_3x"
+                app:layout_constraintBottom_toBottomOf="parent"
+                app:layout_constraintLeft_toLeftOf="parent"
+                app:layout_constraintRight_toRightOf="parent"
+                app:layout_constraintTop_toTopOf="parent">
 
-</android.support.constraint.ConstraintLayout>
+                <TextView
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="@string/ats_ip"
+                    android:textSize="@dimen/material_tooltip_text_size" />
+
+                <TextView
+                    android:id="@+id/ats_ip"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:textColor="@color/material_color_black"
+                    android:textSize="@dimen/material_typography_locale_headline_text_size"
+                    tools:text="216.3.128.12" />
+
+                <TextView
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_marginTop="@dimen/material_baseline_grid_2.5x"
+                    android:text="@string/bluetooth_port"
+                    android:textAllCaps="true"
+                    android:textSize="@dimen/material_tooltip_text_size" />
+
+                <TextView
+                    android:id="@+id/bluetooth_port"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="@string/bluetooth_port"
+                    android:textColor="@color/material_color_black"
+                    android:textSize="@dimen/material_typography_locale_headline_text_size"
+                    tools:text="3003" />
+
+                <TextView
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_marginTop="@dimen/material_baseline_grid_2.5x"
+                    android:text="@string/device"
+                    android:textAllCaps="true"
+                    android:textSize="@dimen/material_tooltip_text_size" />
+
+                <TextView
+                    android:id="@+id/device_name"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="@string/device"
+                    android:textColor="@color/material_color_black"
+                    android:textSize="@dimen/material_typography_locale_headline_text_size"
+                    tools:text="MIURA 183" />
+
+                <TextView
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_marginTop="@dimen/material_baseline_grid_2.5x"
+                    android:text="@string/ats_workstation_id"
+                    android:textAllCaps="true"
+                    android:textSize="@dimen/material_tooltip_text_size" />
+
+                <TextView
+                    android:id="@+id/ats_workstation_id"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:textColor="@color/material_color_black"
+                    android:textSize="@dimen/material_typography_locale_headline_text_size"
+                    tools:text="1234567" />
+
+                <TextView
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_marginTop="@dimen/material_baseline_grid_2.5x"
+                    android:text="@string/ats_pop_id"
+                    android:textAllCaps="true"
+                    android:textSize="@dimen/material_tooltip_text_size" />
+
+                <TextView
+                    android:id="@+id/ats_pop_id"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:textColor="@color/material_color_black"
+                    android:textSize="@dimen/material_typography_locale_headline_text_size"
+                    tools:text="1234567" />
+
+            </LinearLayout>
+
+        </android.support.v7.widget.CardView>
+
+        <android.support.v7.widget.AppCompatButton
+            android:id="@+id/next_button"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_margin="@dimen/material_baseline_grid_2.5x"
+            android:padding="@dimen/material_baseline_grid_1.5x"
+            android:text="@string/next"
+            android:textAllCaps="false"
+            app:layout_constraintBottom_toBottomOf="parent"
+            app:layout_constraintTop_toBottomOf="@id/show_configuration" />
+
+        <android.support.constraint.Group
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:visibility="gone"
+            app:constraint_referenced_ids="show_configuration, next_button" />
+
+    </android.support.constraint.ConstraintLayout>
+</layout>

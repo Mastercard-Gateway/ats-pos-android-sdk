@@ -1,6 +1,7 @@
 package com.mastercard.gateway.sample;
 
 import android.content.Context;
+import android.content.Intent;
 import android.net.wifi.WifiManager;
 import android.os.Bundle;
 import android.support.annotation.Nullable;
@@ -37,23 +38,27 @@ public class MainActivity extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
 
-        WifiManager wifiManager = (WifiManager) getApplicationContext().getSystemService(Context.WIFI_SERVICE);
-        ((TextView) findViewById(R.id.hello)).setText(Formatter.formatIpAddress(wifiManager.getConnectionInfo().getIpAddress()));
 
-//        ATSBluetoothAdapter.setBluetoothDevice("Miura 183");
+        //TODO remove me
+        startActivity(new Intent(this, SelectActionActivity.class));
 
-        // start capturing ATS logs
-        ATSDiagnostics.startLogCapture();
-
-        ats = new ATSClient("10.157.193.8", 20002);
-//        ats = new ATSClient("10.157.196.212", 20002);
-        ats.addCallback(new ATSCallback());
-        ats.connect();
+//        WifiManager wifiManager = (WifiManager) getApplicationContext().getSystemService(Context.WIFI_SERVICE);
+//        ((TextView) findViewById(R.id.hello)).setText(Formatter.formatIpAddress(wifiManager.getConnectionInfo().getIpAddress()));
+//
+////        ATSBluetoothAdapter.setBluetoothDevice("Miura 183");
+//
+//        // start capturing ATS logs
+//        ATSDiagnostics.startLogCapture();
+//
+//        ats = new ATSClient("10.157.193.8", 20002);
+////        ats = new ATSClient("10.157.196.212", 20002);
+//        ats.addCallback(new ATSCallback());
+//        ats.connect();
     }
 
     @Override
     protected void onDestroy() {
-        ats.close();
+//        ats.close();
         super.onDestroy();
     }
 

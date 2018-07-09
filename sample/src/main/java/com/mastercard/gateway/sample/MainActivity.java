@@ -1,17 +1,24 @@
 package com.mastercard.gateway.sample;
 
+import android.bluetooth.BluetoothDevice;
 import android.content.SharedPreferences;
 import android.os.Bundle;
 import android.preference.PreferenceManager;
 import android.support.annotation.Nullable;
 import android.support.v7.app.AppCompatActivity;
 import android.view.View;
+import android.widget.TextView;
+
+import com.mastercard.gateway.ats.ATSBluetoothAdapter;
 
 public class MainActivity extends AppCompatActivity {
 
     String atsIPAddress;
     int atsPort;
-
+    String deviceName;
+    int adapterPort;
+    String workstationID;
+    String popID;
 
     @Override
     protected void onCreate(@Nullable Bundle savedInstanceState) {
@@ -30,6 +37,24 @@ public class MainActivity extends AppCompatActivity {
             @Override
             public void onClick(View v) {
                 ((SampleApplication) getApplication()).initATSClient(atsIPAddress, atsPort);
+
+
+                if (deviceName != null && !deviceName.isEmpty()) {
+
+                    BluetoothDevice selectedDevice = null;
+
+                    for (BluetoothDevice supportedDevice : ATSBluetoothAdapter.getSupportedDevices()) {
+                        if (supportedDevice.getName().equals(deviceName)) {
+                            selectedDevice = supportedDevice;
+                            break;
+                        }
+                    }
+
+                    ATSBluetoothAdapter.start(adapterPort);
+                    ATSBluetoothAdapter.setBluetoothDevice(selectedDevice);
+                }
+
+
                 //TODO navigate to next screen
             }
         });
@@ -43,9 +68,25 @@ public class MainActivity extends AppCompatActivity {
 
         if (preferences.contains("ATS_IP_ADDRESS")) {
             //Show config
+            findViewById(R.id.create_configuration).setVisibility(View.GONE);
+            findViewById(R.id.show_configuration).setVisibility(View.VISIBLE);
+
+            atsIPAddress = preferences.getString("ATS_IP_ADDRESS", "");
+            atsPort = preferences.getInt("ATS_PORT", 0);
+            deviceName = preferences.getString("ATS_DEVICE_NAME", "");
+            adapterPort = preferences.getInt("ATS_DEVICE_PORT", 0);
+            workstationID = preferences.getString("ATS_WORKSTATION_ID", "");
+            popID = preferences.getString("ATS_POP_ID", "");
+
+            ((TextView) findViewById(R.id.ats_ip)).setText(atsIPAddress);
+            ((TextView) findViewById(R.id.ats_port)).setText(atsPort);
+            ((TextView) findViewById(R.id.device_name)).setText(deviceName);
+            ((TextView) findViewById(R.id.bluetooth_port)).setText(adapterPort);
+            ((TextView) findViewById(R.id.ats_workstation_id)).setText(workstationID);
+            ((TextView) findViewById(R.id.ats_pop_id)).setText(popID);
         } else {
             findViewById(R.id.create_configuration).setVisibility(View.VISIBLE);
-            findViewById(R.id.show_configuration).setVisibility(View.VISIBLE);
+            findViewById(R.id.show_configuration).setVisibility(View.GONE);
         }
     }
 

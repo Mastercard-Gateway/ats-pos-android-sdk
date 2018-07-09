@@ -22,26 +22,6 @@ public class SampleApplication extends Application {
 
         // init ATS diagnostics
         ATSDiagnostics.setLogLevel(Log.VERBOSE);
-
-        BluetoothAdapter bluetoothAdapter = BluetoothAdapter.getDefaultAdapter();
-        Set<BluetoothDevice> bondedDevices = bluetoothAdapter.getBondedDevices();
-        BluetoothDevice device = null;
-
-        for (BluetoothDevice d : bondedDevices) {
-            if (d.getName().startsWith("Miura")) {
-                device = d;
-                break;
-            }
-        }
-
-        if (device == null) {
-            throw new RuntimeException("No device found with name: $deviceName");
-        } else {
-            ATSBluetoothAdapter.start(12345);
-
-            // this could happen later
-            ATSBluetoothAdapter.setBluetoothDevice(device);
-        }
     }
 
     void initATSClient(String ipAddress, int atsPort) {

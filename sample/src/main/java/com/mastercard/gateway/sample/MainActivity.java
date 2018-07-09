@@ -1,14 +1,18 @@
 package com.mastercard.gateway.sample;
 
 import android.content.Context;
+import android.content.Intent;
+import android.content.SharedPreferences;
 import android.net.wifi.WifiManager;
 import android.os.Bundle;
+import android.preference.PreferenceManager;
 import android.support.annotation.Nullable;
 import android.support.v7.app.AppCompatActivity;
 import android.text.format.Formatter;
 import android.util.Log;
 import android.widget.TextView;
 
+import com.mastercard.gateway.ats.ATSBluetoothAdapter;
 import com.mastercard.gateway.ats.ATSClient;
 import com.mastercard.gateway.ats.ATSDiagnostics;
 import com.mastercard.gateway.ats.domain.ATSMessage;
@@ -37,25 +41,50 @@ public class MainActivity extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
 
-        WifiManager wifiManager = (WifiManager) getApplicationContext().getSystemService(Context.WIFI_SERVICE);
-        ((TextView) findViewById(R.id.hello)).setText(Formatter.formatIpAddress(wifiManager.getConnectionInfo().getIpAddress()));
 
-//        ATSBluetoothAdapter.setBluetoothDevice("Miura 183");
+        //TODO remove all of this
+        SharedPreferences preferences = PreferenceManager.getDefaultSharedPreferences(this);
+        SharedPreferences.Editor editor = preferences.edit();
+        editor.putString("ATS_IP_ADDRESS", "10.157.193.8");
+        editor.putInt("ATS_PORT", 20002);
+        editor.putString("ATS_DEVICE_NAME", "Simplify 760");
+        editor.putInt("ATS_DEVICE_PORT", 46545);
+        editor.putString("ATS_WORKSTATION_ID", "43214321");
+        editor.putString("ATS_POP_ID", "2");
+        editor.commit();
 
-        // start capturing ATS logs
-        ATSDiagnostics.startLogCapture();
+        ((SampleApplication) getApplication()).initATSClient("10.157.193.8", 20002);
 
-        ats = new ATSClient("10.157.193.8", 20002);
-//        ats = new ATSClient("10.157.196.212", 20002);
-        ats.addCallback(new ATSCallback());
-        ats.connect();
+        ATSBluetoothAdapter.start(46545);
+        ATSBluetoothAdapter.setBluetoothDevice(ATSBluetoothAdapter.getSupportedDevices().get(0));
+
+        Intent intent = new Intent(this, AmountActivity.class);
+        intent.putExtra("Action", "Payment");
+
+        startActivity(intent);
     }
 
-    @Override
-    protected void onDestroy() {
-        ats.close();
-        super.onDestroy();
-    }
+
+
+//        WifiManager wifiManager = (WifiManager) getApplicationContext().getSystemService(Context.WIFI_SERVICE);
+//        ((TextView) findViewById(R.id.hello)).setText(Formatter.formatIpAddress(wifiManager.getConnectionInfo().getIpAddress()));
+//
+////        ATSBluetoothAdapter.setBluetoothDevice("Miura 183");
+//
+//        // start capturing ATS logs
+//        ATSDiagnostics.startLogCapture();
+//
+//        ats = new ATSClient("10.157.193.8", 20002);
+////        ats = new ATSClient("10.157.196.212", 20002);
+//        ats.addCallback(new ATSCallback());
+//        ats.connect();
+//    }
+
+//    @Override
+//    protected void onDestroy() {
+//        ats.close();
+//        super.onDestroy();
+//    }
 
     void acquireDevice() {
 

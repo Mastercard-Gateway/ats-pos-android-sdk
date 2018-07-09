@@ -28,7 +28,7 @@ object ATSBluetoothAdapter {
 
     internal const val CONNECTION_ATTEMPTS = 3
 
-    internal val DEFAULT_DEVICE_PREFIXES = arrayOf("Miura")
+    internal val DEFAULT_DEVICE_PREFIXES = arrayOf("Miura", "Simplify")
 
     internal var atsSocketServer: SocketServer? = null
     internal var atsCommunicationSocketClient: BasicSocketClient? = null

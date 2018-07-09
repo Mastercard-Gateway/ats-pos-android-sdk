@@ -1,6 +1,6 @@
 <resources>
     <string name="app_name">ATS Android SDK Sample</string>
-    <string name="no_configuration_created_yet">You haven\'t created a configuration yet</string>
+    <string name="no_configuration_created_yet">You haven\'t created a\nconfiguration yet</string>
     <string name="create_a_configuration">Create a configuration</string>
     <string name="ats_ip_address">ATS IP Address</string>
     <string name="ats_workstation_id">Workstation ID</string>
@@ -13,6 +13,7 @@
 
 
     <string name="ats_ip">ATS IP</string>
-    <string name="bluetooth_port">Bluetooth Port</string>
+    <string name="bluetooth_port">Bluetooth Adapter Port</string>
+    <string name="ats_port">ATS Port</string>
     <string name="device">Device</string>
 </resources>

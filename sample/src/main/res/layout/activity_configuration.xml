@@ -100,13 +100,14 @@
                 android:layout_height="wrap_content"
                 android:layout_marginTop="@dimen/material_baseline_grid_1.5x"
                 android:prompt="@string/select_a_device"
+                android:spinnerMode="dropdown"
                 app:layout_constraintTop_toBottomOf="@id/bluetooth_switch" />
 
             <android.support.v7.widget.AppCompatButton
                 android:id="@+id/done_button"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:layout_marginTop="@dimen/material_baseline_grid_1.5x"
+                android:layout_marginTop="@dimen/material_baseline_grid_2x"
                 android:background="@color/colorAccent"
                 android:padding="@dimen/material_baseline_grid_1x"
                 android:text="@string/done"

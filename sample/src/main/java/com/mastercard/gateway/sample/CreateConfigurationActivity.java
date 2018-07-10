@@ -9,6 +9,7 @@ import android.preference.PreferenceManager;
 import android.support.annotation.Nullable;
 import android.support.v7.app.AppCompatActivity;
 import android.view.View;
+import android.widget.AdapterView;
 import android.widget.ArrayAdapter;
 import android.widget.CompoundButton;
 
@@ -16,9 +17,11 @@ import com.mastercard.gateway.ats.ATSBluetoothAdapter;
 import com.mastercard.gateway.sample.databinding.ActivityConfigurationBinding;
 
 import java.util.ArrayList;
+import java.util.List;
 
-public class CreateConfigurationActivity extends AppCompatActivity {
+public class CreateConfigurationActivity extends AppCompatActivity implements AdapterView.OnItemSelectedListener {
 
+    private List<BluetoothDevice> bluetoothDevices = ATSBluetoothAdapter.getSupportedDevices();
     private ActivityConfigurationBinding binding;
 
     @Override
@@ -57,11 +60,12 @@ public class CreateConfigurationActivity extends AppCompatActivity {
 
     private void initSpinner() {
         ArrayList<String> list = new ArrayList<>();
-        for (BluetoothDevice device : ATSBluetoothAdapter.getSupportedDevices()) {
+        for (BluetoothDevice device : bluetoothDevices) {
             list.add(device.getName());
         }
-        ArrayAdapter<String> adapter = new ArrayAdapter<String>(this, android.R.layout.simple_spinner_item, list);
+        ArrayAdapter<String> adapter = new ArrayAdapter<>(this, R.layout.spinner_item, list);
         binding.deviceSpinner.setAdapter(adapter);
+        binding.deviceSpinner.setOnItemSelectedListener(this);
     }
 
     private void save() {
@@ -70,12 +74,12 @@ public class CreateConfigurationActivity extends AppCompatActivity {
         SharedPreferences.Editor editor = preferences.edit();
 
         editor.putString("ATS_IP_ADDRESS", binding.atsIpAddress.getText().toString());
-        editor.putInt("ATS_PORT", Integer.parseInt(binding.atsServerPort.getText().toString()));
+        String atsServerPort = binding.atsServerPort.getText().toString();
+        editor.putInt("ATS_PORT", atsServerPort.trim().isEmpty() ? 0 : Integer.parseInt(atsServerPort));
         editor.putString("ATS_WORKSTATION_ID", binding.workstationId.getText().toString());
         editor.putString("ATS_POP_ID", binding.popId.getText().toString());
         editor.putBoolean("BLUETOOTH", binding.bluetoothSwitch.isChecked());
         if (binding.deviceSpinner.getSelectedItem() != null) {
-            editor.putString("ATS_DEVICE_NAME", binding.deviceSpinner.getSelectedItem().toString());
             editor.putInt("ATS_DEVICE_PORT", 0);
         }
         editor.apply();
@@ -92,5 +96,18 @@ public class CreateConfigurationActivity extends AppCompatActivity {
             binding.workstationId.setText(preferences.getString("ATS_WORKSTATION_ID", ""));
             binding.popId.setText(preferences.getString("ATS_POP_ID", ""));
         }
+    }
+
+    @Override
+    public void onItemSelected(AdapterView<?> parent, View view, int position, long id) {
+        SharedPreferences preferences = PreferenceManager.getDefaultSharedPreferences(this);
+        SharedPreferences.Editor editor = preferences.edit();
+        editor.putString("ATS_DEVICE_NAME", parent.getItemAtPosition(position).toString());
+        editor.apply();
+    }
+
+    @Override
+    public void onNothingSelected(AdapterView<?> parent) {
+
     }
 }

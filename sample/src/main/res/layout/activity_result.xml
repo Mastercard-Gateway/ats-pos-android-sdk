@@ -46,6 +46,20 @@
             </LinearLayout>
 
 
+            <Button
+                android:id="@+id/done"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_margin="@dimen/material_baseline_grid_2.5x"
+                android:background="@color/material_color_white"
+                android:padding="@dimen/material_baseline_grid_1.5x"
+                android:text="Done"
+                android:layout_gravity="bottom"
+                android:textAllCaps="false"
+                android:textColor="@color/colorAccent" />
+
+
+
         </FrameLayout>
 
 

@@ -37,6 +37,8 @@ public class AmountActivity extends Activity implements ATSClient.Callback {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_amount);
 
+        ((SampleApplication) getApplication()).getAtsClient().addCallback(this);
+
         atsClient = ((SampleApplication) getApplication()).getAtsClient();
         amountEditText = findViewById(R.id.amountEditText);
         Toolbar toolbar = findViewById(R.id.toolbar);

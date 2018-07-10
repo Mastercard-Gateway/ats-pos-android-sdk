@@ -1,3 +1,8 @@
 <resources>
     <string name="app_name">ATS Android SDK Sample</string>
+    
+    
+    
+    <string name="status_successful">Your %1$s was successful</string>
+    <string name="status_failed">Your %1$s has failed</string>
 </resources>

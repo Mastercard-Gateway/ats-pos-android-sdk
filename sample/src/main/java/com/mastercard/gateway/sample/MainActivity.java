@@ -55,7 +55,6 @@ public class MainActivity extends AppCompatActivity {
             public void onClick(View v) {
                 ((SampleApplication) getApplication()).initATSClient(atsIPAddress, atsPort);
 
-
                 if (deviceName != null && !deviceName.isEmpty()) {
 
                     BluetoothDevice selectedDevice = null;
@@ -71,8 +70,7 @@ public class MainActivity extends AppCompatActivity {
                     ATSBluetoothAdapter.setBluetoothDevice(selectedDevice);
                 }
 
-
-                //TODO navigate to next screen
+                startActivity(new Intent(MainActivity.this, SelectActionActivity.class));
             }
         });
     }

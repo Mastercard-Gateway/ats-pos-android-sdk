@@ -1,0 +1,120 @@
+<?xml version="1.0" encoding="utf-8"?>
+<layout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto">
+
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:orientation="vertical">
+
+        <android.support.v7.widget.Toolbar
+            android:id="@+id/toolbar1"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            app:title="Configuration" />
+
+        <android.support.constraint.ConstraintLayout
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:padding="@dimen/material_baseline_grid_2x">
+
+            <android.support.design.widget.TextInputLayout
+                android:id="@+id/ipAddress_label"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="@dimen/material_baseline_grid_1.5x">
+
+                <android.support.design.widget.TextInputEditText
+                    android:id="@+id/ats_ip_address"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:hint="@string/ats_ip_address"
+                    android:inputType="textUri"
+                    android:paddingBottom="@dimen/material_baseline_grid_1.5x" />
+
+            </android.support.design.widget.TextInputLayout>
+
+            <android.support.design.widget.TextInputLayout
+                android:id="@+id/ats_port_label"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="@dimen/material_baseline_grid_1.5x"
+                app:layout_constraintTop_toBottomOf="@id/ipAddress_label">
+
+                <android.support.design.widget.TextInputEditText
+                    android:id="@+id/ats_server_port"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:hint="@string/ats_server_port"
+                    android:inputType="number"
+                    android:paddingBottom="@dimen/material_baseline_grid_1.5x" />
+
+            </android.support.design.widget.TextInputLayout>
+
+            <android.support.design.widget.TextInputLayout
+                android:id="@+id/workstation_id_label"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="@dimen/material_baseline_grid_1.5x"
+                app:layout_constraintTop_toBottomOf="@id/ats_port_label">
+
+                <android.support.design.widget.TextInputEditText
+                    android:id="@+id/workstation_id"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:hint="@string/ats_workstation_id"
+                    android:inputType="number"
+                    android:paddingBottom="@dimen/material_baseline_grid_1.5x" />
+
+            </android.support.design.widget.TextInputLayout>
+
+            <android.support.design.widget.TextInputLayout
+                android:id="@+id/pop_id_label"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="@dimen/material_baseline_grid_1.5x"
+                app:layout_constraintTop_toBottomOf="@id/workstation_id_label">
+
+                <android.support.design.widget.TextInputEditText
+                    android:id="@+id/pop_id"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:hint="@string/ats_pop_id"
+                    android:inputType="number"
+                    android:paddingBottom="@dimen/material_baseline_grid_1.5x" />
+
+            </android.support.design.widget.TextInputLayout>
+
+            <android.support.v7.widget.SwitchCompat
+                android:id="@+id/bluetooth_switch"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="@dimen/material_baseline_grid_1.5x"
+                android:text="@string/bluetooth"
+                android:textSize="@dimen/material_subheader_text_size"
+                app:layout_constraintTop_toBottomOf="@id/pop_id_label" />
+
+            <android.support.v7.widget.AppCompatSpinner
+                android:id="@+id/device_spinner"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="@dimen/material_baseline_grid_1.5x"
+                android:prompt="@string/select_a_device"
+                android:spinnerMode="dropdown"
+                app:layout_constraintTop_toBottomOf="@id/bluetooth_switch" />
+
+            <android.support.v7.widget.AppCompatButton
+                android:id="@+id/done_button"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="@dimen/material_baseline_grid_2x"
+                android:background="@color/colorAccent"
+                android:padding="@dimen/material_baseline_grid_1x"
+                android:text="@string/done"
+                android:textColor="@color/material_color_white"
+                app:layout_constraintTop_toBottomOf="@id/device_spinner" />
+
+        </android.support.constraint.ConstraintLayout>
+
+    </LinearLayout>
+</layout>

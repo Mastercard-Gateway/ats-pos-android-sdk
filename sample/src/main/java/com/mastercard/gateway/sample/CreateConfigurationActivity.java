@@ -26,7 +26,7 @@ public class CreateConfigurationActivity extends AppCompatActivity {
         super.onCreate(savedInstanceState);
 
         binding = DataBindingUtil.setContentView(this, R.layout.activity_configuration);
-        binding.toolbar1.setNavigationIcon(android.R.drawable.ic_menu_close_clear_cancel);
+        binding.toolbar1.setNavigationIcon(R.drawable.ic_close_grey_24dp);
         binding.toolbar1.setNavigationOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {

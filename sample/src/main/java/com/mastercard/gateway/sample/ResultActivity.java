@@ -3,6 +3,7 @@ package com.mastercard.gateway.sample;
 import android.app.Activity;
 import android.os.Bundle;
 import android.support.annotation.Nullable;
+import android.support.v4.content.res.ResourcesCompat;
 import android.view.View;
 import android.widget.Button;
 import android.widget.FrameLayout;
@@ -20,6 +21,7 @@ public class ResultActivity extends Activity {
         ImageView status = findViewById(R.id.status);
         TextView statusText = findViewById(R.id.status_text);
         Button done = findViewById(R.id.done);
+        FrameLayout background = findViewById(R.id.card_background);
 
 
         String type = getIntent().getStringExtra("Action");
@@ -27,9 +29,13 @@ public class ResultActivity extends Activity {
         if (getIntent().getStringExtra("Result").equals("Success")) {
             status.setImageResource(R.drawable.ic_approved_with_background);
             statusText.setText(getString(R.string.status_successful, type));
+            done.setTextColor(ResourcesCompat.getColor(getResources(), R.color.green, null));
+            background.setBackgroundResource(R.drawable.gradient_success);
         } else {
             status.setImageResource(R.drawable.ic_declined_with_background);
             statusText.setText(getString(R.string.status_failed, type));
+            done.setTextColor(ResourcesCompat.getColor(getResources(), R.color.red, null));
+            background.setBackgroundResource(R.drawable.gradient_fail);
         }
 
         done.setOnClickListener(new View.OnClickListener() {

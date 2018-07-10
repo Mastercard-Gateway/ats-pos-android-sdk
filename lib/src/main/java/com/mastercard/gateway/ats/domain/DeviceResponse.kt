@@ -5,9 +5,34 @@ import org.simpleframework.xml.Element
 import org.simpleframework.xml.ElementList
 import org.simpleframework.xml.Root
 import java.math.BigDecimal
+import java.util.ArrayList
 
 @Root(name = "DeviceResponse", strict = false)
 class DeviceResponse : ATSMessage {
+
+    companion object {
+
+        @JvmStatic
+        fun createSuccessfulResponse(request: DeviceRequest) :DeviceResponse{
+            return DeviceResponse().apply {
+                requestID = request.requestID
+                requestType = request.requestType
+                workstationID = request.workstationID
+                popid = request.popid
+                applicationSender = request.applicationSender
+                overallResult = RequestResultType.Success
+                terminalID = request.terminalID
+                sequenceID = request.sequenceID
+
+                output = request.output?.map {
+                    return@map DeviceResponse.Output().apply {
+                        outDeviceTarget = it.outDeviceTarget
+                        outResult = RequestResultType.Success
+                    }
+                }
+            }
+        }
+    }
 
     @field:ElementList(name = "Output", required = false, inline = true, type = Output::class)
     var output: List<Output>? = null

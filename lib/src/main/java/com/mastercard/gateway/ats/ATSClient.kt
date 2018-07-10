@@ -30,6 +30,10 @@ class ATSClient(val ipAddress: String, val port: Int) : Closeable {
         socketClient.connect(CONNECTION_ATTEMPTS)
     }
 
+    fun isConnected(): Boolean {
+        return socketClient.isConnected()
+    }
+
     @Deprecated("Use classes that extend ATSMessage")
     fun sendMessage(msg: String) {
         "Sending message:\n$msg".log(this)

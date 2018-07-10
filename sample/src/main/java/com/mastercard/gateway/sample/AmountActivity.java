@@ -10,6 +10,7 @@ import android.support.v7.widget.Toolbar;
 import android.view.View;
 import android.widget.Button;
 import android.widget.EditText;
+import android.widget.TextView;
 
 import com.mastercard.gateway.ats.ATSClient;
 import com.mastercard.gateway.ats.domain.ATSMessage;
@@ -27,10 +28,12 @@ import java.math.BigDecimal;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
+import java.util.UUID;
 
 public class AmountActivity extends Activity implements ATSClient.Callback {
 
     EditText amountEditText;
+    TextView textMessages;
 
     Action action;
 
@@ -41,9 +44,13 @@ public class AmountActivity extends Activity implements ATSClient.Callback {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_amount);
 
-        ((SampleApplication) getApplication()).getAtsClient().addCallback(this);
-
         atsClient = ((SampleApplication) getApplication()).getAtsClient();
+        atsClient.addCallback(this);
+
+        if (!atsClient.isConnected()) {
+            atsClient.connect();
+        }
+
         amountEditText = findViewById(R.id.amountEditText);
         Toolbar toolbar = findViewById(R.id.toolbar);
         toolbar.setNavigationOnClickListener(new View.OnClickListener() {
@@ -72,6 +79,8 @@ public class AmountActivity extends Activity implements ATSClient.Callback {
                 createATSMessage(amount);
             }
         });
+
+        textMessages = findViewById(R.id.text_message);
     }
 
 
@@ -108,24 +117,20 @@ public class AmountActivity extends Activity implements ATSClient.Callback {
         } else if (message instanceof DeviceRequest) {
             DeviceRequest request = (DeviceRequest) message;
 
-            DeviceResponse response = new DeviceResponse();
-            response.setRequestID(request.getRequestID());
-            response.setRequestType(request.getRequestType());
-            response.setWorkstationID(request.getWorkstationID());
-            response.setPopid(request.getPopid());
-            response.setApplicationSender(request.getApplicationSender());
-            response.setOverallResult(RequestResultType.Success);
+            List<DeviceRequest.Output> output = request.getOutput();
+            if (output != null && !output.isEmpty()) {
+                List<DeviceRequest.Output.TextLine> textLines = output.get(0).getTextLine();
 
-            List<DeviceResponse.Output> responseOuputs = new ArrayList<>();
-            for (DeviceRequest.Output output : request.getOutput()) {
-                DeviceResponse.Output responseOutput = new DeviceResponse.Output();
-                responseOutput.setOutDeviceTarget(output.getOutDeviceTarget());
-                responseOutput.setOutResult(RequestResultType.Success);
-                responseOuputs.add(responseOutput);
+                if (textLines != null && !textLines.isEmpty()) {
+                    String text = textLines.get(0).getValue();
+                    textMessages.setText(text);
+                }
             }
 
-            response.setOutput(responseOuputs);
 
+
+
+            DeviceResponse response = DeviceResponse.createSuccessfulResponse(request);
 
             atsClient.sendMessage(response);
         }
@@ -145,15 +150,17 @@ public class AmountActivity extends Activity implements ATSClient.Callback {
         String workstationID = preferences.getString("ATS_WORKSTATION_ID", "");
         String popID = preferences.getString("ATS_POP_ID", "");
 
+        UUID transactionID = UUID.randomUUID();
+
         CardServiceRequest request = new CardServiceRequest();
         request.setRequestType(action == Action.Payment ? CardRequestType.CardPayment : CardRequestType.CardPreAuthorisation);
         request.setWorkstationID(workstationID);
-        request.setRequestID("179");
+        request.setRequestID(transactionID.toString());
         request.setPopid(popID);
 
         CardServiceRequest.POSdata posData = new CardServiceRequest.POSdata();
         posData.setPosTimeStamp(new Date());
-        posData.setTransactionNumber(150);
+        posData.setTransactionNumber(Math.abs(transactionID.hashCode()));
         request.setPoSdata(posData);
 
         TotalAmountType totalAmountType = new TotalAmountType();

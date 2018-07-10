@@ -16,13 +16,17 @@ import com.mastercard.gateway.ats.domain.ATSMessage;
 import com.mastercard.gateway.ats.domain.CardRequestType;
 import com.mastercard.gateway.ats.domain.CardServiceRequest;
 import com.mastercard.gateway.ats.domain.CardServiceResponse;
+import com.mastercard.gateway.ats.domain.DeviceRequest;
+import com.mastercard.gateway.ats.domain.DeviceResponse;
 import com.mastercard.gateway.ats.domain.RequestResultType;
 import com.mastercard.gateway.ats.domain.TotalAmountType;
 
 import org.jetbrains.annotations.NotNull;
 
 import java.math.BigDecimal;
+import java.util.ArrayList;
 import java.util.Date;
+import java.util.List;
 
 public class AmountActivity extends Activity implements ATSClient.Callback {
 
@@ -96,10 +100,34 @@ public class AmountActivity extends Activity implements ATSClient.Callback {
                 intent.putExtra("Result", "Error");
             }
 
+            atsClient.close();
+
             startActivity(intent);
 
-            ((SampleApplication) getApplication()).getAtsClient().close();
             finish();
+        } else if (message instanceof DeviceRequest) {
+            DeviceRequest request = (DeviceRequest) message;
+
+            DeviceResponse response = new DeviceResponse();
+            response.setRequestID(request.getRequestID());
+            response.setRequestType(request.getRequestType());
+            response.setWorkstationID(request.getWorkstationID());
+            response.setPopid(request.getPopid());
+            response.setApplicationSender(request.getApplicationSender());
+            response.setOverallResult(RequestResultType.Success);
+
+            List<DeviceResponse.Output> responseOuputs = new ArrayList<>();
+            for (DeviceRequest.Output output : request.getOutput()) {
+                DeviceResponse.Output responseOutput = new DeviceResponse.Output();
+                responseOutput.setOutDeviceTarget(output.getOutDeviceTarget());
+                responseOutput.setOutResult(RequestResultType.Success);
+                responseOuputs.add(responseOutput);
+            }
+
+            response.setOutput(responseOuputs);
+
+
+            atsClient.sendMessage(response);
         }
     }
 
@@ -120,12 +148,12 @@ public class AmountActivity extends Activity implements ATSClient.Callback {
         CardServiceRequest request = new CardServiceRequest();
         request.setRequestType(action == Action.Payment ? CardRequestType.CardPayment : CardRequestType.CardPreAuthorisation);
         request.setWorkstationID(workstationID);
-        request.setRequestID("2");
+        request.setRequestID("179");
         request.setPopid(popID);
 
         CardServiceRequest.POSdata posData = new CardServiceRequest.POSdata();
         posData.setPosTimeStamp(new Date());
-        posData.setTransactionNumber(2);
+        posData.setTransactionNumber(150);
         request.setPoSdata(posData);
 
         TotalAmountType totalAmountType = new TotalAmountType();

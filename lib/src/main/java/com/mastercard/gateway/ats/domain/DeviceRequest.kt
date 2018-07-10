@@ -8,7 +8,7 @@ import java.math.BigDecimal
 @Root(name = "DeviceRequest", strict = false)
 class DeviceRequest : ATSMessage {
 
-    @field:Element(name = "Output", required = false)
+    @field:ElementList(name = "Output", required = false, inline = true)
     var output: List<Output>? = null
     @field:Element(name = "Input", required = false)
     var input: DeviceRequest.Input? = null
@@ -29,7 +29,7 @@ class DeviceRequest : ATSMessage {
     @field:Attribute(name = "RequestID", required = true)
     lateinit var requestID: String
 
-
+    @Root(strict = false)
     class Event {
 
         @field:Element(name = "EventData", required = true)
@@ -37,6 +37,7 @@ class DeviceRequest : ATSMessage {
         @field:Attribute(name = "EventType", required = true)
         lateinit var eventType: EventTypes
 
+        @Root(strict = false)
         class EventData {
 
             @field:Element(name = "Dispenser", required = false)
@@ -45,16 +46,18 @@ class DeviceRequest : ATSMessage {
             var totalAmount: TotalAmountType? = null
             @field:Element(name = "CardIdent", required = false)
             var cardIdent: CardValueDRType? = null
-            @field:Element(name = "DataRequired", required = false)
+            @field:ElementList(name = "DataRequired", required = false, inline = true)
             var dataRequired: List<DataRequiredType>? = null
             @field:Element(name = "ProductsAllowed", required = false)
             var productsAllowed: DeviceRequest.Event.EventData.ProductsAllowed? = null
 
+            @Root(strict = false)
             class ProductsAllowed {
 
-                @field:ElementList(name = "ProductCode", required = true)
+                @field:ElementList(name = "ProductCode", required = true, inline = true)
                 lateinit var productCode: List<ProductCode>
 
+                @Root(strict = false)
                 class ProductCode {
                     @field:Text
                     var value: Integer? = null
@@ -71,16 +74,17 @@ class DeviceRequest : ATSMessage {
 
     }
 
-
+    @Root(strict = false)
     class Input {
 
         @field:Element(name = "Command", required = false)
         var command: Command? = null
-        @field:Element(name = "InSecureData", required = false)
+        @field:ElementList(name = "InSecureData", required = false, inline = true)
         var inSecureData: List<SecureDataFlow>? = null
         @field:Attribute(name = "InDeviceTarget", required = true)
         lateinit var inDeviceTarget: DeviceType
 
+        @Root(strict = false)
         class Command {
             @field:Text
             var value: CommandType? = null
@@ -103,18 +107,9 @@ class DeviceRequest : ATSMessage {
         }
     }
 
+    @Root(name = "Output", strict = false)
     class Output {
 
-        @field:Element(name = "TextLine", required = false)
-        var textLine: List<TextLine>? = null
-        @field:Element(name = "Buzzer", required = false)
-        var buzzer: Buzzer? = null
-        @field:Element(name = "OutSecureData", required = false)
-        var outSecureData: List<SecureDataFlow>? = null
-        @field:Element(name = "MAC", required = false)
-        var mac: MACType? = null
-        @field:Element(name = "ImageFile", required = false)
-        var imageFile: String? = null
         @field:Attribute(name = "InputSynchronize", required = false)
         var inputSynchronize: Boolean? = null
         @field:Attribute(name = "Complete", required = false)
@@ -129,8 +124,19 @@ class DeviceRequest : ATSMessage {
         var timeOut: Integer? = null
         @field:Attribute(name = "OutDeviceTarget", required = true)
         lateinit var outDeviceTarget: DeviceType
+        @field:ElementList(name = "TextLine", required = false, inline = true)
+        var textLine: List<TextLine>? = null
+        @field:Element(name = "Buzzer", required = false)
+        var buzzer: Buzzer? = null
+        @field:ElementList(name = "OutSecureData", required = false, inline = true)
+        var outSecureData: List<SecureDataFlow>? = null
+        @field:Element(name = "MAC", required = false)
+        var mac: MACType? = null
+        @field:Element(name = "ImageFile", required = false)
+        var imageFile: String? = null
 
 
+        @Root(strict = false)
         class Buzzer {
             @field:Text
             var value: Boolean = false
@@ -142,7 +148,7 @@ class DeviceRequest : ATSMessage {
             var durationPause: Integer? = null
         }
 
-
+        @Root(strict = false)
         class TextLine {
             @field:Text
             var value: String? = null

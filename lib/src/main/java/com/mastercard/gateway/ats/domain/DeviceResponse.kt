@@ -2,13 +2,14 @@ package com.mastercard.gateway.ats.domain
 
 import org.simpleframework.xml.Attribute
 import org.simpleframework.xml.Element
+import org.simpleframework.xml.ElementList
 import org.simpleframework.xml.Root
 import java.math.BigDecimal
 
 @Root(name = "DeviceResponse", strict = false)
 class DeviceResponse : ATSMessage {
 
-    @field:Element(name = "Output", required = false)
+    @field:ElementList(name = "Output", required = false, inline = true, type = Output::class)
     var output: List<Output>? = null
     @field:Element(name = "Input", required = false)
     var input: DeviceResponse.Input? = null
@@ -36,18 +37,18 @@ class DeviceResponse : ATSMessage {
     @field:Attribute(name = "OverallResult", required = true)
     lateinit var overallResult: RequestResultType
 
-
+    @Root(name = "EventResult")
     class EventResult {
 
-        @field:Element(name = "Dispenser", type = Short::class, required = false)
+        @field:ElementList(name = "Dispenser", type = Short::class, required = false, inline = true)
         var dispenser: List<Short>? = null
-        @field:Element(name = "ProductCode", required = false)
+        @field:ElementList(name = "ProductCode", required = false, inline = true)
         var productCode: List<Int>? = null
         @field:Element(name = "ModifiedRequest", required = false)
         var modifiedRequest: CardRequestType? = null
         @field:Element(name = "TotalAmount", required = false)
         var totalAmount: TotalAmountType? = null
-        @field:Element(name = "SaleItem", required = false)
+        @field:ElementList(name = "SaleItem", required = false, inline = true)
         var saleItem: List<SaleItemType>? = null
         @field:Element(name = "Acquirer", required = false)
         var acquirer: Acquirer? = null
@@ -58,6 +59,7 @@ class DeviceResponse : ATSMessage {
         @field:Element(name = "OACentreDetails", required = false)
         var oaCentreDetails: OACentreDetails? = null
 
+        @Root(name = "Acquirer")
         class Acquirer {
             @field:Attribute(name = "MerchantID", required = false)
             var merchantID: String? = null
@@ -69,6 +71,7 @@ class DeviceResponse : ATSMessage {
             var creditPlan: String? = null
         }
 
+        @Root(name = "AuthResponse")
         class AuthResponse {
             @field:Element(name = "AuthARC", required = false)
             var authARC: String? = null
@@ -80,6 +83,7 @@ class DeviceResponse : ATSMessage {
             var icc: ICCType? = null
         }
 
+        @Root(name = "OACentreDetails")
         class OACentreDetails {
             @field:Element(name = "OACentreName", required = false)
             var oaCentreName: String? = null
@@ -95,6 +99,7 @@ class DeviceResponse : ATSMessage {
             var iccNoTrack2: OAICCNoTrack2? = null
         }
 
+        @Root(name = "TransactionLimits")
         class TransactionLimits {
             @field:Element(name = "AuthFlags", required = false)
             var authFlags: String? = null
@@ -116,9 +121,10 @@ class DeviceResponse : ATSMessage {
 
     }
 
+    @Root(name = "Input")
     class Input {
 
-        @field:Element(name = "SecureData", required = false)
+        @field:ElementList(name = "SecureData", required = false, inline = true)
         var secureData: List<SecureDataFlow>? = null
         @field:Element(name = "InputValue", required = false)
         var inputValue: InputValueType? = null
@@ -129,6 +135,7 @@ class DeviceResponse : ATSMessage {
 
     }
 
+    @Root(name = "Output", strict = false)
     class Output {
         @field:Attribute(name = "OutDeviceTarget", required = true)
         lateinit var outDeviceTarget: DeviceType

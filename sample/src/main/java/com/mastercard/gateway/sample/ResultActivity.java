@@ -20,7 +20,7 @@ public class ResultActivity extends Activity {
         ImageView status = findViewById(R.id.status);
         TextView statusText = findViewById(R.id.status_text);
         Button done = findViewById(R.id.done);
-        FrameLayout back
+
 
         String type = getIntent().getStringExtra("Action");
 

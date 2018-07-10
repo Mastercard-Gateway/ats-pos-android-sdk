@@ -12,8 +12,8 @@
     <string name="next">Next</string>
 
 
-    <string name="ats_ip">ATS IP</string>
+    <string name="ats_server_ip">ATS Server IP</string>
     <string name="bluetooth_port">Bluetooth Adapter Port</string>
-    <string name="ats_port">ATS Port</string>
+    <string name="ats_server_port">ATS Server Port</string>
     <string name="device">Device</string>
 </resources>

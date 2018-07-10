@@ -1,6 +1,7 @@
 package com.mastercard.gateway.sample;
 
 import android.bluetooth.BluetoothDevice;
+import android.content.Intent;
 import android.content.SharedPreferences;
 import android.os.Bundle;
 import android.preference.PreferenceManager;
@@ -34,7 +35,7 @@ public class MainActivity extends AppCompatActivity {
             public boolean onMenuItemClick(MenuItem item) {
 
                 if (item.getItemId() == R.id.settings) {
-                    //TODO navigate to create config
+                    startActivity(new Intent(MainActivity.this, CreateConfigurationActivity.class));
                     return true;
                 }
 
@@ -45,7 +46,7 @@ public class MainActivity extends AppCompatActivity {
         findViewById(R.id.button_create_config).setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                //TODO navigate to create config
+                startActivity(new Intent(MainActivity.this, CreateConfigurationActivity.class));
             }
         });
 
@@ -94,10 +95,10 @@ public class MainActivity extends AppCompatActivity {
             workstationID = preferences.getString("ATS_WORKSTATION_ID", "");
             popID = preferences.getString("ATS_POP_ID", "");
 
-            ((TextView) findViewById(R.id.ats_ip)).setText(atsIPAddress);
-            ((TextView) findViewById(R.id.ats_port)).setText(atsPort);
+            ((TextView) findViewById(R.id.ats_server_ip)).setText(atsIPAddress);
+            ((TextView) findViewById(R.id.ats_server_port)).setText(String.valueOf(atsPort));
             ((TextView) findViewById(R.id.device_name)).setText(deviceName);
-            ((TextView) findViewById(R.id.bluetooth_port)).setText(adapterPort);
+            ((TextView) findViewById(R.id.bluetooth_port)).setText(String.valueOf(adapterPort));
             ((TextView) findViewById(R.id.ats_workstation_id)).setText(workstationID);
             ((TextView) findViewById(R.id.ats_pop_id)).setText(popID);
         } else {
@@ -109,7 +110,7 @@ public class MainActivity extends AppCompatActivity {
 }
 
 
-    //        WifiManager wifiManager = (WifiManager) getApplicationContext().getSystemService(Context.WIFI_SERVICE);
+//        WifiManager wifiManager = (WifiManager) getApplicationContext().getSystemService(Context.WIFI_SERVICE);
 //        ((TextView) findViewById(R.id.hello)).setText(Formatter.formatIpAddress(wifiManager.getConnectionInfo().getIpAddress()));
 //
 ////        ATSBluetoothAdapter.setBluetoothDevice("Miura 183");

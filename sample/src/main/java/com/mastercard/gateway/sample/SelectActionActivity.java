@@ -27,18 +27,18 @@ public class SelectActionActivity extends Activity {
         findViewById(R.id.button_payment).setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                Bundle options = new Bundle();
-                options.putString("Action", "Payment");
-                startActivity(new Intent(SelectActionActivity.this, AmountActivity.class), options);
+                Intent intent = new Intent(SelectActionActivity.this, AmountActivity.class);
+                intent.putExtra("Action", "Payment");
+                startActivity(intent);
             }
         });
 
         findViewById(R.id.button_auth).setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                Bundle options = new Bundle();
-                options.putString("Action", "Authorization");
-                startActivity(new Intent(SelectActionActivity.this, AmountActivity.class), options);
+                Intent intent = new Intent(SelectActionActivity.this, AmountActivity.class);
+                intent.putExtra("Action", "Authorization");
+                startActivity(intent);
             }
         });
     }

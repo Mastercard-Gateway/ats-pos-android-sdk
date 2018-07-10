@@ -42,6 +42,12 @@ public class AmountActivity extends Activity implements ATSClient.Callback {
         atsClient = ((SampleApplication) getApplication()).getAtsClient();
         amountEditText = findViewById(R.id.amountEditText);
         Toolbar toolbar = findViewById(R.id.toolbar);
+        toolbar.setNavigationOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                AmountActivity.this.finish();
+            }
+        });
         Button actionButton = findViewById(R.id.button_action);
 
         if (getIntent().getStringExtra("Action").equals("Payment")) {

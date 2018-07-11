@@ -75,7 +75,7 @@ class ServiceResponse : ATSMessage {
 
     class Reconciliation {
 
-        @field:ElementList(name = "TotalAmount", required = true)
+        @field:ElementList(name = "TotalAmount", required = true, inline = true)
         lateinit var totalAmount: List<TotalAmount>
         @field:Attribute(name = "LanguageCode", required = false)
         var languageCode: LanguageCodeType? = null
@@ -136,12 +136,12 @@ class ServiceResponse : ATSMessage {
 
     class Versions {
 
-        @field:ElementList(name = "Devices", required = true)
+        @field:ElementList(name = "Devices", required = true, inline = true)
         lateinit var devices: List<Devices>
 
         class Devices {
 
-            @field:ElementList(name = "Device", required = true)
+            @field:ElementList(name = "Device", required = true, inline = true)
             lateinit var device: List<Device>
 
             class Device {

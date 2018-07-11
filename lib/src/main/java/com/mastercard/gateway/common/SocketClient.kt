@@ -23,7 +23,7 @@ internal abstract class SocketClient: StreamManager(), Closeable {
         fun onError(throwable: Throwable)
     }
 
-    override val handler: Handler = Handler { handleMessage(it) }
+    override var handler: Handler = Handler { handleMessage(it) }
     val callbacks = mutableListOf<Callback>()
 
     abstract fun connectToSocket()

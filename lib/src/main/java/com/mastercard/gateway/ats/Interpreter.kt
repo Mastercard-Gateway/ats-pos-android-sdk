@@ -1,9 +1,6 @@
 package com.mastercard.gateway.ats
 
-import com.mastercard.gateway.ats.domain.ATSMessage
-import com.mastercard.gateway.ats.domain.CardServiceResponse
-import com.mastercard.gateway.ats.domain.DeviceResponse
-import com.mastercard.gateway.ats.domain.ServiceResponse
+import com.mastercard.gateway.ats.domain.*
 import com.mastercard.gateway.ats.domain.transform.DateTransform
 import org.simpleframework.xml.core.Persister
 import org.simpleframework.xml.transform.RegistryMatcher
@@ -17,17 +14,22 @@ internal class Interpreter {
         private val serializer: Persister
 
         init {
-            val matcher = RegistryMatcher()
-            matcher.bind(Date::class.java, DateTransform())
 
-            serializer = Persister(matcher)
+            val registryMatcher = RegistryMatcher()
+            registryMatcher.bind(Date::class.java, DateTransform())
+
+            serializer = Persister(registryMatcher)
+
         }
 
         @JvmStatic
         fun deserialize(message: Message): ATSMessage? {
             return when {
+                "CardServiceRequest" in message.content -> serializer.read(CardServiceRequest::class.java, message.content)
                 "CardServiceResponse" in message.content -> serializer.read(CardServiceResponse::class.java, message.content)
+                "DeviceRequest" in message.content -> serializer.read(DeviceRequest::class.java, message.content)
                 "DeviceResponse" in message.content -> serializer.read(DeviceResponse::class.java, message.content)
+                "ServiceRequest" in message.content -> serializer.read(ServiceRequest::class.java, message.content)
                 "ServiceResponse" in message.content -> serializer.read(ServiceResponse::class.java, message.content)
                 else -> null
             }

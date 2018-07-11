@@ -11,7 +11,7 @@ class DateTransform : Transform<Date> {
 
     //2010-05-19T15:11:31.765625+01:00
     //2018-07-06T11:09:50-05:00
-    var xmlDateFormat = SimpleDateFormat("yyyy-MM-dd'T'HH:mm:ssXXX")
+    var xmlDateFormat = SimpleDateFormat("yyyy-MM-dd'T'HH:mm:ss")
 
     override fun write(value: Date?): String = xmlDateFormat.format(value)
 

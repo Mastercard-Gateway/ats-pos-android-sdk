@@ -15,7 +15,7 @@ class ServiceRequest : ATSMessage {
     var agent: AgentOnlineType? = null
     @field:Element(name = "PINPadProgramLoad", required = false)
     var pinPadProgramLoad: PINPadProgramLoad? = null
-    @field:ElementList(name = "PrivateData", required = false)
+    @field:ElementList(name = "PrivateData", required = false, inline = true)
     var privateData: List<Any>? = null
     @field:Element(name = "EncryptionRSA", required = false)
     var encryptionRSA: String? = null

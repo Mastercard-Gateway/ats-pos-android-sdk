@@ -33,3 +33,4 @@ public class SampleApplication extends Application {
         return atsClient;
     }
 }
+

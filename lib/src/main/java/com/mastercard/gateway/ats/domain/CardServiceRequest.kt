@@ -63,7 +63,7 @@ class CardServiceRequest : ATSMessage {
 
     class CardCircuitCollection {
 
-        @field:ElementList(name = "CardCircuit", required = true)
+        @field:ElementList(name = "CardCircuit", required = true, inline = true)
         lateinit var cardCircuit: List<CardCircuit>
 
         class CardCircuit {

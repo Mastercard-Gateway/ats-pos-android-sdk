@@ -1,5 +1,10 @@
 <resources>
     <string name="app_name">ATS Android SDK Sample</string>
+
+
+    <string name="status_successful">Your %1$s was successful</string>
+    <string name="status_failed">Your %1$s has failed</string>
+
     <string name="no_configuration_created_yet">You haven\'t created a\nconfiguration yet</string>
     <string name="create_a_configuration">Create a configuration</string>
     <string name="ats_ip_address">ATS IP Address</string>

@@ -1,5 +1,6 @@
 package com.mastercard.gateway.ats.domain
 
+
 enum class DeviceType {
     CashierDisplay,
     CustomerDisplay,
@@ -17,5 +18,5 @@ enum class DeviceType {
     CashierTerminal,
     CustomerKeyboard,
     CustomerTerminal,
-    Log
+    Log;
 }

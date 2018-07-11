@@ -21,7 +21,6 @@ internal class BasicSocketClient(val socket: Socket) : SocketClient() {
     override fun isConnected(): Boolean = socket.isConnected && !socket.isClosed
 
     override fun close() {
-        super.close()
         socket.close()
     }
 }

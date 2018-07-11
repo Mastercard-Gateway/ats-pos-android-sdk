@@ -41,8 +41,6 @@ internal class IPSocketClient(val ip: String, val port: Int): SocketClient() {
     }
 
     override fun close() {
-        super.close()
-
         socket?.close()
         socket = null
     }

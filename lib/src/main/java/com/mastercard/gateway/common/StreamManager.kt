@@ -60,8 +60,6 @@ internal abstract class StreamManager : Closeable {
                 handler.sendMessage(msg)
             }
         } catch (e: Exception) {
-            "Error reading from socket".log(this, e)
-
             val msg = handler.obtainMessage(EVENT_ERROR, e)
             handler.sendMessage(msg)
         } finally {
@@ -87,8 +85,6 @@ internal abstract class StreamManager : Closeable {
                 Thread.sleep(50) // just throttle down a bit
             }
         } catch (e: Exception) {
-            "Error writing to stream".log(this, e)
-
             val msg = handler.obtainMessage(EVENT_ERROR, e)
             handler.sendMessage(msg)
         } finally {

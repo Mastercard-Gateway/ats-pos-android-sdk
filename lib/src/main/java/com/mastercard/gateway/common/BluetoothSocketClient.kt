@@ -40,8 +40,6 @@ internal class BluetoothSocketClient(val device: BluetoothDevice, val secure: Bo
     }
 
     override fun close() {
-        super.close()
-
         socket?.close()
         socket = null
     }

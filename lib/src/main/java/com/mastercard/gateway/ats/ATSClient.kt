@@ -20,12 +20,15 @@ class ATSClient(val ipAddress: String, val port: Int) : Closeable {
     internal var socketClient = IPSocketClient(ipAddress, port)
     internal val callbacks = mutableListOf<Callback>()
     internal val readBuffer = Buffer()
+    internal var closed = false
 
     init {
         socketClient.addCallback(SocketCallback())
     }
 
     fun connect() {
+        closed = false
+
         "Connecting to ATS at $ipAddress:$port".log(this)
         socketClient.connect(CONNECTION_ATTEMPTS)
     }
@@ -43,6 +46,9 @@ class ATSClient(val ipAddress: String, val port: Int) : Closeable {
     }
 
     override fun close() {
+        closed = true
+
+        "Closing connection to ATS".log(this)
         socketClient.close()
     }
 
@@ -83,8 +89,11 @@ class ATSClient(val ipAddress: String, val port: Int) : Closeable {
         }
 
         override fun onError(throwable: Throwable) {
-            "An error occurred while communicating with ATS".log(this@ATSClient, throwable)
-            callbacks.forEach { it.onError(throwable) }
+            // only want to notify the consumer of an error if client is not closed
+            if (!closed) {
+                "An error occurred while communicating with ATS".log(this@ATSClient, throwable)
+                callbacks.forEach { it.onError(throwable) }
+            }
         }
     }
 }

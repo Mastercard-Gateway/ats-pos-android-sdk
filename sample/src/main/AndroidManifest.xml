@@ -21,7 +21,8 @@
         </activity>
 
         <activity android:name=".SelectActionActivity" />
-        <activity android:name=".AmountActivity" />
+        <activity android:name=".AmountActivity"
+            android:windowSoftInputMode="adjustResize" />
         <activity android:name=".ResultActivity" />
         <activity
             android:name=".CreateConfigurationActivity"

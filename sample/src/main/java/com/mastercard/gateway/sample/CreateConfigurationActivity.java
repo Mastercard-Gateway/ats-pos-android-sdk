@@ -49,7 +49,9 @@ public class CreateConfigurationActivity extends AppCompatActivity implements Ad
         binding.bluetoothSwitch.setOnCheckedChangeListener(new CompoundButton.OnCheckedChangeListener() {
             @Override
             public void onCheckedChanged(CompoundButton buttonView, boolean isChecked) {
-                binding.deviceSpinner.setVisibility(isChecked ? View.VISIBLE : View.GONE);
+                int visible = isChecked ? View.VISIBLE : View.GONE;
+                binding.deviceSpinner.setVisibility(visible);
+                binding.adapterPortLabel.setVisibility(visible);
             }
         });
 

@@ -44,10 +44,6 @@ internal abstract class SocketClient: StreamManager(), Closeable {
         startConnectThread(attempts)
     }
 
-    override fun close() {
-        callbacks.clear()
-    }
-
     fun handleMessage(msg: Message): Boolean {
         when (msg.what) {
             EVENT_CONNECTED -> {
@@ -81,8 +77,6 @@ internal abstract class SocketClient: StreamManager(), Closeable {
             handler.sendEmptyMessage(EVENT_CONNECTED)
 
         } catch (e: Exception) {
-            "Error connecting to socket".log(this, e)
-
             val msg = handler.obtainMessage(EVENT_ERROR, e)
             handler.sendMessage(msg)
         }

@@ -80,7 +80,7 @@ public class CreateConfigurationActivity extends AppCompatActivity implements Ad
         editor.putString("ATS_POP_ID", binding.popId.getText().toString());
         editor.putBoolean("BLUETOOTH", binding.bluetoothSwitch.isChecked());
         if (binding.deviceSpinner.getSelectedItem() != null) {
-            editor.putInt("ATS_DEVICE_PORT", 0);
+            editor.putInt("ATS_DEVICE_PORT", Integer.valueOf(binding.adapterPort.getText().toString()));
         }
         editor.apply();
     }
@@ -95,6 +95,7 @@ public class CreateConfigurationActivity extends AppCompatActivity implements Ad
 //            binding.deviceSpinner = preferences.getString("ATS_DEVICE_NAME", "");
             binding.workstationId.setText(preferences.getString("ATS_WORKSTATION_ID", ""));
             binding.popId.setText(preferences.getString("ATS_POP_ID", ""));
+            binding.adapterPort.setText(String.valueOf(preferences.getInt("ATS_DEVICE_PORT", 0)));
         }
     }
 

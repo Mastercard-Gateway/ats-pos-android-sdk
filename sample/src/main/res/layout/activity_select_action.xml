@@ -43,6 +43,17 @@
         android:text="Authorization"
         android:textAllCaps="false"
         android:textColor="@color/colorAccent" />
-    
+
+    <Button
+        android:id="@+id/button_acquire_device"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_marginEnd="@dimen/material_baseline_grid_2x"
+        android:layout_marginStart="@dimen/material_baseline_grid_2x"
+        android:layout_marginTop="@dimen/material_baseline_grid_2x"
+        android:background="@color/material_color_white"
+        android:text="Acquire Device"
+        android:textAllCaps="false"
+        android:textColor="@color/colorAccent" />
 
 </LinearLayout>

@@ -93,7 +93,7 @@ public class SelectActionActivity extends Activity {
                         SharedPreferences.Editor editor = preferences.edit();
                         editor.putString("ATS_POP_ID", serviceResponse.getPopid());
                         editor.apply();
-
+                        atsClient.close();
                         Toast.makeText(SelectActionActivity.this,"Device Acquired Successfully !", Toast.LENGTH_LONG).show();
                         finish();
                     }

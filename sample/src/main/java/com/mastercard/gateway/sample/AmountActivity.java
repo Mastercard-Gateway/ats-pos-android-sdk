@@ -3,14 +3,13 @@ package com.mastercard.gateway.sample;
 import android.app.Activity;
 import android.content.Intent;
 import android.content.SharedPreferences;
+import android.databinding.DataBindingUtil;
 import android.os.Bundle;
 import android.preference.PreferenceManager;
 import android.support.annotation.Nullable;
-import android.support.v7.widget.Toolbar;
 import android.view.View;
 import android.widget.Button;
-import android.widget.EditText;
-import android.widget.TextView;
+import android.widget.CompoundButton;
 
 import com.mastercard.gateway.ats.ATSClient;
 import com.mastercard.gateway.ats.domain.ATSMessage;
@@ -21,28 +20,31 @@ import com.mastercard.gateway.ats.domain.DeviceRequest;
 import com.mastercard.gateway.ats.domain.DeviceResponse;
 import com.mastercard.gateway.ats.domain.RequestResultType;
 import com.mastercard.gateway.ats.domain.TotalAmountType;
+import com.mastercard.gateway.sample.databinding.ActivityAmountBinding;
 
 import org.jetbrains.annotations.NotNull;
 
 import java.math.BigDecimal;
-import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
-import java.util.UUID;
 
 public class AmountActivity extends Activity implements ATSClient.Callback {
 
-    EditText amountEditText;
-    TextView textMessages;
 
     Action action;
 
     ATSClient atsClient;
 
+    ActivityAmountBinding binding;
+
+    SharedPreferences preferences;
+
     @Override
     protected void onCreate(@Nullable Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        setContentView(R.layout.activity_amount);
+        binding = DataBindingUtil.setContentView(this, R.layout.activity_amount);
+
+        preferences = PreferenceManager.getDefaultSharedPreferences(this);
 
         atsClient = ((SampleApplication) getApplication()).getAtsClient();
         atsClient.addCallback(this);
@@ -51,9 +53,7 @@ public class AmountActivity extends Activity implements ATSClient.Callback {
             atsClient.connect();
         }
 
-        amountEditText = findViewById(R.id.amountEditText);
-        Toolbar toolbar = findViewById(R.id.toolbar);
-        toolbar.setNavigationOnClickListener(new View.OnClickListener() {
+        binding.toolbar.setNavigationOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
                 AmountActivity.this.finish();
@@ -61,26 +61,35 @@ public class AmountActivity extends Activity implements ATSClient.Callback {
         });
         Button actionButton = findViewById(R.id.button_action);
 
-        if (getIntent().getStringExtra("Action").equals("Payment")) {
-            action = Action.Payment;
-            toolbar.setTitle("Create a payment");
-            actionButton.setText("Pay");
-        } else {
-            action = Action.Authorization;
-            toolbar.setTitle("Create an authorization");
-            actionButton.setText("Auth");
-        }
+
+        action = Action.Payment;
+        binding.toolbar.setTitle("Create a payment");
+        actionButton.setText("Pay");
+
 
         actionButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                String amount = amountEditText.getText().toString();
-
-                createATSMessage(amount);
+                createATSMessage();
             }
         });
 
-        textMessages = findViewById(R.id.text_message);
+        String popID = preferences.getString("ATS_POP_ID", "");
+        binding.popIDEditText.setText(popID);
+
+
+        binding.switchMode.setOnCheckedChangeListener(new CompoundButton.OnCheckedChangeListener() {
+            @Override
+            public void onCheckedChanged(CompoundButton buttonView, boolean isChecked) {
+                if (isChecked) {
+                    binding.reference.setVisibility(View.VISIBLE);
+                    binding.popId.setVisibility(View.GONE);
+                } else {
+                    binding.reference.setVisibility(View.GONE);
+                    binding.popId.setVisibility(View.VISIBLE);
+                }
+            }
+        });
     }
 
 
@@ -123,11 +132,9 @@ public class AmountActivity extends Activity implements ATSClient.Callback {
 
                 if (textLines != null && !textLines.isEmpty()) {
                     String text = textLines.get(0).getValue();
-                    textMessages.setText(text);
+                    binding.textMessage.setText(text);
                 }
             }
-
-
 
 
             DeviceResponse response = DeviceResponse.createSuccessfulResponse(request);
@@ -144,24 +151,37 @@ public class AmountActivity extends Activity implements ATSClient.Callback {
         startActivity(intent);
     }
 
-    private void createATSMessage(String amount) {
+    private void createATSMessage() {
 
-        SharedPreferences preferences = PreferenceManager.getDefaultSharedPreferences(this);
+        String amount = binding.amountEditText.getText().toString();
+
+
         String workstationID = preferences.getString("ATS_WORKSTATION_ID", "");
-        String popID = preferences.getString("ATS_POP_ID", "");
 
-        UUID transactionID = UUID.randomUUID();
 
         CardServiceRequest request = new CardServiceRequest();
         request.setRequestType(action == Action.Payment ? CardRequestType.CardPayment : CardRequestType.CardPreAuthorisation);
+
         request.setWorkstationID(workstationID);
-        request.setRequestID(transactionID.toString());
-        request.setPopid(popID);
+        request.setRequestID("19");
+        request.setApplicationSender("ATSClient");
+
+
+
 
         CardServiceRequest.POSdata posData = new CardServiceRequest.POSdata();
         posData.setPosTimeStamp(new Date());
-        posData.setTransactionNumber(Math.abs(transactionID.hashCode()));
+        posData.setTransactionNumber(19);
+
+
+        if (binding.switchMode.isChecked()) {
+            posData.setReference(binding.referenceEditText.getText().toString());
+        } else  {
+            request.setPopid(binding.popIDEditText.getText().toString());
+        }
+
         request.setPoSdata(posData);
+
 
         TotalAmountType totalAmountType = new TotalAmountType();
         totalAmountType.value = new BigDecimal(amount);

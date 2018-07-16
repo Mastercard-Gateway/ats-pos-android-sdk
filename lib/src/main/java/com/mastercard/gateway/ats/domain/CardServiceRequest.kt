@@ -112,6 +112,7 @@ class CardServiceRequest : ATSMessage {
         var trackingReference: String? = null
     }
 
+    @Order(elements = ["POSTimeStamp", "TransactionNumber", "Reference"])
     class POSdata {
         @field:Element(name = "POSTimeStamp", required = true)
         lateinit var posTimeStamp: Date

@@ -8,7 +8,7 @@ import java.net.Socket
 
 /**
  * This class is used to expose a locally paired bluetooth PED to ATS by acting as a data proxy.
- * When you start this adapter with a port, a ServerSocket is started and begins listening for incoming
+ * When you startStatic this adapter with a port, a ServerSocket is started and begins listening for incoming
  * connection requests from ATS. After a request is received, a bluetooth connection is established
  * with the provided reader. A simple example is illustrated below:
  *
@@ -16,7 +16,7 @@ import java.net.Socket
  *     BluetoothDevice device = fetchBluetoothDevice(); // user-defined bluetooth device
  *
  *     // ready to handle PED connections
- *     ATSBluetoothAdapter.start(port);
+ *     ATSBluetoothAdapter.startStatic(port);
  *     ATSBluetoothAdapter.setBluetoothDevice(device);
  *
  *     // ... handle PED connection requests ...
@@ -31,35 +31,34 @@ object ATSBluetoothAdapter {
     internal val DEFAULT_DEVICE_PREFIXES = arrayOf("Miura", "Simplify")
 
     internal var atsSocketServer: SocketServer? = null
-    internal var atsCommunicationSocketClient: BasicSocketClient? = null
+    internal var atsCommunicationSocketClient: SocketClient? = null
     internal var bluetoothSocketClient: BluetoothSocketClient? = null
 
     // mockable callbacks
     internal val atsServerSocketCallback = ATSServerSocketCallback()
     internal val atsCommunicationSocketCallback = ATSCommunicationSocketCallback()
     internal val bluetoothSocketCallback = BluetoothSocketCallback()
+    internal val bluetoothRoamingCallback = BluetoothRoamingSocketCallback()
 
-
-    /**
-     * The bluetooth device to connect to when ATS opens a socket
-     */
     @JvmStatic
-    var bluetoothDevice: BluetoothDevice? = null
-
-    /**
-     * Starts listening for incoming ATS connection requests on the specified port.
-     * The port should be the value provided in ATS configuration for this device.
-     *
-     * @param port The port to listen on
-     */
-    @JvmStatic
-    fun start(port: Int) {
+    fun start(configuration: ATSBluetoothConfiguration) {
         if (isRunning()) {
             return
         }
 
+        when(configuration) {
+            is ATSBluetoothConfiguration.Static -> {
+                atsSocketServer = createSocketServer(configuration.port)
+                bluetoothSocketClient = createBluetoothSocketClient(configuration.bluetoothDevice)
+            }
+            is ATSBluetoothConfiguration.Roaming -> {
+                atsCommunicationSocketClient = createATSCommunicationSocketClient(configuration.ipAddress, configuration.port)
+                bluetoothSocketClient = createRoamingBluetoothSocketClient(configuration.bluetoothDevice)
+            }
+        }
+
         "Starting ATS bluetooth adapter".log(this)
-        atsSocketServer = createSocketServer(port)
+
     }
 
     /**
@@ -80,7 +79,7 @@ object ATSBluetoothAdapter {
      */
     @JvmStatic
     fun isRunning(): Boolean {
-        return atsSocketServer?.isRunning() ?: false
+        return atsSocketServer?.isRunning() ?: atsCommunicationSocketClient?.isConnected() ?: false
     }
 
     /**
@@ -107,8 +106,14 @@ object ATSBluetoothAdapter {
         }
     }
 
-    internal fun createATSCommunicationSocketClient(socket: Socket): BasicSocketClient {
+    internal fun createATSCommunicationSocketClient(socket: Socket): SocketClient {
         return BasicSocketClient(socket).apply {
+            addCallback(atsCommunicationSocketCallback)
+        }
+    }
+
+    internal fun createATSCommunicationSocketClient(ipAddress: String, port: Int): SocketClient {
+        return IPSocketClient(ipAddress, port).apply {
             addCallback(atsCommunicationSocketCallback)
         }
     }
@@ -118,6 +123,15 @@ object ATSBluetoothAdapter {
             addCallback(bluetoothSocketCallback)
         }
     }
+
+    internal fun createRoamingBluetoothSocketClient(device: BluetoothDevice): BluetoothSocketClient {
+        return BluetoothSocketClient(device, true).apply {
+            addCallback(bluetoothRoamingCallback)
+            connect(CONNECTION_ATTEMPTS)
+        }
+    }
+
+
 
     internal fun closeATSSocketServer() {
         atsSocketServer?.close()
@@ -139,12 +153,6 @@ object ATSBluetoothAdapter {
         override fun incomingSocket(socket: Socket) {
             "Received incoming ATS socket".logV(this)
 
-            if (bluetoothDevice == null) {
-                "No bluetooth device defined, closing incoming socket".logV(this)
-                socket.close()
-                return
-            }
-
             if (atsCommunicationSocketClient?.isConnected() == true) {
                 "Communication socket already open, closing incoming socket".logV(this)
                 socket.close()
@@ -155,11 +163,8 @@ object ATSBluetoothAdapter {
             atsCommunicationSocketClient = createATSCommunicationSocketClient(socket).apply {
                 connect()
             }
-
-            "Connecting to bluetooth device: ${bluetoothDevice!!.name}".log(this)
-            bluetoothSocketClient = createBluetoothSocketClient(bluetoothDevice!!).apply {
-                connect(CONNECTION_ATTEMPTS)
-            }
+            
+            bluetoothSocketClient?.connect(CONNECTION_ATTEMPTS)
         }
     }
 
@@ -188,6 +193,29 @@ object ATSBluetoothAdapter {
     internal class BluetoothSocketCallback : SocketClient.Callback {
 
         override fun onConnected() {}
+
+        override fun onRead(bytes: ByteArray) {
+            // Pass incoming bytes from the bluetooth device to ATS
+            atsCommunicationSocketClient?.write(bytes)
+        }
+
+        override fun onDisconnected() {
+            // If the bluetooth socket closes, close the socket ATS is connected to
+            "Bluetooth connection closed".log(this)
+            closeATSConnection()
+        }
+
+        override fun onError(throwable: Throwable) {
+            "Bluetooth connection encountered an error".log(this, throwable)
+        }
+    }
+
+    @SuppressLint("NewApi")
+    internal class BluetoothRoamingSocketCallback : SocketClient.Callback {
+
+        override fun onConnected() {
+            atsCommunicationSocketClient?.connect(CONNECTION_ATTEMPTS)
+        }
 
         override fun onRead(bytes: ByteArray) {
             // Pass incoming bytes from the bluetooth device to ATS

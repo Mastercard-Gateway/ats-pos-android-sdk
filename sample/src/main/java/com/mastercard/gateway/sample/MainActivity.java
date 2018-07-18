@@ -70,8 +70,13 @@ public class MainActivity extends AppCompatActivity {
                         }
                     }
 
-                    ATSBluetoothAdapter.start(adapterPort);
-                    ATSBluetoothAdapter.setBluetoothDevice(selectedDevice);
+
+                    ATSBluetoothAdapter.Configuration configuration = new ATSBluetoothAdapter.Configuration.Roaming(atsIPAddress, adapterPort, selectedDevice);
+                    ATSBluetoothAdapter.start(configuration);
+
+//                    ATSBluetoothAdapter.startStatic(adapterPort);
+//                    ATSBluetoothAdapter.setBluetoothDevice(selectedDevice);
+//                    ATSBluetoothAdapter.startRoaming(atsIPAddress, adapterPort);
                 }
 
                 startActivity(new Intent(MainActivity.this, AmountActivity.class));

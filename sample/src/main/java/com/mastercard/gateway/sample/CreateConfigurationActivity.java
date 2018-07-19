@@ -52,6 +52,7 @@ public class CreateConfigurationActivity extends AppCompatActivity implements Ad
                 int visible = isChecked ? View.VISIBLE : View.GONE;
                 binding.deviceSpinner.setVisibility(visible);
                 binding.adapterPortLabel.setVisibility(visible);
+                binding.roamingSwitch.setVisibility(visible);
             }
         });
 
@@ -84,6 +85,7 @@ public class CreateConfigurationActivity extends AppCompatActivity implements Ad
         if (binding.deviceSpinner.getSelectedItem() != null) {
             editor.putInt("ATS_DEVICE_PORT", Integer.valueOf(binding.adapterPort.getText().toString()));
         }
+        editor.putBoolean("BLUETOOTH_ROAMING", binding.roamingSwitch.isChecked());
         editor.apply();
     }
 
@@ -98,6 +100,20 @@ public class CreateConfigurationActivity extends AppCompatActivity implements Ad
             binding.workstationId.setText(preferences.getString("ATS_WORKSTATION_ID", ""));
             binding.popId.setText(preferences.getString("ATS_POP_ID", ""));
             binding.adapterPort.setText(String.valueOf(preferences.getInt("ATS_DEVICE_PORT", 0)));
+
+            boolean bluetoothEnabled = preferences.getBoolean("BLUETOOTH", false);
+            binding.bluetoothSwitch.setChecked(bluetoothEnabled);
+
+            int visible = bluetoothEnabled ? View.VISIBLE : View.GONE;
+            binding.deviceSpinner.setVisibility(visible);
+            binding.adapterPortLabel.setVisibility(visible);
+            binding.roamingSwitch.setVisibility(visible);
+
+            binding.roamingSwitch.setChecked(preferences.getBoolean("BLUETOOTH_ROAMING", false));
+        } else {
+            binding.deviceSpinner.setVisibility(View.GONE);
+            binding.adapterPortLabel.setVisibility(View.GONE);
+            binding.roamingSwitch.setVisibility(View.GONE);
         }
     }
 

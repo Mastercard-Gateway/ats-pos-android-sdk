@@ -13,6 +13,7 @@ import android.view.View;
 import android.widget.TextView;
 
 import com.mastercard.gateway.ats.ATSBluetoothAdapter;
+import com.mastercard.gateway.ats.ATSBluetoothConfiguration;
 
 public class MainActivity extends AppCompatActivity {
 
@@ -58,6 +59,9 @@ public class MainActivity extends AppCompatActivity {
             public void onClick(View v) {
                 ((SampleApplication) getApplication()).initATSClient(atsIPAddress, atsPort);
 
+                if (ATSBluetoothAdapter.isRunning()) {
+                    ATSBluetoothAdapter.stop();
+                }
 
                 if (preferences.getBoolean("BLUETOOTH", false) && deviceName != null && !deviceName.isEmpty()) {
 
@@ -70,13 +74,17 @@ public class MainActivity extends AppCompatActivity {
                         }
                     }
 
+                    boolean roaming = preferences.getBoolean("BLUETOOTH_ROAMING", false);
 
-                    ATSBluetoothAdapter.Configuration configuration = new ATSBluetoothAdapter.Configuration.Roaming(atsIPAddress, adapterPort, selectedDevice);
+                    ATSBluetoothConfiguration configuration;
+
+                    if (roaming) {
+                        configuration = new ATSBluetoothConfiguration.Roaming(atsIPAddress, adapterPort, selectedDevice);
+                    } else {
+                        configuration = new ATSBluetoothConfiguration.Static(adapterPort, selectedDevice);
+                    }
+
                     ATSBluetoothAdapter.start(configuration);
-
-//                    ATSBluetoothAdapter.startStatic(adapterPort);
-//                    ATSBluetoothAdapter.setBluetoothDevice(selectedDevice);
-//                    ATSBluetoothAdapter.startRoaming(atsIPAddress, adapterPort);
                 }
 
                 startActivity(new Intent(MainActivity.this, AmountActivity.class));

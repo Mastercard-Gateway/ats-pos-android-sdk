@@ -163,7 +163,7 @@ object ATSBluetoothAdapter {
             atsCommunicationSocketClient = createATSCommunicationSocketClient(socket).apply {
                 connect()
             }
-            
+
             bluetoothSocketClient?.connect(CONNECTION_ATTEMPTS)
         }
     }

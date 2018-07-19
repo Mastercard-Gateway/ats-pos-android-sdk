@@ -8,7 +8,7 @@ import java.math.BigDecimal
 @Root(name = "DeviceRequest", strict = false)
 class DeviceRequest : ATSMessage {
 
-    @field:ElementList(name = "Output", required = false, inline = true)
+    @field:ElementList(required = false, inline = true)
     var output: List<Output>? = null
     @field:Element(name = "Input", required = false)
     var input: DeviceRequest.Input? = null
@@ -29,7 +29,7 @@ class DeviceRequest : ATSMessage {
     @field:Attribute(name = "RequestID", required = true)
     lateinit var requestID: String
 
-    @Root(strict = false)
+    @Root(name="Event", strict = false)
     class Event {
 
         @field:Element(name = "EventData", required = true)
@@ -37,7 +37,7 @@ class DeviceRequest : ATSMessage {
         @field:Attribute(name = "EventType", required = true)
         lateinit var eventType: EventTypes
 
-        @Root(strict = false)
+        @Root(name="EventData", strict = false)
         class EventData {
 
             @field:Element(name = "Dispenser", required = false)
@@ -51,13 +51,13 @@ class DeviceRequest : ATSMessage {
             @field:Element(name = "ProductsAllowed", required = false)
             var productsAllowed: DeviceRequest.Event.EventData.ProductsAllowed? = null
 
-            @Root(strict = false)
+            @Root(name="ProductsAllowed", strict = false)
             class ProductsAllowed {
 
                 @field:ElementList(name = "ProductCode", required = true, inline = true)
                 lateinit var productCode: List<ProductCode>
 
-                @Root(strict = false)
+                @Root(name="ProductCode", strict = false)
                 class ProductCode {
                     @field:Text
                     var value: Integer? = null
@@ -74,7 +74,7 @@ class DeviceRequest : ATSMessage {
 
     }
 
-    @Root(strict = false)
+    @Root(name = "Input", strict = false)
     class Input {
 
         @field:Element(name = "Command", required = false)
@@ -124,11 +124,11 @@ class DeviceRequest : ATSMessage {
         var timeOut: Integer? = null
         @field:Attribute(name = "OutDeviceTarget", required = true)
         lateinit var outDeviceTarget: DeviceType
-        @field:ElementList(name = "TextLine", required = false, inline = true)
+        @field:ElementList(required = false, inline = true)
         var textLine: List<TextLine>? = null
         @field:Element(name = "Buzzer", required = false)
         var buzzer: Buzzer? = null
-        @field:ElementList(name = "OutSecureData", required = false, inline = true)
+        @field:ElementList(name = "OutSecureData", required = false, inline = true, type = SecureDataFlow::class)
         var outSecureData: List<SecureDataFlow>? = null
         @field:Element(name = "MAC", required = false)
         var mac: MACType? = null
@@ -136,7 +136,7 @@ class DeviceRequest : ATSMessage {
         var imageFile: String? = null
 
 
-        @Root(strict = false)
+        @Root(name= "Buzzer", strict = false)
         class Buzzer {
             @field:Text
             var value: Boolean = false
@@ -148,9 +148,9 @@ class DeviceRequest : ATSMessage {
             var durationPause: Integer? = null
         }
 
-        @Root(strict = false)
+        @Root(name = "TextLine", strict = false)
         class TextLine {
-            @field:Text
+            @field:Text(required = false)
             var value: String? = null
             @field:Attribute(name = "Row", required = false)
             var row: Byte? = null

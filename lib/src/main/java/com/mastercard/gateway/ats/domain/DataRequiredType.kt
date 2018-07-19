@@ -1,5 +1,8 @@
 package com.mastercard.gateway.ats.domain
 
+import org.simpleframework.xml.Root
+
+@Root(name = "DataRequiredType")
 enum class DataRequiredType {
     Track2,
     PAN,

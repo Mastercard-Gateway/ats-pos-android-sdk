@@ -43,6 +43,7 @@ class CardServiceRequest : ATSMessage {
     var referenceNumber: String? = null
 
 
+    @Root(name = "Acquirer", strict = false)
     class Acquirer {
         @field:Attribute(name = "TerminalID", required = false)
         var terminalID: String? = null
@@ -61,11 +62,13 @@ class CardServiceRequest : ATSMessage {
     }
 
 
+    @Root(name = "CardCircuitCollection", strict = false)
     class CardCircuitCollection {
 
         @field:ElementList(name = "CardCircuit", required = true, inline = true)
         lateinit var cardCircuit: List<CardCircuit>
 
+        @Root(name = "CardCircuit", strict = false)
         class CardCircuit {
             @field:Text
             lateinit var value: String
@@ -74,6 +77,7 @@ class CardServiceRequest : ATSMessage {
         }
     }
 
+    @Root(name = "Loyalty", strict = false)
     class Loyalty {
 
         @field:Element(name = "LoyaltyCard", required = false)
@@ -85,12 +89,13 @@ class CardServiceRequest : ATSMessage {
         @field:Attribute(name = "LoyaltyFlag", required = true)
         var loyaltyFlag: Boolean = false
 
-
+        @Root(name = "LoyaltyCard", strict = false)
         class LoyaltyCard : CardTrack() {
             @field:Attribute(name = "LoyaltyPAN", required = false)
             var loyaltyPAN: String? = null
         }
 
+        @Root(name = "MOPrule", strict = false)
         class MOPrule {
             @field:Attribute(name = "CardPAN", required = true)
             lateinit var cardPAN: String
@@ -99,6 +104,7 @@ class CardServiceRequest : ATSMessage {
         }
     }
 
+    @Root(name = "OriginalTransaction", strict = false)
     class OriginalTransaction {
         @field:Attribute(name = "TerminalID", required = false)
         var terminalID: String? = null
@@ -112,6 +118,7 @@ class CardServiceRequest : ATSMessage {
         var trackingReference: String? = null
     }
 
+    @Root(name = "POSdata", strict = false)
     @Order(elements = ["POSTimeStamp", "TransactionNumber", "Reference"])
     class POSdata {
         @field:Element(name = "POSTimeStamp", required = true)

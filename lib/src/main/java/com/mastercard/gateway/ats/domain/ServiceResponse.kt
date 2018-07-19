@@ -46,6 +46,7 @@ class ServiceResponse : ATSMessage {
     lateinit var overallResult: RequestResultType
 
 
+    @Root(name = "Authorisation", strict = false)
     class Authorisation {
         @field:Attribute(name = "ApprovalCode", required = false)
         var approvalCode: String? = null
@@ -57,6 +58,7 @@ class ServiceResponse : ATSMessage {
         lateinit var timeStamp: Date
     }
 
+    @Root(name = "OriginalHeader", strict = false)
     class OriginalHeader {
 
         @field:Attribute(name = "ApplicationSender", required = false)
@@ -73,6 +75,7 @@ class ServiceResponse : ATSMessage {
         lateinit var overallResult: RequestResultType
     }
 
+    @Root(name = "Reconciliation", strict = false)
     class Reconciliation {
 
         @field:ElementList(name = "TotalAmount", required = true, inline = true)
@@ -80,6 +83,7 @@ class ServiceResponse : ATSMessage {
         @field:Attribute(name = "LanguageCode", required = false)
         var languageCode: LanguageCodeType? = null
 
+        @Root(name = "TotalAmount", strict = false)
         class TotalAmount {
 
             @field:Text
@@ -101,6 +105,7 @@ class ServiceResponse : ATSMessage {
         }
     }
 
+    @Root(name = "Submission", strict = false)
     class Submission {
 
         @field:Element(name = "Successful", required = true)
@@ -110,6 +115,7 @@ class ServiceResponse : ATSMessage {
         @field:Attribute(name = "LanguageCode", required = false)
         var languageCode: LanguageCodeType? = null
 
+        @Root(name = "Failed", strict = false)
         class Failed {
             @field:Text
             lateinit var value: BigDecimal
@@ -117,6 +123,7 @@ class ServiceResponse : ATSMessage {
             lateinit var numberPayments: Integer
         }
 
+        @Root(name = "Successful", strict = false)
         class Successful {
             @field:Text
             lateinit var value: BigDecimal
@@ -125,6 +132,7 @@ class ServiceResponse : ATSMessage {
         }
     }
 
+    @Root(name = "Terminal", strict = false)
     class Terminal {
         @field:Attribute(name = "TerminalID", required = true)
         lateinit var terminalID: String
@@ -134,16 +142,19 @@ class ServiceResponse : ATSMessage {
         var stan: Long? = null
     }
 
+    @Root(name = "Versions", strict = false)
     class Versions {
 
         @field:ElementList(name = "Devices", required = true, inline = true)
         lateinit var devices: List<Devices>
 
+        @Root(name = "Devices", strict = false)
         class Devices {
 
             @field:ElementList(name = "Device", required = true, inline = true)
             lateinit var device: List<Device>
 
+            @Root(name = "Device", strict = false)
             class Device {
                 @field:Element(name = "SerialNumber", required = false)
                 var serialNumber: String? = null

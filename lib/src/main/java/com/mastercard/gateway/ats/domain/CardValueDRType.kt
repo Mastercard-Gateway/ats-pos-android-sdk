@@ -4,7 +4,6 @@ import org.simpleframework.xml.Attribute
 import org.simpleframework.xml.Element
 import org.simpleframework.xml.Root
 
-@Suppress("ArrayInDataClass")
 @Root(name = "CardValueDRType", strict = false)
 class CardValueDRType {
 
@@ -50,6 +49,7 @@ class CardValueDRType {
     var icc: ICCType? = null
 
 
+    @Root(name = "CADLuhn", strict = false)
     class CADLuhn {
         @field:Attribute(name = "Mod10", required = false)
         var mod10: Boolean? = null
@@ -63,6 +63,7 @@ class CardValueDRType {
         var bpaRearranged: Boolean? = null
     }
 
+    @Root(name = "Features", strict = false)
     class Features {
         @field:Element(name = "Feature", required = false)
         var feature: List<CardFeatureType>? = null

@@ -1,6 +1,5 @@
 package com.mastercard.gateway.ats
 
-import android.annotation.SuppressLint
 import android.bluetooth.BluetoothAdapter
 import android.bluetooth.BluetoothDevice
 import com.mastercard.gateway.common.*
@@ -243,6 +242,13 @@ object ATSBluetoothAdapter {
 
         override fun onError(throwable: Throwable) {
             "Bluetooth connection encountered an error".log(this, throwable)
+
+            if (currentConfiguration is ATSBluetoothConfiguration.Roaming) {
+                if (bluetoothSocketClient?.isConnected()?.not() ?: true) {
+                    isRetrying = false
+                    retryBluetoothConnection()
+                }
+            }
         }
     }
 }

@@ -74,17 +74,20 @@ public class MainActivity extends AppCompatActivity {
                         }
                     }
 
-                    boolean roaming = preferences.getBoolean("BLUETOOTH_ROAMING", false);
+                    if (selectedDevice != null) {
 
-                    ATSBluetoothConfiguration configuration;
+                        boolean roaming = preferences.getBoolean("BLUETOOTH_ROAMING", false);
 
-                    if (roaming) {
-                        configuration = new ATSBluetoothConfiguration.Roaming(atsIPAddress, adapterPort, selectedDevice);
-                    } else {
-                        configuration = new ATSBluetoothConfiguration.Static(adapterPort, selectedDevice);
+                        ATSBluetoothConfiguration configuration;
+
+                        if (roaming) {
+                            configuration = new ATSBluetoothConfiguration.Roaming(atsIPAddress, adapterPort, selectedDevice);
+                        } else {
+                            configuration = new ATSBluetoothConfiguration.Static(adapterPort, selectedDevice);
+                        }
+
+                        ATSBluetoothAdapter.start(configuration);
                     }
-
-                    ATSBluetoothAdapter.start(configuration);
                 }
 
                 startActivity(new Intent(MainActivity.this, AmountActivity.class));

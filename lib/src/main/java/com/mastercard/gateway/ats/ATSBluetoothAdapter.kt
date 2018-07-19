@@ -15,9 +15,10 @@ import java.net.Socket
  *     int port = 12345; // the ATS configured port for this PED
  *     BluetoothDevice device = fetchBluetoothDevice(); // user-defined bluetooth device
  *
+ *      ATSBluetoothConfiguration configuration = new ATSBluetoothConfiguration.Static(port, device);
+ *
  *     // ready to handle PED connections
- *     ATSBluetoothAdapter.startStatic(port);
- *     ATSBluetoothAdapter.setBluetoothDevice(device);
+ *     ATSBluetoothAdapter.start(configuration);
  *
  *     // ... handle PED connection requests ...
  *
@@ -38,27 +39,42 @@ object ATSBluetoothAdapter {
     internal val atsServerSocketCallback = ATSServerSocketCallback()
     internal val atsCommunicationSocketCallback = ATSCommunicationSocketCallback()
     internal val bluetoothSocketCallback = BluetoothSocketCallback()
-    internal val bluetoothRoamingCallback = BluetoothRoamingSocketCallback()
 
+    internal var currentConfiguration: ATSBluetoothConfiguration? = null
+
+    internal var isRetrying = false
+
+
+    /**
+     * Starts the communication between ATS and the Bluetooth device
+     *
+     * @param configuration: ATSBluetoothConfiguration - provides the Adapter with the information
+     * to connect to ATS and the Bluetooth device. The supported configurations are: Static and Roaming
+     */
     @JvmStatic
     fun start(configuration: ATSBluetoothConfiguration) {
         if (isRunning()) {
             return
         }
 
-        when(configuration) {
+        currentConfiguration = configuration
+
+        when (configuration) {
             is ATSBluetoothConfiguration.Static -> {
                 atsSocketServer = createSocketServer(configuration.port)
                 bluetoothSocketClient = createBluetoothSocketClient(configuration.bluetoothDevice)
             }
             is ATSBluetoothConfiguration.Roaming -> {
-                atsCommunicationSocketClient = createATSCommunicationSocketClient(configuration.ipAddress, configuration.port)
-                bluetoothSocketClient = createRoamingBluetoothSocketClient(configuration.bluetoothDevice)
+                initRoamingSocketClients(configuration)
             }
         }
 
         "Starting ATS bluetooth adapter".log(this)
+    }
 
+    private fun initRoamingSocketClients(configuration: ATSBluetoothConfiguration.Roaming) {
+        bluetoothSocketClient = createBluetoothSocketClient(configuration.bluetoothDevice)
+        bluetoothSocketClient?.connect(CONNECTION_ATTEMPTS)
     }
 
     /**
@@ -66,6 +82,7 @@ object ATSBluetoothAdapter {
      */
     @JvmStatic
     fun stop() {
+        currentConfiguration = null
         "Stopping ATS bluetooth adapter".log(this)
         closeATSSocketServer()
         closeATSConnection()
@@ -99,6 +116,17 @@ object ATSBluetoothAdapter {
         } ?: listOf()
     }
 
+    internal fun retryBluetoothConnection() {
+        if (!isRetrying) {
+            isRetrying = true
+            currentConfiguration?.let { configuration ->
+                if (configuration is ATSBluetoothConfiguration.Roaming) {
+                    initRoamingSocketClients(configuration)
+                }
+            }
+
+        }
+    }
 
     internal fun createSocketServer(port: Int): SocketServer {
         return SocketServer(port).apply {
@@ -123,15 +151,6 @@ object ATSBluetoothAdapter {
             addCallback(bluetoothSocketCallback)
         }
     }
-
-    internal fun createRoamingBluetoothSocketClient(device: BluetoothDevice): BluetoothSocketClient {
-        return BluetoothSocketClient(device, true).apply {
-            addCallback(bluetoothRoamingCallback)
-            connect(CONNECTION_ATTEMPTS)
-        }
-    }
-
-
 
     internal fun closeATSSocketServer() {
         atsSocketServer?.close()
@@ -168,7 +187,7 @@ object ATSBluetoothAdapter {
         }
     }
 
-    @SuppressLint("NewApi")
+
     internal class ATSCommunicationSocketCallback : SocketClient.Callback {
 
         override fun onConnected() {}
@@ -182,6 +201,10 @@ object ATSBluetoothAdapter {
             // on disconnect, close the connection to the bluetooth device
             "ATS connection closed".log(this)
             closeBluetoothConnection()
+
+            if (currentConfiguration is ATSBluetoothConfiguration.Roaming) {
+                retryBluetoothConnection()
+            }
         }
 
         override fun onError(throwable: Throwable) {
@@ -189,32 +212,18 @@ object ATSBluetoothAdapter {
         }
     }
 
-    @SuppressLint("NewApi")
+
     internal class BluetoothSocketCallback : SocketClient.Callback {
 
-        override fun onConnected() {}
-
-        override fun onRead(bytes: ByteArray) {
-            // Pass incoming bytes from the bluetooth device to ATS
-            atsCommunicationSocketClient?.write(bytes)
-        }
-
-        override fun onDisconnected() {
-            // If the bluetooth socket closes, close the socket ATS is connected to
-            "Bluetooth connection closed".log(this)
-            closeATSConnection()
-        }
-
-        override fun onError(throwable: Throwable) {
-            "Bluetooth connection encountered an error".log(this, throwable)
-        }
-    }
-
-    @SuppressLint("NewApi")
-    internal class BluetoothRoamingSocketCallback : SocketClient.Callback {
-
         override fun onConnected() {
-            atsCommunicationSocketClient?.connect(CONNECTION_ATTEMPTS)
+            val configuration = currentConfiguration
+            if (configuration is ATSBluetoothConfiguration.Roaming) {
+                "Connecting to ATS".log(this)
+                isRetrying = false
+                atsCommunicationSocketClient = createATSCommunicationSocketClient(configuration.ipAddress, configuration.port).apply {
+                    connect(CONNECTION_ATTEMPTS)
+                }
+            }
         }
 
         override fun onRead(bytes: ByteArray) {
@@ -226,6 +235,10 @@ object ATSBluetoothAdapter {
             // If the bluetooth socket closes, close the socket ATS is connected to
             "Bluetooth connection closed".log(this)
             closeATSConnection()
+
+            if (currentConfiguration is ATSBluetoothConfiguration.Roaming) {
+                retryBluetoothConnection()
+            }
         }
 
         override fun onError(throwable: Throwable) {

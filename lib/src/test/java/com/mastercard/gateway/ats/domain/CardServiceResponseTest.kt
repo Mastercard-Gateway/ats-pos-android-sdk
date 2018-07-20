@@ -1,5 +1,7 @@
 package com.mastercard.gateway.ats.domain
 
+import com.mastercard.gateway.ats.Interpreter
+import com.mastercard.gateway.ats.Message
 import org.junit.Assert.assertEquals
 import org.junit.Assert.assertNotNull
 import org.junit.Test
@@ -17,8 +19,8 @@ class CardServiceResponseTest {
 
     @Test
     fun testDeserialization() {
-        val serializer = Persister()
-        val obj = serializer.read(CardServiceResponse::class.java, payload)
+        val msg = Message(payload)
+        val obj = Interpreter.deserialize(msg) as CardServiceResponse
 
         assertNotNull(obj)
         assertEquals(CardRequestType.CardPayment, obj.requestType)

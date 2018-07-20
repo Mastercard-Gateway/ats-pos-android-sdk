@@ -13,6 +13,7 @@ import android.view.View;
 import android.widget.TextView;
 
 import com.mastercard.gateway.ats.ATSBluetoothAdapter;
+import com.mastercard.gateway.ats.ATSBluetoothConfiguration;
 
 public class MainActivity extends AppCompatActivity {
 
@@ -56,27 +57,55 @@ public class MainActivity extends AppCompatActivity {
         findViewById(R.id.next).setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                ((SampleApplication) getApplication()).initATSClient(atsIPAddress, atsPort);
-
-
-                if (preferences.getBoolean("BLUETOOTH", false) && deviceName != null && !deviceName.isEmpty()) {
-
-                    BluetoothDevice selectedDevice = null;
-
-                    for (BluetoothDevice supportedDevice : ATSBluetoothAdapter.getSupportedDevices()) {
-                        if (supportedDevice.getName().equals(deviceName)) {
-                            selectedDevice = supportedDevice;
-                            break;
-                        }
-                    }
-
-                    ATSBluetoothAdapter.start(adapterPort);
-                    ATSBluetoothAdapter.setBluetoothDevice(selectedDevice);
-                }
-
-                startActivity(new Intent(MainActivity.this, AmountActivity.class));
+                initATS();
             }
         });
+    }
+
+    // Setting up communication with ATS and if configured, the Bluetooth adapter
+    private void initATS() {
+        ((SampleApplication) getApplication()).initATSClient(atsIPAddress, atsPort);
+
+        if (ATSBluetoothAdapter.isRunning()) {
+            ATSBluetoothAdapter.stop();
+        }
+
+        if (preferences.getBoolean("BLUETOOTH", false) && deviceName != null && !deviceName.isEmpty()) {
+
+            BluetoothDevice selectedDevice = getBluetoothDevice();
+
+            if (selectedDevice != null) {
+
+                boolean roaming = preferences.getBoolean("BLUETOOTH_ROAMING", false);
+
+                //Create either a Static or Roaming ATSBluetoothConfiguration
+                ATSBluetoothConfiguration configuration;
+
+                if (roaming) {
+                    configuration = new ATSBluetoothConfiguration.Roaming(atsIPAddress, adapterPort, selectedDevice);
+                } else {
+                    configuration = new ATSBluetoothConfiguration.Static(adapterPort, selectedDevice);
+                }
+
+                //Start ATSBluetooth Adapter
+                ATSBluetoothAdapter.start(configuration);
+            }
+        }
+
+        startActivity(new Intent(MainActivity.this, AmountActivity.class));
+    }
+
+    @Nullable
+    private BluetoothDevice getBluetoothDevice() {
+        BluetoothDevice selectedDevice = null;
+
+        for (BluetoothDevice supportedDevice : ATSBluetoothAdapter.getSupportedDevices()) {
+            if (supportedDevice.getName().equals(deviceName)) {
+                selectedDevice = supportedDevice;
+                break;
+            }
+        }
+        return selectedDevice;
     }
 
     @Override

@@ -4,7 +4,7 @@ import org.simpleframework.xml.*
 import java.math.BigDecimal
 import java.util.*
 
-@Root(name = "ServiceRequest")
+@Root(name = "ServiceRequest", strict = false)
 class ServiceRequest : ATSMessage {
 
     @field:Element(name = "POSdata", required = false)
@@ -30,7 +30,7 @@ class ServiceRequest : ATSMessage {
     @field:Attribute(name = "RequestID", required = true)
     lateinit var requestID: String
 
-
+    @Root(name = "PINPadProgramLoad", strict = false)
     class PINPadProgramLoad {
 
         @field:Element(name = "ForceApplication", required = false)
@@ -46,7 +46,7 @@ class ServiceRequest : ATSMessage {
 
     }
 
-
+    @Root(name = "POSdata", strict = false)
     class POSdata {
 
         @field:Element(name = "POSTimeStamp", required = true)
@@ -66,6 +66,7 @@ class ServiceRequest : ATSMessage {
 
     }
 
+    @Root(name = "TotalAmount", strict = false)
     class TotalAmount {
         @field:Text
         lateinit var value: BigDecimal

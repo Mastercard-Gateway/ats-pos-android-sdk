@@ -6,7 +6,7 @@ import org.simpleframework.xml.Attribute
 import org.simpleframework.xml.Element
 import org.simpleframework.xml.Root
 import org.simpleframework.xml.Text
-import java.util.Date
+import java.util.*
 
 
 @Root(name = "CardServiceResponse")
@@ -41,6 +41,7 @@ class CardServiceResponse : ATSMessage {
     @field:Attribute(name = "OverallResult", required = true)
     lateinit var overallResult: RequestResultType
 
+    @Root(name = "Loyalty", strict = false)
     class Loyalty {
 
         @field:Element(name = "LoyaltyCard", required = false)
@@ -66,6 +67,7 @@ class CardServiceResponse : ATSMessage {
         @field:Attribute(name = "LoyaltyFlag", required = true)
         var loyaltyFlag: Boolean = false
 
+        @Root(name = "LoyaltyAmount", strict = false)
         class LoyaltyAmount {
             @field:Text
             var value: Float = 0f
@@ -73,6 +75,7 @@ class CardServiceResponse : ATSMessage {
             var originalLoyaltyAmount: Float? = null
         }
 
+        @Root(name = "LoyaltyApprovalCode", strict = false)
         class LoyaltyApprovalCode {
             var value: String? = null
             @field:Attribute(name = "LoyaltyAcquirerID", required = false)
@@ -81,12 +84,14 @@ class CardServiceResponse : ATSMessage {
             var loyaltyAcquirerBatch: String? = null
         }
 
+        @Root(name = "LoyaltyCard", strict = false)
         class LoyaltyCard : CardTrack() {
             @field:Attribute(name = "LoyaltyPAN")
             var loyaltyPAN: String? = null
         }
     }
 
+    @Root(name = "OriginalHeader", strict = false)
     class OriginalHeader {
 
         @field:Attribute(name = "ApplicationSender", required = false)
@@ -103,6 +108,7 @@ class CardServiceResponse : ATSMessage {
         lateinit var overallResult: RequestResultType
     }
 
+    @Root(name = "Tender", strict = false)
     class Tender {
 
         @field:Element(name = "TotalAmount", required = false)
@@ -114,6 +120,7 @@ class CardServiceResponse : ATSMessage {
         @field:Attribute(name = "LanguageCode", required = false)
         var languageCode: LanguageCodeType? = null
 
+        @Root(name = "Authorisation", strict = false)
         class Authorisation {
 
             @field:Attribute(name = "IssuerID", required = false)
@@ -169,6 +176,7 @@ class CardServiceResponse : ATSMessage {
         }
     }
 
+    @Root(name = "Terminal", strict = false)
     class Terminal {
         @field:Attribute(name = "TerminalBatch", required = false)
         var terminalBatch: String? = null

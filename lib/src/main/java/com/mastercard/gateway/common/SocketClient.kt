@@ -40,7 +40,7 @@ internal abstract class SocketClient: StreamManager(), Closeable {
 
     fun connect(attempts: Int = 1) {
         writeBuffer.clear()
-        // start connection thread
+        // startStatic connection thread
         startConnectThread(attempts)
     }
 

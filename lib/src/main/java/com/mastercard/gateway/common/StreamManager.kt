@@ -1,6 +1,7 @@
 package com.mastercard.gateway.common
 
 import android.os.Handler
+import android.support.annotation.VisibleForTesting
 import java.io.Closeable
 import java.io.InputStream
 import java.io.OutputStream
@@ -39,7 +40,8 @@ internal abstract class StreamManager : Closeable {
         thread(start = true) { runWrite() }
     }
 
-    private fun runRead() {
+    @VisibleForTesting(otherwise = VisibleForTesting.PRIVATE)
+    internal fun runRead() {
         // get input stream
         val inputStream = getInputStream()
         val buffer = ByteArray(1024)
@@ -68,7 +70,8 @@ internal abstract class StreamManager : Closeable {
         }
     }
 
-    private fun runWrite() {
+    @VisibleForTesting(otherwise = VisibleForTesting.PRIVATE)
+    internal fun runWrite() {
         try {
             // get output stream
             val outputStream = getOutputStream()

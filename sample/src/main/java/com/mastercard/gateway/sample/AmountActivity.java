@@ -151,6 +151,7 @@ public class AmountActivity extends Activity implements ATSClient.Callback {
         startActivity(intent);
     }
 
+    //Create a CardServiceRequest for the amount entered
     private void createATSMessage() {
 
         String amount = binding.amountEditText.getText().toString();
@@ -160,7 +161,7 @@ public class AmountActivity extends Activity implements ATSClient.Callback {
 
 
         CardServiceRequest request = new CardServiceRequest();
-        request.setRequestType(action == Action.Payment ? CardRequestType.CardPayment : CardRequestType.CardPreAuthorisation);
+        request.setRequestType(CardRequestType.CardPayment);
 
         request.setWorkstationID(workstationID);
         request.setRequestID("19");

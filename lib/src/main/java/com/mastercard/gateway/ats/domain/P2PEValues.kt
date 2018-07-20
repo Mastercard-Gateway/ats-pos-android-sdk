@@ -5,7 +5,7 @@ import org.simpleframework.xml.Order
 import org.simpleframework.xml.Root
 
 @Suppress("ArrayInDataClass")
-@Root(name = "P2PEValues")
+@Root(name = "P2PEValues", strict = false)
 class P2PEValues {
     @field:Element(name = "DataIV", required=false)
     var dataIV: ByteArray? = null

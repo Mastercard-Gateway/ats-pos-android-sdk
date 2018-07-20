@@ -7,7 +7,7 @@ import java.net.Socket
 
 /**
  * This class is used to expose a locally paired bluetooth PED to ATS by acting as a data proxy.
- * When you startStatic this adapter with a port, a ServerSocket is started and begins listening for incoming
+ * When you start this adapter with a Static configuration, a ServerSocket is started and begins listening for incoming
  * connection requests from ATS. After a request is received, a bluetooth connection is established
  * with the provided reader. A simple example is illustrated below:
  *

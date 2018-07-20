@@ -25,6 +25,7 @@ public class SampleApplication extends Application {
     }
 
     void initATSClient(String ipAddress, int atsPort) {
+        //Create and connect to ATSClient
         atsClient = new ATSClient(ipAddress, atsPort);
         atsClient.connect();
     }

@@ -56,6 +56,8 @@ object ATSBluetoothAdapter {
             return
         }
 
+        isRetrying = false
+
         currentConfiguration = configuration
 
         when (configuration) {
@@ -120,10 +122,10 @@ object ATSBluetoothAdapter {
             isRetrying = true
             currentConfiguration?.let { configuration ->
                 if (configuration is ATSBluetoothConfiguration.Roaming) {
+                    "Retrying bluetooth connection".log(this)
                     initRoamingSocketClients(configuration)
                 }
             }
-
         }
     }
 
@@ -241,9 +243,10 @@ object ATSBluetoothAdapter {
         }
 
         override fun onError(throwable: Throwable) {
-            "Bluetooth connection encountered an error".log(this, throwable)
+            "Bluetooth connection encountered an error".log(this)
 
             if (currentConfiguration is ATSBluetoothConfiguration.Roaming) {
+
                 if (bluetoothSocketClient?.isConnected()?.not() ?: true) {
                     isRetrying = false
                     retryBluetoothConnection()

@@ -23,6 +23,7 @@ public class MainActivity extends AppCompatActivity {
     int adapterPort;
     String workstationID;
     String popID;
+    ATSBluetoothAdapter adapter = new ATSBluetoothAdapter();
 
     SharedPreferences preferences;
 
@@ -30,7 +31,6 @@ public class MainActivity extends AppCompatActivity {
     protected void onCreate(@Nullable Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
-
 
         Toolbar toolbar = findViewById(R.id.toolbar);
         toolbar.inflateMenu(R.menu.menu_main);
@@ -65,10 +65,8 @@ public class MainActivity extends AppCompatActivity {
     // Setting up communication with ATS and if configured, the Bluetooth adapter
     private void initATS() {
 
-
-
-        if (ATSBluetoothAdapter.isRunning()) {
-            ATSBluetoothAdapter.stop();
+        if (adapter.isRunning()) {
+            adapter.stop();
         }
 
         if (preferences.getBoolean("BLUETOOTH", false) && deviceName != null && !deviceName.isEmpty()) {
@@ -89,7 +87,7 @@ public class MainActivity extends AppCompatActivity {
                 }
 
                 //Start ATSBluetooth Adapter
-                ATSBluetoothAdapter.start(configuration);
+                adapter.start(configuration);
             }
         }
 
@@ -100,7 +98,7 @@ public class MainActivity extends AppCompatActivity {
     private BluetoothDevice getBluetoothDevice() {
         BluetoothDevice selectedDevice = null;
 
-        for (BluetoothDevice supportedDevice : ATSBluetoothAdapter.getSupportedDevices()) {
+        for (BluetoothDevice supportedDevice : adapter.getSupportedDevices()) {
             if (supportedDevice.getName().equals(deviceName)) {
                 selectedDevice = supportedDevice;
                 break;

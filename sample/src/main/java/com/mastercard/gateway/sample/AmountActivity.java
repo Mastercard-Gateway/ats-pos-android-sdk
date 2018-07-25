@@ -7,12 +7,14 @@ import android.databinding.DataBindingUtil;
 import android.os.Bundle;
 import android.preference.PreferenceManager;
 import android.support.annotation.Nullable;
+import android.util.Log;
 import android.view.View;
 import android.widget.Button;
 import android.widget.CompoundButton;
 
 import com.mastercard.gateway.ats.ATSBluetoothAdapter;
 import com.mastercard.gateway.ats.ATSClient;
+import com.mastercard.gateway.ats.ATSDiagnostics;
 import com.mastercard.gateway.ats.domain.ATSMessage;
 import com.mastercard.gateway.ats.domain.CardRequestType;
 import com.mastercard.gateway.ats.domain.CardServiceRequest;
@@ -46,7 +48,6 @@ public class AmountActivity extends Activity implements ATSClient.Callback {
         binding = DataBindingUtil.setContentView(this, R.layout.activity_amount);
 
         preferences = PreferenceManager.getDefaultSharedPreferences(this);
-
 
         binding.toolbar.setNavigationOnClickListener(new View.OnClickListener() {
             @Override
@@ -101,14 +102,13 @@ public class AmountActivity extends Activity implements ATSClient.Callback {
             atsClient.close();
         }
 
-        String atsIPAddress = preferences.getString("ATS_IP_ADDRESS", "");
-        int atsPort = preferences.getInt("ATS_PORT", 0);
-
-        atsClient = new ATSClient(atsIPAddress, atsPort);
+        atsClient = new ATSClient();
         atsClient.addCallback(this);
 
         if (!atsClient.isConnected()) {
-            atsClient.connect();
+            String atsIPAddress = preferences.getString("ATS_IP_ADDRESS", "");
+            int atsPort = preferences.getInt("ATS_PORT", 0);
+            atsClient.connect(atsIPAddress, atsPort);
         }
     }
 
@@ -119,7 +119,11 @@ public class AmountActivity extends Activity implements ATSClient.Callback {
 
     @Override
     public void onDisconnected() {
+        ATSDiagnostics.stopLogCapture();
+        String log = ATSDiagnostics.getLog();
+        ATSDiagnostics.clearLog();
 
+        Log.d(AmountActivity.class.getSimpleName(), "ATS Log:\n" + log);
     }
 
     @Override
@@ -186,7 +190,6 @@ public class AmountActivity extends Activity implements ATSClient.Callback {
         request.setRequestID("19");
         request.setApplicationSender("ATSClient");
 
-
         CardServiceRequest.POSdata posData = new CardServiceRequest.POSdata();
         posData.setPosTimeStamp(new Date());
         posData.setTransactionNumber(19);
@@ -215,7 +218,6 @@ public class AmountActivity extends Activity implements ATSClient.Callback {
     @Override
     protected void onDestroy() {
         super.onDestroy();
-        ATSBluetoothAdapter.stop();
     }
 
     private void showProgress() {

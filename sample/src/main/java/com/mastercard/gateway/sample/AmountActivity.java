@@ -92,6 +92,11 @@ public class AmountActivity extends Activity implements ATSClient.Callback {
         });
     }
 
+    @Override
+    protected void onStart() {
+        super.onStart();
+        hideProgress();
+    }
 
     @Override
     public void onConnected() {
@@ -118,11 +123,10 @@ public class AmountActivity extends Activity implements ATSClient.Callback {
                 intent.putExtra("Result", "Error");
             }
 
-            atsClient.close();
+//            atsClient.close();
 
             startActivity(intent);
 
-            finish();
         } else if (message instanceof DeviceRequest) {
             DeviceRequest request = (DeviceRequest) message;
 
@@ -168,8 +172,6 @@ public class AmountActivity extends Activity implements ATSClient.Callback {
         request.setApplicationSender("ATSClient");
 
 
-
-
         CardServiceRequest.POSdata posData = new CardServiceRequest.POSdata();
         posData.setPosTimeStamp(new Date());
         posData.setTransactionNumber(19);
@@ -177,7 +179,7 @@ public class AmountActivity extends Activity implements ATSClient.Callback {
 
         if (binding.switchMode.isChecked()) {
             posData.setReference(binding.referenceEditText.getText().toString());
-        } else  {
+        } else {
             request.setPopid(binding.popIDEditText.getText().toString());
         }
 
@@ -191,11 +193,25 @@ public class AmountActivity extends Activity implements ATSClient.Callback {
 
         atsClient.sendMessage(request);
 
+        showProgress();
+    }
+
+
+    @Override
+    protected void onDestroy() {
+        super.onDestroy();
+        atsClient.close();
+    }
+
+    private void showProgress(){
         findViewById(R.id.transaction_in_progress).setVisibility(View.VISIBLE);
         findViewById(R.id.collect_amount).setVisibility(View.GONE);
     }
 
-
+    private void hideProgress() {
+        findViewById(R.id.transaction_in_progress).setVisibility(View.GONE);
+        findViewById(R.id.collect_amount).setVisibility(View.VISIBLE);
+    }
     enum Action {
         Authorization,
         Payment

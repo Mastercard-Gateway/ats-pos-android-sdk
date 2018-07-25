@@ -48,7 +48,6 @@ public class AmountActivity extends Activity implements ATSClient.Callback {
         preferences = PreferenceManager.getDefaultSharedPreferences(this);
 
 
-
         binding.toolbar.setNavigationOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
@@ -97,10 +96,10 @@ public class AmountActivity extends Activity implements ATSClient.Callback {
     @Override
     protected void onResume() {
         super.onResume();
-        if (atsClient != null) {
+
+        if (atsClient != null && atsClient.isConnected()) {
             atsClient.close();
         }
-
 
         String atsIPAddress = preferences.getString("ATS_IP_ADDRESS", "");
         int atsPort = preferences.getInt("ATS_PORT", 0);
@@ -138,6 +137,7 @@ public class AmountActivity extends Activity implements ATSClient.Callback {
                 intent.putExtra("Result", "Error");
             }
 
+            //atsClient is supposed to be closed after every transaction due to its short timeout period.
             atsClient.close();
 
             startActivity(intent);
@@ -216,10 +216,9 @@ public class AmountActivity extends Activity implements ATSClient.Callback {
     protected void onDestroy() {
         super.onDestroy();
         ATSBluetoothAdapter.stop();
-        atsClient.close();
     }
 
-    private void showProgress(){
+    private void showProgress() {
         findViewById(R.id.transaction_in_progress).setVisibility(View.VISIBLE);
         findViewById(R.id.collect_amount).setVisibility(View.GONE);
     }
@@ -228,6 +227,7 @@ public class AmountActivity extends Activity implements ATSClient.Callback {
         findViewById(R.id.transaction_in_progress).setVisibility(View.GONE);
         findViewById(R.id.collect_amount).setVisibility(View.VISIBLE);
     }
+
     enum Action {
         Authorization,
         Payment

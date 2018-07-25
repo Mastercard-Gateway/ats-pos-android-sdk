@@ -7,11 +7,13 @@ import android.databinding.DataBindingUtil;
 import android.os.Bundle;
 import android.preference.PreferenceManager;
 import android.support.annotation.Nullable;
+import android.util.Log;
 import android.view.View;
 import android.widget.Button;
 import android.widget.CompoundButton;
 
 import com.mastercard.gateway.ats.ATSClient;
+import com.mastercard.gateway.ats.ATSDiagnostics;
 import com.mastercard.gateway.ats.domain.ATSMessage;
 import com.mastercard.gateway.ats.domain.CardRequestType;
 import com.mastercard.gateway.ats.domain.CardServiceRequest;
@@ -48,6 +50,10 @@ public class AmountActivity extends Activity implements ATSClient.Callback {
 
         atsClient = ((SampleApplication) getApplication()).getAtsClient();
         atsClient.addCallback(this);
+
+        // begin capturing ATS logs
+        ATSDiagnostics.clearLog();
+        ATSDiagnostics.startLogCapture();
 
         if (!atsClient.isConnected()) {
             atsClient.connect();
@@ -100,7 +106,11 @@ public class AmountActivity extends Activity implements ATSClient.Callback {
 
     @Override
     public void onDisconnected() {
+        ATSDiagnostics.stopLogCapture();
+        String log = ATSDiagnostics.getLog();
+        ATSDiagnostics.clearLog();
 
+        Log.d(AmountActivity.class.getSimpleName(), "ATS Log:\n" + log);
     }
 
     @Override

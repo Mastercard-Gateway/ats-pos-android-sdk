@@ -4,51 +4,91 @@ import android.util.Log
 import java.text.SimpleDateFormat
 import java.util.*
 
-class ATSDiagnostics {
+/**
+ * This class is used to help capture logs from the ATS SDK.
+ * Each component of the SDK outputs log statements to the singleton
+ * instance of this class. You can capture those statements by calling
+ * {@link #startLogCapture() startLogCapture()}
+ *
+ * Typical use case:
+ *
+ * ATSDiagnostics.setLogLevel(Log.VERBOSE);
+ * ATSDiagnostics.startLogCapture();
+ *
+ * // ... perform transaction with ATS
+ *
+ * ATSDiagnostics.stopLogCapture();
+ *
+ * String log = ATSDiagnostics.getLog();
+ * ATSDiagnostics.clearLog();
+ */
+object ATSDiagnostics {
 
-    companion object {
+    private var logLevel: Int = Log.DEBUG
+    private var capturing: Boolean = false
+    private val log = StringBuffer()
+    private val dateFormatter = SimpleDateFormat("yyyy-MM-dd HH:mm:ss.SSS", Locale.getDefault())
 
-        internal var logLevel: Int = Log.DEBUG
-        internal var capturing: Boolean = false
-        internal val log = StringBuffer()
-        internal val dateFormatter = SimpleDateFormat("yyyy-MM-dd HH:mm:ss.SSS", Locale.getDefault())
+    /**
+     * Returns the current log level being recorded
+     *
+     * @return The log level
+     * @see android.util.Log
+     */
+    @JvmStatic
+    fun getLogLevel(): Int {
+        return logLevel
+    }
 
-        @JvmStatic
-        fun getLogLevel(): Int {
-            return logLevel
-        }
+    /**
+     * Sets the log level to record
+     *
+     * @param level The log level
+     * @see android.util.Log
+     */
+    @JvmStatic
+    fun setLogLevel(level: Int) {
+        logLevel = level
+    }
 
-        @JvmStatic
-        fun setLogLevel(level: Int) {
-            logLevel = level
-        }
+    /**
+     * Starts capturing log messages to the internal buffer.
+     */
+    @JvmStatic
+    fun startLogCapture() {
+        capturing = true
+    }
 
-        @JvmStatic
-        fun startLogCapture() {
-            capturing = true
-        }
+    /**
+     * Stops capturing log messages
+     */
+    @JvmStatic
+    fun stopLogCapture() {
+        capturing = false
+    }
 
-        @JvmStatic
-        fun stopLogCapture(): String {
-            capturing = false
-            return getLog()
-        }
+    /**
+     * Returns the current log stack
+     *
+     * @return The current log
+     */
+    @JvmStatic
+    fun getLog(): String {
+        return log.toString()
+    }
 
-        @JvmStatic
-        fun getLog(): String {
-            return log.toString()
-        }
+    /**
+     * Clears the internal log buffer
+     */
+    @JvmStatic
+    fun clearLog() {
+        log.setLength(0)
+    }
 
-        @JvmStatic
-        fun clearLog() {
-            log.setLength(0)
-        }
-
-        internal fun log(priority: Int, tag: String, message: String) {
-            if (capturing && priority >= logLevel) {
-                val timestamp = dateFormatter.format(Date())
-                log.append("$timestamp [$tag] $message\n")
-            }
+    internal fun log(priority: Int, tag: String, message: String) {
+        if (capturing && priority >= logLevel) {
+            val timestamp = dateFormatter.format(Date())
+            log.append("$timestamp [$tag] $message\n")
         }
     }
 }

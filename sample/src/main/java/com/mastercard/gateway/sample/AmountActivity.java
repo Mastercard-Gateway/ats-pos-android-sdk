@@ -11,6 +11,7 @@ import android.view.View;
 import android.widget.Button;
 import android.widget.CompoundButton;
 
+import com.mastercard.gateway.ats.ATSBluetoothAdapter;
 import com.mastercard.gateway.ats.ATSClient;
 import com.mastercard.gateway.ats.domain.ATSMessage;
 import com.mastercard.gateway.ats.domain.CardRequestType;
@@ -214,6 +215,7 @@ public class AmountActivity extends Activity implements ATSClient.Callback {
     @Override
     protected void onDestroy() {
         super.onDestroy();
+        ATSBluetoothAdapter.stop();
         atsClient.close();
     }
 

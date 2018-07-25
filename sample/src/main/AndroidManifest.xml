@@ -20,12 +20,11 @@
             </intent-filter>
         </activity>
 
-        <activity android:name=".SelectActionActivity" />
-        <activity android:name=".AmountActivity"
-            android:windowSoftInputMode="adjustResize" />
-        <activity android:name=".ResultActivity" />
         <activity
-            android:name=".CreateConfigurationActivity"
-            android:screenOrientation="portrait" />
+            android:name=".AmountActivity"
+            android:windowSoftInputMode="adjustResize" />
+
+        <activity android:name=".ResultActivity" />
+        <activity android:name=".CreateConfigurationActivity" />
     </application>
 </manifest>

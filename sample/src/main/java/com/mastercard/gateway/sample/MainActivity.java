@@ -64,7 +64,7 @@ public class MainActivity extends AppCompatActivity {
 
     // Setting up communication with ATS and if configured, the Bluetooth adapter
     private void initATS() {
-        
+
         if (adapter.isRunning()) {
             adapter.stop();
         }

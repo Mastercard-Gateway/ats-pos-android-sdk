@@ -177,9 +177,6 @@ public class AmountActivity extends Activity implements ATSClient.Callback {
         request.setRequestID("19");
         request.setApplicationSender("ATSClient");
 
-
-
-
         CardServiceRequest.POSdata posData = new CardServiceRequest.POSdata();
         posData.setPosTimeStamp(new Date());
         posData.setTransactionNumber(19);

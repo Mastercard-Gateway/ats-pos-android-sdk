@@ -1,11 +1,67 @@
 package com.mastercard.gateway.ats
 
 import com.mastercard.gateway.ats.domain.ATSMessage
-import com.mastercard.gateway.common.*
+import com.mastercard.gateway.common.Buffer
+import com.mastercard.gateway.common.IPSocketClient
+import com.mastercard.gateway.common.SocketClient
+import com.mastercard.gateway.common.log
 import java.io.Closeable
 
 /**
- * Facilitates connecting and communicating to ATS
+ * This class facilitates connecting and communicating to ATS, a socket is opened and messages
+ * received are passed to all registered callbacks. A simple example is illustrated below:
+ *
+ *   String atsIPAddress = "192.168.0.1";
+ *   int atsPort = 20002;
+ *
+ *
+ *   ATSClient atsClient = new ATSClient();
+ *
+ *   ATSClient.Callback atsCallback = new ATSClient.Callback() {
+ *      @Override
+ *      public void onConnected() {
+ *          // ATSClient has connected to ATS successfully
+ *      }
+ *
+ *      @Override
+ *      public void onDisconnected() {
+ *          // ATSClient has disconnected from ATS
+ *      }
+ *
+ *      @Override
+ *      public void onMessageReceived(@org.jetbrains.annotations.Nullable ATSMessage message) {
+ *          // ATS has sent a message
+ *      }
+ *
+ *      @Override
+ *      public void onError(@NotNull Throwable throwable) {
+ *          // An error has occured
+ *      }
+ *   }
+ *
+ *   atsClient.addCallback(atsCallback);
+ *   atsClient.connect(atsIPAddress, atsPort);
+ *
+ *   CardServiceRequest request = new CardServiceRequest();
+ *   request.setRequestType(CardRequestType.CardPayment);
+ *
+ *   request.setWorkstationID("12345);
+ *   request.setPopid("2");
+ *   request.setRequestID("19");
+ *   request.setApplicationSender("ATSClient");
+ *
+ *   CardServiceRequest.POSdata posData = new CardServiceRequest.POSdata();
+ *   posData.setPosTimeStamp(new Date());
+ *   posData.setTransactionNumber(19);
+ *   request.setPoSdata(posData);
+ *
+ *   TotalAmountType totalAmountType = new TotalAmountType();
+ *   totalAmountType.value = new BigDecimal(amount);
+ *   totalAmountType.setPaymentAmount(new BigDecimal(amount));
+ *   request.setTotalAmount(totalAmountType);
+ *
+ *   atsClient.sendMessage(request);
+ *   
  */
 class ATSClient : Closeable {
 
@@ -54,6 +110,10 @@ class ATSClient : Closeable {
      * @param port Port ATS is configured for listening to incoming messages
      */
     fun connect(ipAddress: String, port: Int) {
+        if (isConnected()) {
+            return
+        }
+
         closed = false
 
         "Connecting to ATS at $ipAddress:$port".log(this)

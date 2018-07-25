@@ -46,12 +46,7 @@ public class AmountActivity extends Activity implements ATSClient.Callback {
 
         preferences = PreferenceManager.getDefaultSharedPreferences(this);
 
-        atsClient = ((SampleApplication) getApplication()).getAtsClient();
-        atsClient.addCallback(this);
 
-        if (!atsClient.isConnected()) {
-            atsClient.connect();
-        }
 
         binding.toolbar.setNavigationOnClickListener(new View.OnClickListener() {
             @Override
@@ -99,6 +94,25 @@ public class AmountActivity extends Activity implements ATSClient.Callback {
     }
 
     @Override
+    protected void onResume() {
+        super.onResume();
+        if (atsClient != null) {
+            atsClient.close();
+        }
+
+
+        String atsIPAddress = preferences.getString("ATS_IP_ADDRESS", "");
+        int atsPort = preferences.getInt("ATS_PORT", 0);
+
+        atsClient = new ATSClient(atsIPAddress, atsPort);
+        atsClient.addCallback(this);
+
+        if (!atsClient.isConnected()) {
+            atsClient.connect();
+        }
+    }
+
+    @Override
     public void onConnected() {
 
     }
@@ -123,7 +137,7 @@ public class AmountActivity extends Activity implements ATSClient.Callback {
                 intent.putExtra("Result", "Error");
             }
 
-//            atsClient.close();
+            atsClient.close();
 
             startActivity(intent);
 

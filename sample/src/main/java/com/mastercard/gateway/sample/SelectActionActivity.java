@@ -71,43 +71,43 @@ public class SelectActionActivity extends Activity {
         request.setWorkstationID(preferences.getString("ATS_WORKSTATION_ID", ""));
         request.setRequestID("9786");
 
-        final ATSClient atsClient = ((SampleApplication) getApplication()).getAtsClient();
-        atsClient.addCallback(new ATSClient.Callback() {
-            @Override
-            public void onConnected() {
-
-            }
-
-            @Override
-            public void onDisconnected() {
-
-            }
-
-            @Override
-            public void onMessageReceived(@org.jetbrains.annotations.Nullable ATSMessage message) {
-
-                if (message instanceof ServiceResponse) {
-                    ServiceResponse serviceResponse = (ServiceResponse) message;
-
-                    if (serviceResponse.getOverallResult() == RequestResultType.Success) {
-                        SharedPreferences.Editor editor = preferences.edit();
-                        editor.putString("ATS_POP_ID", serviceResponse.getPopid());
-                        editor.apply();
-                        atsClient.close();
-                        Toast.makeText(SelectActionActivity.this,"Device Acquired Successfully !", Toast.LENGTH_LONG).show();
-                        finish();
-                    }
-                } else {
-                    Toast.makeText(SelectActionActivity.this,"Device Acquired Failed !", Toast.LENGTH_LONG).show();
-                }
-            }
-
-            @Override
-            public void onError(@NotNull Throwable throwable) {
-
-            }
-        });
-        atsClient.sendMessage(request);
+//        final ATSClient atsClient = ((SampleApplication) getApplication()).getAtsClient();
+//        atsClient.addCallback(new ATSClient.Callback() {
+//            @Override
+//            public void onConnected() {
+//
+//            }
+//
+//            @Override
+//            public void onDisconnected() {
+//
+//            }
+//
+//            @Override
+//            public void onMessageReceived(@org.jetbrains.annotations.Nullable ATSMessage message) {
+//
+//                if (message instanceof ServiceResponse) {
+//                    ServiceResponse serviceResponse = (ServiceResponse) message;
+//
+//                    if (serviceResponse.getOverallResult() == RequestResultType.Success) {
+//                        SharedPreferences.Editor editor = preferences.edit();
+//                        editor.putString("ATS_POP_ID", serviceResponse.getPopid());
+//                        editor.apply();
+//                        atsClient.close();
+//                        Toast.makeText(SelectActionActivity.this,"Device Acquired Successfully !", Toast.LENGTH_LONG).show();
+//                        finish();
+//                    }
+//                } else {
+//                    Toast.makeText(SelectActionActivity.this,"Device Acquired Failed !", Toast.LENGTH_LONG).show();
+//                }
+//            }
+//
+//            @Override
+//            public void onError(@NotNull Throwable throwable) {
+//
+//            }
+//        });
+//        atsClient.sendMessage(request);
     }
 
 }

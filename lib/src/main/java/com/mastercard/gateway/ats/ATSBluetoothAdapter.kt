@@ -174,7 +174,7 @@ class ATSBluetoothAdapter {
     }
 
 
-    inner class ATSServerSocketCallback : SocketServer.Callback {
+    internal inner class ATSServerSocketCallback : SocketServer.Callback {
         override fun incomingSocket(socket: Socket) {
             "Received incoming ATS socket".logV(this)
 
@@ -194,7 +194,7 @@ class ATSBluetoothAdapter {
     }
 
 
-    inner class ATSCommunicationSocketCallback : SocketClient.Callback {
+    internal inner class ATSCommunicationSocketCallback : SocketClient.Callback {
 
         override fun onConnected() {}
 
@@ -219,7 +219,7 @@ class ATSBluetoothAdapter {
     }
 
 
-    inner class BluetoothSocketCallback : SocketClient.Callback {
+    internal inner class BluetoothSocketCallback : SocketClient.Callback {
 
         override fun onConnected() {
             val configuration = currentConfiguration

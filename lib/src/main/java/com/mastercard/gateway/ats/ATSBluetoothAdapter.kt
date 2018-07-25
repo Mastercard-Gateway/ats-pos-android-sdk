@@ -14,21 +14,44 @@ import java.net.Socket
  *     int port = 12345; // the ATS configured port for this PED
  *     BluetoothDevice device = fetchBluetoothDevice(); // user-defined bluetooth device
  *
- *      ATSBluetoothConfiguration configuration = new ATSBluetoothConfiguration.Static(port, device);
+ *     // create an adapter configuration
+ *     ATSBluetoothConfiguration configuration = new ATSBluetoothConfiguration.Static(port, device);
  *
  *     // ready to handle PED connections
- *     ATSBluetoothAdapter.start(configuration);
+ *     ATSBluetoothAdapter adapter = new ATSBluetoothAdapter();
+ *     adapter.start(configuration);
  *
  *     // ... handle PED connection requests ...
  *
  *     // no longer need to handle PED connections
- *     ATSBluetoothAdapter.stop();
+ *     adapter.stop();
  */
-object ATSBluetoothAdapter {
+class ATSBluetoothAdapter {
 
-    internal const val CONNECTION_ATTEMPTS = 3
+    companion object {
+        internal const val CONNECTION_ATTEMPTS = 3
 
-    internal val DEFAULT_DEVICE_PREFIXES = arrayOf("Miura", "Simplify")
+        internal val DEFAULT_DEVICE_PREFIXES = arrayOf("Miura", "Simplify")
+
+        /**
+         *  Returns a list of supported bluetooth card readers that have previously been paired to this device.
+         *
+         *  @return The list of previously paired supported bluetooth devices
+         */
+        @JvmStatic
+        fun getSupportedDevices(): List<BluetoothDevice> {
+            return BluetoothAdapter.getDefaultAdapter()?.bondedDevices?.filter { device ->
+                DEFAULT_DEVICE_PREFIXES.forEach { prefix ->
+                    if (device.name.startsWith(prefix)) {
+                        return@filter true
+                    }
+                }
+                return@filter false
+            } ?: listOf()
+        }
+    }
+
+
 
     internal var atsSocketServer: SocketServer? = null
     internal var atsCommunicationSocketClient: SocketClient? = null
@@ -44,13 +67,14 @@ object ATSBluetoothAdapter {
     internal var isRetrying = false
 
 
+
+
     /**
      * Starts the communication between ATS and the Bluetooth device
      *
      * @param configuration: ATSBluetoothConfiguration - provides the Adapter with the information
      * to connect to ATS and the Bluetooth device. The supported configurations are: Static and Roaming
      */
-    @JvmStatic
     fun start(configuration: ATSBluetoothConfiguration) {
         if (isRunning()) {
             return
@@ -81,7 +105,6 @@ object ATSBluetoothAdapter {
     /**
      * Stops listening for ATS connection requests and closes all connections
      */
-    @JvmStatic
     fun stop() {
         currentConfiguration = null
         "Stopping ATS bluetooth adapter".log(this)
@@ -95,26 +118,8 @@ object ATSBluetoothAdapter {
      *
      * @return True or False
      */
-    @JvmStatic
     fun isRunning(): Boolean {
         return atsSocketServer?.isRunning() ?: atsCommunicationSocketClient?.isConnected() ?: false
-    }
-
-    /**
-     *  Returns a list of supported bluetooth card readers that have previously been paired to this device.
-     *
-     *  @return The list of previously paired supported bluetooth devices
-     */
-    @JvmStatic
-    fun getSupportedDevices(): List<BluetoothDevice> {
-        return BluetoothAdapter.getDefaultAdapter()?.bondedDevices?.filter { device ->
-            DEFAULT_DEVICE_PREFIXES.forEach { prefix ->
-                if (device.name.startsWith(prefix)) {
-                    return@filter true
-                }
-            }
-            return@filter false
-        } ?: listOf()
     }
 
     internal fun retryBluetoothConnection() {
@@ -169,7 +174,7 @@ object ATSBluetoothAdapter {
     }
 
 
-    internal class ATSServerSocketCallback : SocketServer.Callback {
+    inner class ATSServerSocketCallback : SocketServer.Callback {
         override fun incomingSocket(socket: Socket) {
             "Received incoming ATS socket".logV(this)
 
@@ -189,7 +194,7 @@ object ATSBluetoothAdapter {
     }
 
 
-    internal class ATSCommunicationSocketCallback : SocketClient.Callback {
+    inner class ATSCommunicationSocketCallback : SocketClient.Callback {
 
         override fun onConnected() {}
 
@@ -214,7 +219,7 @@ object ATSBluetoothAdapter {
     }
 
 
-    internal class BluetoothSocketCallback : SocketClient.Callback {
+    inner class BluetoothSocketCallback : SocketClient.Callback {
 
         override fun onConnected() {
             val configuration = currentConfiguration

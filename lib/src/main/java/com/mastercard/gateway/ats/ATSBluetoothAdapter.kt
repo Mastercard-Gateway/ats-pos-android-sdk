@@ -30,9 +30,28 @@ class ATSBluetoothAdapter {
 
     companion object {
         internal const val CONNECTION_ATTEMPTS = 3
+
+        internal val DEFAULT_DEVICE_PREFIXES = arrayOf("Miura", "Simplify")
+
+        /**
+         *  Returns a list of supported bluetooth card readers that have previously been paired to this device.
+         *
+         *  @return The list of previously paired supported bluetooth devices
+         */
+        @JvmStatic
+        fun getSupportedDevices(): List<BluetoothDevice> {
+            return BluetoothAdapter.getDefaultAdapter()?.bondedDevices?.filter { device ->
+                DEFAULT_DEVICE_PREFIXES.forEach { prefix ->
+                    if (device.name.startsWith(prefix)) {
+                        return@filter true
+                    }
+                }
+                return@filter false
+            } ?: listOf()
+        }
     }
 
-    internal val DEFAULT_DEVICE_PREFIXES = arrayOf("Miura", "Simplify")
+
 
     internal var atsSocketServer: SocketServer? = null
     internal var atsCommunicationSocketClient: SocketClient? = null
@@ -101,22 +120,6 @@ class ATSBluetoothAdapter {
      */
     fun isRunning(): Boolean {
         return atsSocketServer?.isRunning() ?: atsCommunicationSocketClient?.isConnected() ?: false
-    }
-
-    /**
-     *  Returns a list of supported bluetooth card readers that have previously been paired to this device.
-     *
-     *  @return The list of previously paired supported bluetooth devices
-     */
-    fun getSupportedDevices(): List<BluetoothDevice> {
-        return BluetoothAdapter.getDefaultAdapter()?.bondedDevices?.filter { device ->
-            DEFAULT_DEVICE_PREFIXES.forEach { prefix ->
-                if (device.name.startsWith(prefix)) {
-                    return@filter true
-                }
-            }
-            return@filter false
-        } ?: listOf()
     }
 
     internal fun retryBluetoothConnection() {

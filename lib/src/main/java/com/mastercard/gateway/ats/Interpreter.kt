@@ -36,11 +36,11 @@ internal class Interpreter {
         }
 
         @JvmStatic
-        fun serialize(obj: Any): Message {
+        fun serialize(obj: Any): String {
             val out = ByteArrayOutputStream()
             serializer.write(obj, out)
 
-            return Message(String(out.toByteArray()))
+            return String(out.toByteArray())
         }
     }
 }

@@ -13,25 +13,12 @@ import java.util.NoSuchElementException;
 import java.util.Set;
 
 public class SampleApplication extends Application {
-
-    private ATSClient atsClient;
-
     @Override
     public void onCreate() {
         super.onCreate();
 
         // init ATS diagnostics
         ATSDiagnostics.setLogLevel(Log.VERBOSE);
-    }
-
-    void initATSClient(String ipAddress, int atsPort) {
-        //Create and connect to ATSClient
-        atsClient = new ATSClient(ipAddress, atsPort);
-        atsClient.connect();
-    }
-
-    ATSClient getAtsClient() {
-        return atsClient;
     }
 }
 

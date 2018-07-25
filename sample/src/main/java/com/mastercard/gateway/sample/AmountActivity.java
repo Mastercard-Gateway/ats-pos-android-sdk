@@ -48,16 +48,16 @@ public class AmountActivity extends Activity implements ATSClient.Callback {
 
         preferences = PreferenceManager.getDefaultSharedPreferences(this);
 
-        atsClient = ((SampleApplication) getApplication()).getAtsClient();
+        String atsIPAddress = preferences.getString("ATS_IP_ADDRESS", "");
+        int atsPort = preferences.getInt("ATS_PORT", 0);
+
+        atsClient = new ATSClient();
         atsClient.addCallback(this);
+        atsClient.connect(atsIPAddress, atsPort);
 
         // begin capturing ATS logs
         ATSDiagnostics.clearLog();
         ATSDiagnostics.startLogCapture();
-
-        if (!atsClient.isConnected()) {
-            atsClient.connect();
-        }
 
         binding.toolbar.setNavigationOnClickListener(new View.OnClickListener() {
             @Override

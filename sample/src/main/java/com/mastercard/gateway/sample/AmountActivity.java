@@ -9,10 +9,9 @@ import android.preference.PreferenceManager;
 import android.support.annotation.Nullable;
 import android.util.Log;
 import android.view.View;
-import android.widget.Button;
+import android.view.WindowManager;
 import android.widget.CompoundButton;
 
-import com.mastercard.gateway.ats.ATSBluetoothAdapter;
 import com.mastercard.gateway.ats.ATSClient;
 import com.mastercard.gateway.ats.ATSDiagnostics;
 import com.mastercard.gateway.ats.domain.ATSMessage;
@@ -33,14 +32,12 @@ import java.util.List;
 
 public class AmountActivity extends Activity implements ATSClient.Callback {
 
-
-    Action action;
-
-    ATSClient atsClient;
+    ATSClient atsClient = new ATSClient();
+    Action action = Action.Payment;
 
     ActivityAmountBinding binding;
-
     SharedPreferences preferences;
+
 
     @Override
     protected void onCreate(@Nullable Bundle savedInstanceState) {
@@ -49,30 +46,27 @@ public class AmountActivity extends Activity implements ATSClient.Callback {
 
         preferences = PreferenceManager.getDefaultSharedPreferences(this);
 
+        showProgress(false);
+
         binding.toolbar.setNavigationOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
                 AmountActivity.this.finish();
             }
         });
-        Button actionButton = findViewById(R.id.button_action);
 
-
-        action = Action.Payment;
         binding.toolbar.setTitle("Create a payment");
-        actionButton.setText("Pay");
 
-
-        actionButton.setOnClickListener(new View.OnClickListener() {
+        binding.buttonAction.setText("Pay");
+        binding.buttonAction.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                createATSMessage();
+                connectATSClient();
             }
         });
 
         String popID = preferences.getString("ATS_POP_ID", "");
         binding.popIDEditText.setText(popID);
-
 
         binding.switchMode.setOnCheckedChangeListener(new CompoundButton.OnCheckedChangeListener() {
             @Override
@@ -89,48 +83,51 @@ public class AmountActivity extends Activity implements ATSClient.Callback {
     }
 
     @Override
-    protected void onStart() {
-        super.onStart();
-        hideProgress();
-    }
-
-    @Override
     protected void onResume() {
         super.onResume();
 
-        if (atsClient != null && atsClient.isConnected()) {
-            atsClient.close();
-        }
-
-        atsClient = new ATSClient();
         atsClient.addCallback(this);
 
-        if (!atsClient.isConnected()) {
-            String atsIPAddress = preferences.getString("ATS_IP_ADDRESS", "");
-            int atsPort = preferences.getInt("ATS_PORT", 0);
-            atsClient.connect(atsIPAddress, atsPort);
-        }
+        ATSDiagnostics.startLogCapture();
+    }
+
+    @Override
+    protected void onPause() {
+        // if this screen backgrounds, close the client
+        // which will kill any transaction in progress
+        atsClient.close();
+
+        atsClient.removeCallback(this);
+
+        ATSDiagnostics.stopLogCapture();
+        ATSDiagnostics.clearLog();
+
+        showProgress(false);
+
+        super.onPause();
     }
 
     @Override
     public void onConnected() {
+        CardServiceRequest request = createPaymentRequest();
 
+        atsClient.sendMessage(request);
+
+        showProgress(true);
     }
 
     @Override
     public void onDisconnected() {
-        ATSDiagnostics.stopLogCapture();
-        String log = ATSDiagnostics.getLog();
-        ATSDiagnostics.clearLog();
+        keepScreenOn(false);
 
-        Log.d(AmountActivity.class.getSimpleName(), "ATS Log:\n" + log);
+        String log = ATSDiagnostics.getLog();
+        Log.d(AmountActivity.class.getSimpleName(), "ATS Log (" + log.length() + " chars):\n" + log);
     }
 
     @Override
     public void onMessageReceived(@Nullable ATSMessage message) {
         if (message instanceof CardServiceResponse) {
             CardServiceResponse response = (CardServiceResponse) message;
-
 
             Intent intent = new Intent(AmountActivity.this, ResultActivity.class);
             intent.putExtra("Action", action.equals(Action.Payment) ? "Payment" : "Authorization");
@@ -159,7 +156,6 @@ public class AmountActivity extends Activity implements ATSClient.Callback {
                 }
             }
 
-
             DeviceResponse response = DeviceResponse.createSuccessfulResponse(request);
 
             atsClient.sendMessage(response);
@@ -174,26 +170,31 @@ public class AmountActivity extends Activity implements ATSClient.Callback {
         startActivity(intent);
     }
 
-    //Create a CardServiceRequest for the amount entered
-    private void createATSMessage() {
+    private void connectATSClient() {
+        // keep the screen on while we process
+        keepScreenOn(true);
 
+        String atsIPAddress = preferences.getString("ATS_IP_ADDRESS", "");
+        int atsPort = preferences.getInt("ATS_PORT", 0);
+        atsClient.connect(atsIPAddress, atsPort);
+    }
+
+    //Create a CardServiceRequest for the amount entered
+    private CardServiceRequest createPaymentRequest() {
         String amount = binding.amountEditText.getText().toString();
 
-
         String workstationID = preferences.getString("ATS_WORKSTATION_ID", "");
-
 
         CardServiceRequest request = new CardServiceRequest();
         request.setRequestType(CardRequestType.CardPayment);
 
         request.setWorkstationID(workstationID);
-        request.setRequestID("19");
+        request.setRequestID("1");
         request.setApplicationSender("ATSClient");
 
         CardServiceRequest.POSdata posData = new CardServiceRequest.POSdata();
         posData.setPosTimeStamp(new Date());
-        posData.setTransactionNumber(19);
-
+        posData.setTransactionNumber(1);
 
         if (binding.switchMode.isChecked()) {
             posData.setReference(binding.referenceEditText.getText().toString());
@@ -203,25 +204,25 @@ public class AmountActivity extends Activity implements ATSClient.Callback {
 
         request.setPoSdata(posData);
 
-
         TotalAmountType totalAmountType = new TotalAmountType();
         totalAmountType.value = new BigDecimal(amount);
         totalAmountType.setPaymentAmount(new BigDecimal(amount));
         request.setTotalAmount(totalAmountType);
 
-        atsClient.sendMessage(request);
-
-        showProgress();
+        return request;
     }
 
-    private void showProgress() {
-        findViewById(R.id.transaction_in_progress).setVisibility(View.VISIBLE);
-        findViewById(R.id.collect_amount).setVisibility(View.GONE);
+    private void showProgress(boolean show) {
+        findViewById(R.id.transaction_in_progress).setVisibility(show ? View.VISIBLE : View.GONE);
+        findViewById(R.id.collect_amount).setVisibility(show ? View.GONE : View.VISIBLE);
     }
 
-    private void hideProgress() {
-        findViewById(R.id.transaction_in_progress).setVisibility(View.GONE);
-        findViewById(R.id.collect_amount).setVisibility(View.VISIBLE);
+    private void keepScreenOn(boolean keepOn) {
+        if (keepOn) {
+            getWindow().addFlags(WindowManager.LayoutParams.FLAG_KEEP_SCREEN_ON);
+        } else {
+            getWindow().clearFlags(WindowManager.LayoutParams.FLAG_KEEP_SCREEN_ON);
+        }
     }
 
     enum Action {

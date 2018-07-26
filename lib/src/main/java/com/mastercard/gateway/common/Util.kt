@@ -12,7 +12,7 @@ internal fun Int.bytes(): ByteArray {
             .array()
 }
 
-internal fun String.log(tag: String, priority:Int = Log.DEBUG) {
+internal fun String.log(tag: String, priority:Int = Log.INFO) {
     Log.println(priority, tag, this)
 
     // also include in diagnostics
@@ -23,7 +23,7 @@ internal fun String.log(tag: String, tr: Throwable) {
     "$this\n${Log.getStackTraceString(tr)}".log(tag, Log.ERROR)
 }
 
-internal fun String.log(obj: Any, priority:Int = Log.DEBUG) {
+internal fun String.log(obj: Any, priority:Int = Log.INFO) {
     log(obj.javaClass.simpleName, priority)
 }
 

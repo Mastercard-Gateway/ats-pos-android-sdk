@@ -17,9 +17,6 @@ public class SampleApplication extends Application {
     @Override
     public void onCreate() {
         super.onCreate();
-
-        // init ATS diagnostics
-        ATSDiagnostics.setLogLevel(Log.VERBOSE);
     }
 }
 

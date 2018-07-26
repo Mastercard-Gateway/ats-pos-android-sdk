@@ -98,7 +98,7 @@ public class MainActivity extends AppCompatActivity {
     private BluetoothDevice getBluetoothDevice() {
         BluetoothDevice selectedDevice = null;
 
-        for (BluetoothDevice supportedDevice : adapter.getSupportedDevices()) {
+        for (BluetoothDevice supportedDevice : ATSBluetoothAdapter.getSupportedDevices()) {
             if (supportedDevice.getName().equals(deviceName)) {
                 selectedDevice = supportedDevice;
                 break;

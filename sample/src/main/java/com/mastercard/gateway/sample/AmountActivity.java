@@ -214,12 +214,6 @@ public class AmountActivity extends Activity implements ATSClient.Callback {
         showProgress();
     }
 
-
-    @Override
-    protected void onDestroy() {
-        super.onDestroy();
-    }
-
     private void showProgress() {
         findViewById(R.id.transaction_in_progress).setVisibility(View.VISIBLE);
         findViewById(R.id.collect_amount).setVisibility(View.GONE);

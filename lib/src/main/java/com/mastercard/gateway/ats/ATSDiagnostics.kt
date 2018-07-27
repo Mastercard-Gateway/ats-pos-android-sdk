@@ -88,7 +88,19 @@ object ATSDiagnostics {
     internal fun log(priority: Int, tag: String, message: String) {
         if (capturing && priority >= logLevel) {
             val timestamp = dateFormatter.format(Date())
-            log.append("$timestamp [$tag] $message\n")
+            log.append("$timestamp ${resolvePriorityLetter(priority)}/$tag: $message\n")
+        }
+    }
+
+    internal fun resolvePriorityLetter(priority: Int): Char {
+        return when (priority) {
+            Log.VERBOSE -> 'V'
+            Log.DEBUG -> 'D'
+            Log.INFO -> 'I'
+            Log.ASSERT -> 'A'
+            Log.WARN -> 'W'
+            Log.ERROR -> 'E'
+            else -> '?'
         }
     }
 }

@@ -81,11 +81,16 @@ public class CreateConfigurationActivity extends AppCompatActivity implements Ad
         editor.putInt("ATS_PORT", atsServerPort.trim().isEmpty() ? 0 : Integer.parseInt(atsServerPort));
         editor.putString("ATS_WORKSTATION_ID", binding.workstationId.getText().toString());
         editor.putString("ATS_POP_ID", binding.popId.getText().toString());
-        editor.putBoolean("BLUETOOTH", binding.bluetoothSwitch.isChecked());
-        if (binding.deviceSpinner.getSelectedItem() != null) {
-            editor.putInt("ATS_DEVICE_PORT", Integer.valueOf(binding.adapterPort.getText().toString()));
+
+        boolean btChecked = binding.bluetoothSwitch.isChecked();
+        editor.putBoolean("BLUETOOTH", btChecked);
+        if (btChecked) {
+            if (binding.deviceSpinner.getSelectedItem() != null) {
+                editor.putInt("ATS_DEVICE_PORT", Integer.valueOf(binding.adapterPort.getText().toString()));
+            }
+            editor.putBoolean("BLUETOOTH_ROAMING", binding.roamingSwitch.isChecked());
         }
-        editor.putBoolean("BLUETOOTH_ROAMING", binding.roamingSwitch.isChecked());
+
         editor.apply();
     }
 

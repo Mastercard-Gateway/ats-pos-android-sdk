@@ -1,10 +1,7 @@
 package com.mastercard.gateway.ats
 
 import com.mastercard.gateway.ats.domain.ATSMessage
-import com.mastercard.gateway.common.Buffer
-import com.mastercard.gateway.common.IPSocketClient
-import com.mastercard.gateway.common.SocketClient
-import com.mastercard.gateway.common.log
+import com.mastercard.gateway.common.*
 import java.io.Closeable
 
 /**
@@ -129,7 +126,7 @@ class ATSClient : Closeable {
      * @return true if connected
      */
     fun isConnected(): Boolean {
-        return socketClient.isConnected()
+        return ::socketClient.isInitialized && socketClient.isConnected()
     }
 
     /**
@@ -138,7 +135,12 @@ class ATSClient : Closeable {
      * @param message XML payload encoded as a String
      */
     fun sendMessage(message: String) {
-        "Sending raw XML message:\n$message".log(this)
+        if (!isConnected()) {
+            return
+        }
+
+        "Sending raw XML message (${message.length} chars)".log(this)
+        "Message content:\n$message".logD(this)
         socketClient.write(Message(message).bytes)
     }
 
@@ -148,8 +150,13 @@ class ATSClient : Closeable {
      * @param message The message to encode and send to ATS
      */
     fun sendMessage(message: ATSMessage) {
+        if (!isConnected()) {
+            return
+        }
+
         val serializedMessage = Interpreter.serialize(message)
-        "Sending ATS message:\n$serializedMessage".log(this)
+        "Sending ATS message (${serializedMessage.length} chars)".log(this)
+        "Message content:\n$serializedMessage".logD(this)
         socketClient.write(Message(serializedMessage).bytes)
     }
 
@@ -158,6 +165,10 @@ class ATSClient : Closeable {
      */
     override fun close() {
         closed = true
+
+        if (!isConnected()) {
+            return
+        }
 
         "Closing connection to ATS".log(this)
         socketClient.close()
@@ -196,7 +207,8 @@ class ATSClient : Closeable {
 
             // read the buffer for a complete message
             Message.read(readBuffer)?.let { message ->
-                "Received message:\n${message.content}".log(this@ATSClient)
+                "Received message (${message.content.length} chars)".log(this@ATSClient)
+                "Message content:\n${message.content}".logD(this@ATSClient)
                 callbacks.forEach { callback ->
                     callback.onMessageReceived(Interpreter.deserialize(message))
                 }

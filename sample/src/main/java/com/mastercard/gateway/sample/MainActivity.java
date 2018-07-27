@@ -65,10 +65,6 @@ public class MainActivity extends AppCompatActivity {
     // Setting up communication with ATS and if configured, the Bluetooth adapter
     private void initATS() {
 
-        if (adapter.isRunning()) {
-            adapter.stop();
-        }
-
         if (preferences.getBoolean("BLUETOOTH", false) && deviceName != null && !deviceName.isEmpty()) {
 
             BluetoothDevice selectedDevice = getBluetoothDevice();
@@ -98,7 +94,7 @@ public class MainActivity extends AppCompatActivity {
     private BluetoothDevice getBluetoothDevice() {
         BluetoothDevice selectedDevice = null;
 
-        for (BluetoothDevice supportedDevice : adapter.getSupportedDevices()) {
+        for (BluetoothDevice supportedDevice : ATSBluetoothAdapter.getSupportedDevices()) {
             if (supportedDevice.getName().equals(deviceName)) {
                 selectedDevice = supportedDevice;
                 break;
@@ -110,6 +106,16 @@ public class MainActivity extends AppCompatActivity {
     @Override
     protected void onResume() {
         super.onResume();
+
+        /*
+         * adapter starts when user clicks 'next' button. So, adapter needn't be running when this activity is visible.
+         *
+         * PLEASE NOTE : Make sure there is enough time between adapter.stop() and adapter.start(configuration) calls
+         *               to let sockets close down properly.
+         */
+        if (adapter.isRunning()) {
+            adapter.stop();
+        }
 
         preferences = PreferenceManager.getDefaultSharedPreferences(this);
 

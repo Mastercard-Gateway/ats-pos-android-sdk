@@ -1,6 +1,5 @@
 package com.mastercard.gateway.sample;
 
-import android.bluetooth.BluetoothDevice;
 import android.content.Intent;
 import android.content.SharedPreferences;
 import android.os.Bundle;
@@ -12,20 +11,8 @@ import android.view.MenuItem;
 import android.view.View;
 import android.widget.TextView;
 
-import com.mastercard.gateway.ats.ATSBluetoothAdapter;
-import com.mastercard.gateway.ats.ATSBluetoothConfiguration;
-
 public class MainActivity extends AppCompatActivity {
 
-    String atsIPAddress;
-    int atsPort;
-    String deviceName;
-    int adapterPort;
-    String workstationID;
-    String popID;
-    ATSBluetoothAdapter adapter = new ATSBluetoothAdapter();
-
-    SharedPreferences preferences;
 
     @Override
     protected void onCreate(@Nullable Bundle savedInstanceState) {
@@ -57,79 +44,28 @@ public class MainActivity extends AppCompatActivity {
         findViewById(R.id.next).setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                initATS();
+                startActivity(new Intent(MainActivity.this, AmountActivity.class));
             }
         });
-    }
-
-    // Setting up communication with ATS and if configured, the Bluetooth adapter
-    private void initATS() {
-
-        if (preferences.getBoolean("BLUETOOTH", false) && deviceName != null && !deviceName.isEmpty()) {
-
-            BluetoothDevice selectedDevice = getBluetoothDevice();
-
-            if (selectedDevice != null) {
-
-                boolean roaming = preferences.getBoolean("BLUETOOTH_ROAMING", false);
-
-                //Create either a Static or Roaming ATSBluetoothConfiguration
-                ATSBluetoothConfiguration configuration;
-
-                if (roaming) {
-                    configuration = new ATSBluetoothConfiguration.Roaming(atsIPAddress, adapterPort, selectedDevice);
-                } else {
-                    configuration = new ATSBluetoothConfiguration.Static(adapterPort, selectedDevice);
-                }
-
-                //Start ATSBluetooth Adapter
-                adapter.start(configuration);
-            }
-        }
-
-        startActivity(new Intent(MainActivity.this, AmountActivity.class));
-    }
-
-    @Nullable
-    private BluetoothDevice getBluetoothDevice() {
-        BluetoothDevice selectedDevice = null;
-
-        for (BluetoothDevice supportedDevice : ATSBluetoothAdapter.getSupportedDevices()) {
-            if (supportedDevice.getName().equals(deviceName)) {
-                selectedDevice = supportedDevice;
-                break;
-            }
-        }
-        return selectedDevice;
     }
 
     @Override
     protected void onResume() {
         super.onResume();
 
-        /*
-         * adapter starts when user clicks 'next' button. So, adapter needn't be running when this activity is visible.
-         *
-         * PLEASE NOTE : Make sure there is enough time between adapter.stop() and adapter.start(configuration) calls
-         *               to let sockets close down properly.
-         */
-        if (adapter.isRunning()) {
-            adapter.stop();
-        }
-
-        preferences = PreferenceManager.getDefaultSharedPreferences(this);
+        SharedPreferences preferences = PreferenceManager.getDefaultSharedPreferences(this);
 
         if (preferences.contains("ATS_IP_ADDRESS")) {
             //Show config
             findViewById(R.id.create_configuration).setVisibility(View.GONE);
             findViewById(R.id.show_configuration).setVisibility(View.VISIBLE);
 
-            atsIPAddress = preferences.getString("ATS_IP_ADDRESS", "");
-            atsPort = preferences.getInt("ATS_PORT", 0);
-            deviceName = preferences.getString("ATS_DEVICE_NAME", "");
-            adapterPort = preferences.getInt("ATS_DEVICE_PORT", 0);
-            workstationID = preferences.getString("ATS_WORKSTATION_ID", "");
-            popID = preferences.getString("ATS_POP_ID", "");
+            String atsIPAddress = preferences.getString("ATS_IP_ADDRESS", "");
+            int atsPort = preferences.getInt("ATS_PORT", 0);
+            String deviceName = preferences.getString("ATS_DEVICE_NAME", "");
+            int adapterPort = preferences.getInt("ATS_DEVICE_PORT", 0);
+            String workstationID = preferences.getString("ATS_WORKSTATION_ID", "");
+            String popID = preferences.getString("ATS_POP_ID", "");
 
             ((TextView) findViewById(R.id.ats_server_ip)).setText(atsIPAddress);
             ((TextView) findViewById(R.id.ats_server_port)).setText(String.valueOf(atsPort));

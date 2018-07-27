@@ -89,9 +89,14 @@ public class CreateConfigurationActivity extends AppCompatActivity implements Ad
                 editor.putInt("ATS_DEVICE_PORT", Integer.valueOf(binding.adapterPort.getText().toString()));
             }
             editor.putBoolean("BLUETOOTH_ROAMING", binding.roamingSwitch.isChecked());
+            editor.apply();
+
+            ((SampleApplication) getApplication()).startATSBluetoothAdapter();
+        } else {
+            editor.apply();
+            ((SampleApplication) getApplication()).stopATSBluetoothAdapter();
         }
 
-        editor.apply();
     }
 
     private void populateScreen() {

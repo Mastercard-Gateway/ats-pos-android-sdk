@@ -2,12 +2,18 @@ node {
     stage 'Checkout'
     checkout scm
 
+    stage 'Clean'
+    sh "./gradlew clean --refresh-dependencies"
+
+    stage 'Build'
+    sh "./gradlew build"
+
     stage 'Unit Test'
     // sh "./gradlew clean --refresh-dependencies lintDebug testDebugUnitTest"
     // sh "./gradlew clean --refresh-dependencies testDebugUnitTest"
 
     stage 'Assemble'
-    sh "./gradlew assemble generateFingerprints"
+    sh "./gradlew assembleDebug"
 
     stage 'Archive'
     androidLint canComputeNew: false, canRunOnFailed: true, defaultEncoding: '', failedNewHigh: '0', healthy: '', pattern: 'app/build/**/lint-*.xml', unHealthy: '', unstableTotalAll: '200'

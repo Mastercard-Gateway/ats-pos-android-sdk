@@ -4,7 +4,7 @@ node {
 
     stage 'Unit Test'
     // sh "./gradlew clean --refresh-dependencies lintDebug testDebugUnitTest"
-    sh "./gradlew clean --refresh-dependencies testDebugUnitTest"
+    // sh "./gradlew clean --refresh-dependencies testDebugUnitTest"
 
     stage 'Assemble'
     sh "./gradlew assemble generateFingerprints"

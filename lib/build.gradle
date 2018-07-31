@@ -75,12 +75,12 @@ artifactory {
             password = artifactoryPassword // The publisher password
             maven = true
         }
-        defaults {
+        /*defaults {
             publishArtifacts = true
             publications('aar')
             publishPom = true //Publish generated POM files to Artifactory (true by default)
             publishIvy = false //Publish generated Ivy descriptor files to Artifactory (true by default)
-        }
+        }*/
     }
     resolve {
         repository {

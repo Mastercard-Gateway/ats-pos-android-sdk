@@ -3,7 +3,7 @@ node {
     checkout scm
 
     stage 'Build'
-    sh "./gradlew clean assembleRelease lib:androidSourcesJar lib:androidJavadocsJar lib:generatePomFileForAarPublication"
+    sh "./gradlew clean assembleRelease lib:androidSourcesJar lib:dokkaJavadocsJar lib:generatePomFileForAarPublication"
 
     stage 'Deploy SDK'
     sh "./gradlew lib:artifactoryPublish"

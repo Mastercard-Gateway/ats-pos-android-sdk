@@ -19,3 +19,18 @@
 # If you keep the line number information, uncomment this to
 # hide the original source file name.
 #-renamesourcefileattribute SourceFile
+
+
+# Simple-Xml Proguard Config
+# Keep public classes and methods.
+-dontwarn com.bea.xml.stream.**
+-dontwarn org.simpleframework.xml.stream.**
+-keep class org.simpleframework.xml.**{ *; }
+-keepclassmembers,allowobfuscation class * {
+    @org.simpleframework.xml.* <fields>;
+    @org.simpleframework.xml.* <init>(...);
+}
+
+# keep domain models and enums
+-keep class com.mastercard.gateway.ats.domain.** { *; }
+-keep enum com.mastercard.gateway.ats.domain.** { *; }

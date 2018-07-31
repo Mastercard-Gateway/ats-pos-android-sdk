@@ -1,8 +1,9 @@
-def artifactVersion = properties.version
+ext {
+    libraryVersionName = '0.1.0-SNAPSHOT'
 
-// env variables defined in CI server
-def artifactoryUser = System.getenv('bamboo_artifactory_publisher_user')
-def artifactoryPassword = System.getenv('bamboo_artifactory_publisher_password')
+    artifactoryUser = System.getenv('bamboo_artifactory_publisher_user')
+    artifactoryPassword = System.getenv('bamboo_artifactory_publisher_password')
+}
 
 apply plugin: 'com.android.library'
 apply plugin: 'kotlin-android'
@@ -10,14 +11,18 @@ apply plugin: 'kotlin-android-extensions'
 apply plugin: 'com.jfrog.artifactory'
 apply plugin: 'maven-publish'
 
+
 android {
     compileSdkVersion 27
+    buildToolsVersion '27.0.3'
 
     defaultConfig {
         minSdkVersion 19
         targetSdkVersion 27
-        versionCode 1
-        versionName '0.1.0-SNAPSHOT'
+        versionName libraryVersionName
+
+        consumerProguardFiles 'proguard-rules.pro'
+
         testInstrumentationRunner 'android.support.test.runner.AndroidJUnitRunner'
     }
 
@@ -26,16 +31,6 @@ android {
             minifyEnabled false
             proguardFiles getDefaultProguardFile('proguard-android.txt'), 'proguard-rules.pro'
         }
-    }
-
-    sourceSets {
-        main.java.srcDirs += 'src/main/kotlin'
-        debug.java.srcDirs += 'src/debug/kotlin'
-        release.java.srcDirs += 'src/release/kotlin'
-
-        test.java.srcDirs += 'src/test/kotlin'
-
-        androidTest.java.srcDirs += 'src/androidTest/kotlin'
     }
 
     lintOptions {
@@ -54,43 +49,11 @@ android {
     }
 }
 
-publishing {
-    publications {
-        aar(MavenPublication) {
-            groupId = "com.mastercard.gateway"
-            artifactId = project.name
-            version = artifactVersion
-            artifact "${project.buildDir}/outputs/aar/${project.name}-release.aar"
-        }
-    }
+// define an 'optional' dependency
+configurations {
+    optional
+    implementation.extendsFrom optional
 }
-
-artifactory {
-    contextUrl = 'http://tools.labs.mastercard.com/artifactory'
-    publish {
-        repository {
-            // The Artifactory repository key to publish to
-            repoKey = artifactVersion.endsWith('SNAPSHOT') ? 'libs-snapshot-local' : 'libs-release-local'
-            username = artifactoryUser // The publisher user name
-            password = artifactoryPassword // The publisher password
-            maven = true
-        }
-        /*defaults {
-            publishArtifacts = true
-            publications('aar')
-            publishPom = true //Publish generated POM files to Artifactory (true by default)
-            publishIvy = false //Publish generated Ivy descriptor files to Artifactory (true by default)
-        }*/
-    }
-    resolve {
-        repository {
-            repoKey = 'repo'
-            username = artifactoryUser // The resolver user name
-            password = artifactoryPassword // The resolver password
-        }
-    }
-}
-
 
 ext {
     mockitoVersion = '2.13.0'
@@ -99,12 +62,10 @@ ext {
 }
 
 dependencies {
-    implementation fileTree(dir: 'libs', include: ['*.jar'])
-
     implementation "org.jetbrains.kotlin:kotlin-stdlib-jdk7:$kotlin_version"
     implementation 'com.android.support:appcompat-v7:27.1.1'
 
-    //RxJava
+    // Simple XML
     implementation 'org.simpleframework:simple-xml:2.7.1'
 
     testImplementation 'junit:junit:4.12'
@@ -119,6 +80,87 @@ dependencies {
     androidTestImplementation 'com.android.support.test:runner:1.0.2'
     androidTestImplementation 'com.android.support.test.espresso:espresso-core:3.0.2'
 }
-repositories {
-    mavenCentral()
+
+task androidJavadocs(type: Javadoc) {
+    classpath += project.files(android.getBootClasspath().join(File.pathSeparator))
+    android.libraryVariants.all { variant ->
+        if (variant.name == 'release') {
+            owner.classpath += variant.javaCompile.classpath
+        }
+    }
+    source = android.sourceSets.main.java.srcDirs
+    exclude '**/R.html', '**/R.*.html', '**/index.html'
+}
+
+task androidJavadocsJar(type: Jar, dependsOn: androidJavadocs) {
+    classifier = 'javadoc'
+    from androidJavadocs.destinationDir
+}
+
+task androidSourcesJar(type: Jar) {
+    classifier = 'sources'
+    from android.sourceSets.main.java.srcDirs
+}
+
+publishing {
+    publications {
+        aar(MavenPublication) {
+            groupId = "com.mastercard.gateway"
+            artifactId = "ats-android"
+            version = libraryVersionName
+
+            artifact bundleRelease
+            artifact androidJavadocsJar
+            artifact androidSourcesJar
+
+            pom.withXml {
+                def root = asNode()
+
+                // adds basic info
+                root.appendNode('name', 'Mastercard ATS Android SDK')
+                root.appendNode('description', 'The Android SDK for Mastercard ATS')
+
+                // adds dependencies
+                def dependenciesNode = root.appendNode('dependencies')
+                configurations.implementation.allDependencies.each { dp ->
+                    if (dp.group) {
+                        def dependencyNode = dependenciesNode.appendNode('dependency')
+                        dependencyNode.appendNode('groupId', dp.group)
+                        dependencyNode.appendNode('artifactId', dp.name)
+                        dependencyNode.appendNode('version', dp.version)
+
+                        if (configurations.optional.allDependencies.contains(dp)) {
+                            dependencyNode.appendNode('optional', true)
+                        }
+                    }
+                }
+            }
+        }
+    }
+}
+
+artifactory {
+    contextUrl = 'http://tools.labs.mastercard.com/artifactory'
+    publish {
+        repository {
+            // The Artifactory repository key to publish to
+            repoKey = libraryVersionName.endsWith('SNAPSHOT') ? 'libs-snapshot-local' : 'libs-release-local'
+            username = artifactoryUser // The publisher user name
+            password = artifactoryPassword // The publisher password
+            maven = true
+        }
+        defaults {
+            publishArtifacts = true
+            publications('aar')
+            publishPom = true //Publish generated POM files to Artifactory (true by default)
+            publishIvy = false //Publish generated Ivy descriptor files to Artifactory (true by default)
+        }
+    }
+    resolve {
+        repository {
+            repoKey = 'repo'
+            username = artifactoryUser // The resolver user name
+            password = artifactoryPassword // The resolver password
+        }
+    }
 }

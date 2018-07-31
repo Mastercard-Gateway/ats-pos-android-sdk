@@ -3,10 +3,10 @@ node {
     checkout scm
 
     stage 'Build'
-    sh "./gradlew clean build"
+    sh "./gradlew clean assembleRelease lib:androidSourcesJar lib:androidJavadocsJar lib:generatePomFileForAarPublication"
 
     stage 'Deploy SDK'
-    sh "./gradlew lib:generatePomFileForAarPublication lib:artifactoryPublish"
+    sh "./gradlew lib:artifactoryPublish"
 
     stage 'Archive'
     step([$class: 'ArtifactArchiver', artifacts: '**/*.aar', fingerprint: true])

@@ -1,34 +1,154 @@
+ext {
+    libraryVersionName = '0.1.0'
+
+    artifactoryUser = System.getenv('bamboo_artifactory_publisher_user')
+    artifactoryPassword = System.getenv('bamboo_artifactory_publisher_password')
+}
+
 apply plugin: 'com.android.library'
+apply plugin: 'kotlin-android'
+apply plugin: 'kotlin-android-extensions'
+apply plugin: 'com.jfrog.artifactory'
+apply plugin: 'maven-publish'
+apply plugin: 'org.jetbrains.dokka-android'
+
 
 android {
     compileSdkVersion 27
-
-
+    buildToolsVersion '27.0.3'
 
     defaultConfig {
         minSdkVersion 19
         targetSdkVersion 27
-        versionCode 1
-        versionName "1.0"
+        versionName libraryVersionName
 
-        testInstrumentationRunner "android.support.test.runner.AndroidJUnitRunner"
+        consumerProguardFiles 'proguard.pro'
 
+        testInstrumentationRunner 'android.support.test.runner.AndroidJUnitRunner'
     }
 
     buildTypes {
-        release {
-            minifyEnabled false
-            proguardFiles getDefaultProguardFile('proguard-android.txt'), 'proguard-rules.pro'
+        release
+    }
+
+    testOptions {
+        unitTests {
+            includeAndroidResources = true
+            returnDefaultValues = true
         }
     }
 
+    lintOptions {
+        abortOnError false
+    }
+}
+
+// define an 'optional' dependency
+configurations {
+    optional
+    implementation.extendsFrom optional
+}
+
+ext {
+    mockitoVersion = '2.13.0'
+    mockitoKotlinVersion = '1.5.0'
+    powermockVersion = '1.7.1'
 }
 
 dependencies {
-    implementation fileTree(dir: 'libs', include: ['*.jar'])
-
+    implementation "org.jetbrains.kotlin:kotlin-stdlib-jdk7:$kotlin_version"
     implementation 'com.android.support:appcompat-v7:27.1.1'
+
+    // Simple XML
+    implementation 'org.simpleframework:simple-xml:2.7.1'
+
     testImplementation 'junit:junit:4.12'
+    testImplementation "org.robolectric:robolectric:3.8"
+    testImplementation "org.mockito:mockito-core:$mockitoVersion"
+    testImplementation "org.jetbrains.kotlin:kotlin-test-junit:$kotlin_version"
+    testImplementation "org.jetbrains.kotlin:kotlin-reflect:$kotlin_version"
+    testImplementation "com.nhaarman:mockito-kotlin-kt1.1:$mockitoKotlinVersion"
+    testImplementation "org.powermock:powermock-module-junit4:$powermockVersion"
+    testImplementation "org.powermock:powermock-api-mockito2:$powermockVersion"
+
     androidTestImplementation 'com.android.support.test:runner:1.0.2'
     androidTestImplementation 'com.android.support.test.espresso:espresso-core:3.0.2'
+}
+
+task dokkaJavadocs(type: org.jetbrains.dokka.gradle.DokkaTask) {
+    outputFormat = 'javadoc'
+    outputDirectory = "$buildDir/javadoc"
+}
+
+task dokkaJavadocsJar(type: Jar, dependsOn: dokkaJavadocs) {
+    classifier = 'javadoc'
+    from dokkaJavadocs.outputDirectory
+}
+
+task androidSourcesJar(type: Jar) {
+    classifier = 'sources'
+    from android.sourceSets.main.java.srcDirs
+}
+
+publishing {
+    publications {
+        aar(MavenPublication) {
+            groupId = "com.mastercard.gateway"
+            artifactId = "ats-android"
+            version = libraryVersionName
+
+            artifact bundleRelease
+            artifact dokkaJavadocsJar
+            artifact androidSourcesJar
+
+            pom.withXml {
+                def root = asNode()
+
+                // adds basic info
+                root.appendNode('name', 'Mastercard ATS Android SDK')
+                root.appendNode('description', 'The Android SDK for Mastercard ATS')
+
+                // adds dependencies
+                def dependenciesNode = root.appendNode('dependencies')
+                configurations.implementation.allDependencies.each { dp ->
+                    if (dp.group) {
+                        def dependencyNode = dependenciesNode.appendNode('dependency')
+                        dependencyNode.appendNode('groupId', dp.group)
+                        dependencyNode.appendNode('artifactId', dp.name)
+                        dependencyNode.appendNode('version', dp.version)
+
+                        if (configurations.optional.allDependencies.contains(dp)) {
+                            dependencyNode.appendNode('optional', true)
+                        }
+                    }
+                }
+            }
+        }
+    }
+}
+
+artifactory {
+    contextUrl = 'http://tools.labs.mastercard.com/artifactory'
+    publish {
+        repository {
+            // The Artifactory repository key to publish to
+            repoKey = libraryVersionName.endsWith('SNAPSHOT') ? 'libs-snapshot-local' : 'libs-release-local'
+            username = artifactoryUser // The publisher user name
+            password = artifactoryPassword // The publisher password
+            maven = true
+        }
+        defaults {
+            publishArtifacts = true
+            publications('aar')
+            publishPom = true //Publish generated POM files to Artifactory (true by default)
+            publishIvy = false //Publish generated Ivy descriptor files to Artifactory (true by default)
+        }
+    }
+    resolve {
+        repository {
+            repoKey = 'repo'
+            username = artifactoryUser // The resolver user name
+            password = artifactoryPassword // The resolver password
+        }
+    }
 }

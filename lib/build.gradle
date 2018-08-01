@@ -1,5 +1,5 @@
 ext {
-    libraryVersionName = '0.1.0'
+    libraryVersionName = '0.2.0-SNAPSHOT'
 
     artifactoryUser = System.getenv('bamboo_artifactory_publisher_user')
     artifactoryPassword = System.getenv('bamboo_artifactory_publisher_password')

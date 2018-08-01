@@ -9,7 +9,7 @@ node {
     sh "./gradlew lib:artifactoryPublish"
 
     stage 'Archive'
-    step([$class: 'ArtifactArchiver', artifacts: '**/*.aar, **/*.apk', fingerprint: true])
+    step([$class: 'ArtifactArchiver', artifacts: '**/build/outputs/**/*.aar, **/build/outputs/**/*.apk', fingerprint: true])
     properties([[$class: 'BuildDiscarderProperty', strategy: [$class: 'LogRotator', artifactNumToKeepStr: '10', numToKeepStr: '10']]])
 
 }

@@ -11,7 +11,7 @@ import kotlin.test.assertTrue
 
 class ATSClientTest {
 
-    private var ats = ATSClient("1.1.1.1", 20002)
+    private var ats = ATSClient()
     private var mockSocketClient: IPSocketClient = mock()
 
 

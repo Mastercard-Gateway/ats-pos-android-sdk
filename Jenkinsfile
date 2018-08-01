@@ -2,8 +2,11 @@ node {
     stage 'Checkout'
     checkout scm
 
+    stage 'Test'
+    sh "./gradlew clean --refresh-dependencies lib:lintRelease lib:testReleaseUnitTest"
+
     stage 'Build'
-    sh "./gradlew clean assemble lib:androidSourcesJar lib:dokkaJavadocsJar lib:generatePomFileForAarPublication"
+    sh "./gradlew assemble lib:androidSourcesJar lib:dokkaJavadocsJar lib:generatePomFileForAarPublication"
 
     stage 'Deploy SDK'
     sh "./gradlew lib:artifactoryPublish"

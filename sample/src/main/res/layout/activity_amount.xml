@@ -8,17 +8,17 @@
         android:layout_height="match_parent"
         android:orientation="vertical">
 
-        <android.support.design.widget.AppBarLayout
+        <com.google.android.material.appbar.AppBarLayout
             android:layout_width="match_parent"
             android:layout_height="wrap_content">
 
-            <android.support.v7.widget.Toolbar
+            <androidx.appcompat.widget.Toolbar
                 android:id="@+id/toolbar"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:background="@color/material_color_white"
                 app:navigationIcon="@drawable/ic_arrow_back_black_24dp" />
-        </android.support.design.widget.AppBarLayout>
+        </com.google.android.material.appbar.AppBarLayout>
 
         <FrameLayout
             android:layout_width="match_parent"
@@ -36,20 +36,20 @@
                     android:layout_gravity="center_vertical|center_horizontal"
                     android:orientation="vertical">
 
-                    <android.support.design.widget.TextInputLayout
+                    <com.google.android.material.textfield.TextInputLayout
                         android:layout_width="match_parent"
                         android:layout_height="wrap_content"
 
                         android:layout_marginEnd="@dimen/material_baseline_grid_2x"
                         android:layout_marginStart="@dimen/material_baseline_grid_2x">
 
-                        <android.support.design.widget.TextInputEditText
+                        <com.google.android.material.textfield.TextInputEditText
                             android:id="@+id/amountEditText"
                             android:layout_width="match_parent"
                             android:layout_height="wrap_content"
                             android:hint="Amount"
                             android:inputType="numberDecimal" />
-                    </android.support.design.widget.TextInputLayout>
+                    </com.google.android.material.textfield.TextInputLayout>
 
 
                     <View
@@ -74,7 +74,7 @@
                             android:layout_weight="1"
                             android:text="Device" />
 
-                        <android.support.v7.widget.SwitchCompat
+                        <androidx.appcompat.widget.SwitchCompat
                             android:id="@+id/switchMode"
                             android:layout_width="wrap_content"
                             android:layout_height="wrap_content"
@@ -84,7 +84,7 @@
 
                     </LinearLayout>
 
-                    <android.support.design.widget.TextInputLayout
+                    <com.google.android.material.textfield.TextInputLayout
                         android:id="@+id/reference"
                         android:layout_width="match_parent"
                         android:layout_height="wrap_content"
@@ -92,15 +92,15 @@
                         android:layout_marginEnd="@dimen/material_baseline_grid_2x"
                         android:layout_marginStart="@dimen/material_baseline_grid_2x">
 
-                        <android.support.design.widget.TextInputEditText
+                        <com.google.android.material.textfield.TextInputEditText
                             android:id="@+id/referenceEditText"
                             android:layout_width="match_parent"
                             android:layout_height="wrap_content"
                             android:hint="Reference Number"
                             android:inputType="number" />
-                    </android.support.design.widget.TextInputLayout>
+                    </com.google.android.material.textfield.TextInputLayout>
 
-                    <android.support.design.widget.TextInputLayout
+                    <com.google.android.material.textfield.TextInputLayout
                         android:id="@+id/pop_id"
                         android:layout_width="match_parent"
                         android:layout_height="wrap_content"
@@ -108,13 +108,13 @@
                         android:layout_marginStart="@dimen/material_baseline_grid_2x"
                         android:visibility="gone">
 
-                        <android.support.design.widget.TextInputEditText
+                        <com.google.android.material.textfield.TextInputEditText
                             android:id="@+id/popIDEditText"
                             android:layout_width="match_parent"
                             android:layout_height="wrap_content"
                             android:hint="POP ID"
                             android:inputType="number" />
-                    </android.support.design.widget.TextInputLayout>
+                    </com.google.android.material.textfield.TextInputLayout>
 
                     <View
                         android:layout_width="match_parent"

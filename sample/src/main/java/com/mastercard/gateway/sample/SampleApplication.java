@@ -4,7 +4,7 @@ import android.app.Application;
 import android.bluetooth.BluetoothDevice;
 import android.content.SharedPreferences;
 import android.preference.PreferenceManager;
-import android.support.annotation.Nullable;
+import androidx.annotation.Nullable;
 
 import com.mastercard.gateway.ats.ATSBluetoothAdapter;
 import com.mastercard.gateway.ats.ATSBluetoothConfiguration;

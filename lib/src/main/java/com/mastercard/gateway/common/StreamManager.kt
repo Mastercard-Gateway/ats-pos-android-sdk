@@ -1,11 +1,10 @@
 package com.mastercard.gateway.common
 
 import android.os.Handler
-import android.support.annotation.VisibleForTesting
+import androidx.annotation.VisibleForTesting
 import java.io.Closeable
 import java.io.InputStream
 import java.io.OutputStream
-import java.net.SocketException
 import kotlin.concurrent.thread
 
 internal abstract class StreamManager : Closeable {

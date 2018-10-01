@@ -6,7 +6,7 @@
     android:layout_height="match_parent">
 
 
-    <android.support.v7.widget.CardView
+    <androidx.cardview.widget.CardView
         android:layout_width="match_parent"
         android:layout_height="match_parent"
         android:layout_margin="@dimen/material_baseline_grid_2x"
@@ -63,7 +63,7 @@
         </FrameLayout>
 
 
-    </android.support.v7.widget.CardView>
+    </androidx.cardview.widget.CardView>
 
 
 </FrameLayout>

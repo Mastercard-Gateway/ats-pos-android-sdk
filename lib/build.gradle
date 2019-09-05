@@ -89,35 +89,37 @@ task androidSourcesJar(type: Jar) {
     from android.sourceSets.main.java.srcDirs
 }
 
-publishing {
-    publications {
-        aar(MavenPublication) {
-            groupId = "com.mastercard.gateway"
-            artifactId = "ats-android"
-            version = libraryVersionName
+project.afterEvaluate {
+    publishing {
+        publications {
+            aar(MavenPublication) {
+                groupId = "com.mastercard.gateway"
+                artifactId = "ats-android"
+                version = libraryVersionName
 
-            artifact bundleReleaseAar
-            artifact dokkaJavadocsJar
-            artifact androidSourcesJar
+                artifact bundleReleaseAar
+                artifact dokkaJavadocsJar
+                artifact androidSourcesJar
 
-            pom.withXml {
-                def root = asNode()
+                pom.withXml {
+                    def root = asNode()
 
-                // adds basic info
-                root.appendNode('name', 'Mastercard ATS Android SDK')
-                root.appendNode('description', 'The Android SDK for Mastercard ATS')
+                    // adds basic info
+                    root.appendNode('name', 'Mastercard ATS Android SDK')
+                    root.appendNode('description', 'The Android SDK for Mastercard ATS')
 
-                // adds dependencies
-                def dependenciesNode = root.appendNode('dependencies')
-                configurations.implementation.allDependencies.each { dp ->
-                    if (dp.group) {
-                        def dependencyNode = dependenciesNode.appendNode('dependency')
-                        dependencyNode.appendNode('groupId', dp.group)
-                        dependencyNode.appendNode('artifactId', dp.name)
-                        dependencyNode.appendNode('version', dp.version)
+                    // adds dependencies
+                    def dependenciesNode = root.appendNode('dependencies')
+                    configurations.implementation.allDependencies.each { dp ->
+                        if (dp.group) {
+                            def dependencyNode = dependenciesNode.appendNode('dependency')
+                            dependencyNode.appendNode('groupId', dp.group)
+                            dependencyNode.appendNode('artifactId', dp.name)
+                            dependencyNode.appendNode('version', dp.version)
 
-                        if (configurations.optional.allDependencies.contains(dp)) {
-                            dependencyNode.appendNode('optional', true)
+                            if (configurations.optional.allDependencies.contains(dp)) {
+                                dependencyNode.appendNode('optional', true)
+                            }
                         }
                     }
                 }

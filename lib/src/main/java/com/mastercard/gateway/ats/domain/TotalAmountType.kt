@@ -22,7 +22,7 @@ class TotalAmountType {
     @field:Attribute(name = "DonationAmount", required=false)
     var donationAmount: BigDecimal? = null
     @field:Attribute(name = "Changeable", required=false)
-    var changeable: Boolean?? = null
+    var changeable: Boolean? = null
     @field:Attribute(name = "OriginalAmount", required=false)
     var originalAmount: BigDecimal? = null
     @field:Attribute(name = "AvailableAmount", required=false)

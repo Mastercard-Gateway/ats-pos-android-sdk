@@ -35,16 +35,6 @@ android {
     }
 }
 
-dokka {
-    outputFormat = 'html'
-    outputDirectory = "$buildDir/javadoc"
-
-    packageOptions {
-        prefix = "com.mastercard.gateway.ats.domain"
-        reportUndocumented = false
-    }
-}
-
 // define an 'optional' dependency
 configurations {
     optional
@@ -74,6 +64,11 @@ dependencies {
 task dokkaJavadocs(type: org.jetbrains.dokka.gradle.DokkaTask) {
     outputFormat = 'javadoc'
     outputDirectory = "$buildDir/javadoc"
+
+    packageOptions {
+        prefix = "com.mastercard.gateway.ats.domain"
+        reportUndocumented = false
+    }
 }
 
 task dokkaJavadocsJar(type: Jar, dependsOn: dokkaJavadocs) {
@@ -103,8 +98,8 @@ publishing {
                 def root = asNode()
 
                 // adds basic info
-                root.appendNode('name', 'Mastercard ATS Android SDK')
-                root.appendNode('description', 'The Android SDK for Mastercard ATS')
+                root.appendNode('name', 'Mastercard ATS POS Android SDK')
+                root.appendNode('description', 'The Android SDK for Mastercard ATS POS')
 
                 // adds license info
                 def license = root.appendNode('licenses').appendNode('license')
@@ -114,8 +109,8 @@ publishing {
 
                 // adds source control info
                 def scm = root.appendNode('scm')
-                scm.appendNode('url', 'https://github.com/Mastercard-Gateway/ats-android-sdk')
-                scm.appendNode('connection', 'https://github.com/Mastercard-Gateway/ats-android-sdk.git')
+                scm.appendNode('url', 'https://github.com/Mastercard-Gateway/ats-pos-android-sdk')
+                scm.appendNode('connection', 'https://github.com/Mastercard-Gateway/ats-pos-android-sdk.git')
 
                 // adds dependencies
                 def dependenciesNode = root.appendNode('dependencies')
@@ -146,7 +141,7 @@ bintray {
         name = 'ats-android'
         userOrg = 'simplify'
         licenses = ['Apache-2.0']
-        vcsUrl = 'https://github.com/Mastercard-Gateway/ats-android-sdk.git'
+        vcsUrl = 'https://github.com/Mastercard-Gateway/ats-pos-android-sdk.git'
         version {
             name = libraryVersionName
         }

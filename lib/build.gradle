@@ -35,6 +35,16 @@ android {
     }
 }
 
+dokka {
+    outputFormat = 'html'
+    outputDirectory = "$buildDir/javadoc"
+
+    packageOptions {
+        prefix = "com.mastercard.gateway.ats.domain"
+        reportUndocumented = false
+    }
+}
+
 // define an 'optional' dependency
 configurations {
     optional

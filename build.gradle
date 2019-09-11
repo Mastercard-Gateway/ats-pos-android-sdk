@@ -46,3 +46,7 @@ allprojects {
 task clean(type: Delete) {
     delete rootProject.buildDir
 }
+
+ext {
+    libraryVersionName = '0.2.0-SNAPSHOT'
+}

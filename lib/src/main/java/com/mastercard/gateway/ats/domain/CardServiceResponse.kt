@@ -32,6 +32,8 @@ class CardServiceResponse : ATSMessage {
     var applicationSender: String? = null
     @field:Attribute(name = "POPID", required = false)
     var popid: String? = null
+    @field:Attribute(name = "SystemStatus", required = false)
+    var systemStatus: Integer? = null
     @field:Attribute(name = "RequestType", required = true)
     lateinit var requestType: CardRequestType
     @field:Attribute(name = "WorkstationID", required = true)

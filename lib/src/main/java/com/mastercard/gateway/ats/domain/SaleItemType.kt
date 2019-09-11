@@ -29,7 +29,7 @@ class SaleItemType {
     @field:Element(name = "VATRate", required=false)
     var vatRate: BigDecimal? = null
     @field:Element(name = "ProductCode", required = true)
-    lateinit var productCode: Integer
+    var productCode: Int? = null
     @field:Element(name = "Amount", required = true)
     lateinit var amount: BigDecimal
     @field:Attribute(name = "ItemID", required = true)

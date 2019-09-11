@@ -138,8 +138,8 @@ bintray {
     publish = true
     pkg {
         repo = 'Android'
-        name = 'ats-android'
-        userOrg = 'simplify'
+        name = 'ats-pos-android-sdk'
+        userOrg = 'mpgs'
         licenses = ['Apache-2.0']
         vcsUrl = 'https://github.com/Mastercard-Gateway/ats-pos-android-sdk.git'
         version {

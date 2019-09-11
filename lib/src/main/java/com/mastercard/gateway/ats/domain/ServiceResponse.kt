@@ -4,7 +4,7 @@ import org.simpleframework.xml.*
 import java.math.BigDecimal
  import java.util.Date
 
-@Suppress("ArrayInDataClass")
+@Suppress("ArrayInDataClass", "Unused")
 @Root(name = "ServiceResponse", strict = false)
 class ServiceResponse : ATSMessage {
 
@@ -89,7 +89,7 @@ class ServiceResponse : ATSMessage {
             @field:Text
             lateinit var value: BigDecimal
             @field:Attribute(name = "NumberPayments", required = true)
-            lateinit var numberPayments: Integer
+            var numberPayments: Int? = null
             @field:Attribute(name = "PaymentType", required = true)
             lateinit var paymentType: TransactionType
             @field:Attribute(name = "Currency", required = false)
@@ -99,7 +99,7 @@ class ServiceResponse : ATSMessage {
             @field:Attribute(name = "Acquirer", required = false)
             var acquirer: String? = null
             @field:Attribute(name = "NumberHeld", required = false)
-            var numberHeld: Integer? = null
+            var numberHeld: Int? = null
             @field:Attribute(name = "AmountHeld", required = false)
             var amountHeld: BigDecimal? = null
         }
@@ -120,7 +120,7 @@ class ServiceResponse : ATSMessage {
             @field:Text
             lateinit var value: BigDecimal
             @field:Attribute(name = "NumberPayments", required = true)
-            lateinit var numberPayments: Integer
+            var numberPayments: Int? = null
         }
 
         @Root(name = "Successful", strict = false)
@@ -128,7 +128,7 @@ class ServiceResponse : ATSMessage {
             @field:Text
             lateinit var value: BigDecimal
             @field:Attribute(name = "NumberPayments", required = true)
-            lateinit var numberPayments: Integer
+            var numberPayments: Int? = null
         }
     }
 

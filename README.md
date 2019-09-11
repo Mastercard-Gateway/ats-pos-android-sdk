@@ -1,6 +1,6 @@
 # ATS POS ANDROID SDK
 
-[![Download](https://api.bintray.com/packages/mpgs/Android/ats-android/images/download.svg) ](https://bintray.com/mpgs/Android/ats-android/_latestVersion)
+[![Download](https://api.bintray.com/packages/mpgs/Android/ats-pos-android-sdk/images/download.svg) ](https://bintray.com/mpgs/Android/ats-pos-android-sdk/_latestVersion)
 [![Build Status](https://travis-ci.org/mastercard-gateway/ats-pos-android-sdk.svg?branch=master)](https://travis-ci.org/mastercard-gateway/ats-pos-android-sdk)
 
 The Android SDK by Mastercard Payment Gateway Services allows you to integrate ATS-driven payments into your Android app. It provides a few components that can be used to communicate with ATS, expose bluetooth-connected card readers to the network, and collect log information for diagnostics reporting.
